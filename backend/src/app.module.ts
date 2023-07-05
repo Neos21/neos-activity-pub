@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { configuration } from './common/configs/configuration';
 import { AccessLogMiddleware } from './common/middlewares/access-log.middleware';
 // Modules
+import { WellKnownModule } from './well-known/well-known.module';
 import { ActivityPubModule } from './activity-pub/activity-pub.module';
 import { AdminModule } from './admin/admin.module';
 // Controllers
@@ -43,6 +44,8 @@ import { AppController } from './app.controller';
       }]
     }),
     
+    // Well-Known
+    WellKnownModule,
     // Modules
     ActivityPubModule,
     AdminModule,
