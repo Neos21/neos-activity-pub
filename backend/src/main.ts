@@ -42,8 +42,6 @@ async function bootstrap() {
   const logger = new Logger(bootstrap.name);
   
   const app = await NestFactory.create(AppModule);
-  // 全ての Prefix に `/api` を付ける : Angular 側で Proxy しやすくするため
-  app.setGlobalPrefix('api');
   // CORS を有効にする : https://github.com/expressjs/cors#configuration-options
   app.enableCors({
     origin: (/localhost/),  // `localhost` を全て許可するため正規表現を使う
