@@ -17,6 +17,7 @@ import { ActivityPubModule } from './activity-pub/activity-pub.module';
 import { AdminModule } from './admin/admin.module';
 // Controllers
 import { AppController } from './app.controller';
+import { SharedModule } from './shared/shared.module';
 
 /** App Module */
 @Module({
@@ -48,7 +49,7 @@ import { AppController } from './app.controller';
     
     // Well-Known
     WellKnownModule,
-    // Modules
+    // API Modules
     ActivityPubModule,
     AdminModule,
     // Angular 側で Proxy しやすくするため `/api` の Prefix を付ける : https://docs.nestjs.com/recipes/router-module
@@ -58,7 +59,7 @@ import { AppController } from './app.controller';
         ActivityPubModule,
         AdminModule
       ]
-    }])
+    }]),
   ],
   controllers: [
     AppController

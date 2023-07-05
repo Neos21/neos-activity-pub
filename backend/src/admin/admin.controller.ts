@@ -12,7 +12,7 @@ import { BasicAuthGuard } from './guards/basic-auth.guard';
  */
 @Controller('admin')
 export class AdminController {
-  constructor(private adminService: AdminService) { }
+  constructor(private readonly adminService: AdminService) { }
   
   /**
    * ユーザ登録

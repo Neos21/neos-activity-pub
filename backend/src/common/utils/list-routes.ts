@@ -9,7 +9,7 @@ import { cyan, green, grey, red, yellow } from './colour-logger';
  * @param router Express Router
  * @return Log Text
  */
-export function listRoutes(router: Express) {
+export const listRoutes = (router: Express) => {
   const endpoints: Array<expressListEndpoints.Endpoint> = expressListEndpoints(router);
   // 最長のパスに合わせて整形する
   const longestPathLength = Math.max(...endpoints.map((endpoint) => endpoint.path.length));
@@ -25,11 +25,11 @@ export function listRoutes(router: Express) {
   const methodsOrders = Object.keys(methodsColourFunctions);
   const prepareMethods = (methods: Array<string>): string => methods
     .sort((methodA, methodB) => methodsOrders.indexOf(methodA) - methodsOrders.indexOf(methodB))  // Sort By `methodsOrders`
-    .map((method) => {
+    .map(method => {
       const colourFunction: (text: string) => string | undefined = methodsColourFunctions[method];
       return colourFunction ? colourFunction(method) : method;
     })
     .join(', ');
   const logText = `${yellow('Routes :')}\n` + endpoints.map((endpoint) => `    - ${endpoint.path.padEnd(longestPathLength, ' ')} : ${prepareMethods(endpoint.methods)}`).sort().join('\n');
   return logText;
-}
+};

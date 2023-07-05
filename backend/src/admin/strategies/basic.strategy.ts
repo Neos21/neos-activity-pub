@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { BasicStrategy as Strategy } from 'passport-http';
 
-/** BASIC 認証 Strategy */
+/** BASIC Strategy */
 @Injectable()
 export class BasicStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {

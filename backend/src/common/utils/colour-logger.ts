@@ -1,4 +1,4 @@
-/* NestJS のロガー `cli-colors.util.js` を参考にしたロガーに色付けするための関数群 */
+// NestJS のロガー `cli-colors.util.js` を参考にしたロガーに色付けするための関数群
 
 /** NestJS のロガーと同じ環境変数名を参照する */
 const isColourAllowed = (): boolean => !process.env.NO_COLOR;

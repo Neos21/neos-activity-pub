@@ -2,9 +2,14 @@ import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
+import { UsersService } from '../shared/services/users.service';
+
 @Controller('.well-known')
 export class WellKnownController {
-  constructor(private configService: ConfigService) { }
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly usersService: UsersService
+  ) { }
   
   /**
    * Get Host Meta
@@ -28,18 +33,22 @@ export class WellKnownController {
    * @return WebFinger
    */
   @Get('webfinger')
-  public getWebFinger(@Query('resource') resource: string, @Res() res: Response) {
+  public async getWebFinger(@Query('resource') resource: string, @Res() res: Response) {
     if(!resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
     
+    const isHttp = this.configService.get<number>('isHttp');
     const host = this.configService.get<string>('host');
-    const name = resource.replace('acct:', '').replace(`@${host}`, '');  // TODO : 存在チェックする
+    const name = resource.replace('acct:', '').replace(`@${host}`, '');
+    
+    const user = await this.usersService.findOneByName(name);
+    if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`Actor [${resource}] is not found.`);
     
     const json = {
-      subject: `acct:${name}@${host}`,
+      subject: `acct:${user.name}@${host}`,
       links: [{
         rel : 'self',
         type: 'application/activity+json',
-        href: `https://${host}/api/activity-pub/users/@${name}`
+        href: `http${isHttp ? '' : 's'}://${host}/api/activity-pub/users/${user.name}`
       }]
     };
     return res.status(HttpStatus.OK).type('application/jrd+json').json(json);
