@@ -42,6 +42,6 @@ export class WellKnownController {
         href: `https://${host}/api/activity-pub/users/@${name}`
       }]
     };
-    return res.status(HttpStatus.OK).json(json);
+    return res.status(HttpStatus.OK).type('application/jrd+json').json(json);
   }
 }
