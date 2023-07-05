@@ -4,6 +4,8 @@ import { AdminController } from './admin.controller';
 
 /** Admin Module */
 @Module({
-  controllers: [AdminController]
+  controllers: [
+    AdminController
+  ]
 })
 export class AdminModule { }

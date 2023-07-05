@@ -6,6 +6,7 @@ import { cyan, yellow } from '../utils/colour-logger';
 /** アクセスログを出力するミドルウェア */
 @Injectable()
 export class AccessLogMiddleware implements NestMiddleware {
+  /** Logger */
   private readonly logger: Logger = new Logger(AccessLogMiddleware.name);
   
   /**
