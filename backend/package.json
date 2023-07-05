@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "start": "node ./dist/main.js",
+    "dev": "nest start --debug --watch",
     "build": "nest build",
-    "start": "nest start",
-    "start:dev": "nest start --debug --watch",
-    "start:prod": "node dist/main",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

@@ -4,7 +4,7 @@ import { Controller, Get } from '@nestjs/common';
 @Controller()
 export class AppController {
   /** Get Hello World */
-  @Get()
+  @Get('/api')
   public getHelloWorld(): string {
     return 'Hello World';
   }
