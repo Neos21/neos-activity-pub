@@ -53,6 +53,9 @@ const getBooleanValue = (envName: string): boolean => {
 export const configuration = (): { [key: string]: string | number | boolean } => ({
   port               : getNumberValue ('PORT'                 , 3000         ),  // ポート番号
   host               : getStringValue ('HOST'                 , 'example.com'),  // ホスト (`https://example.com/` の `example.com` 部分)
+  isHttp             : getBooleanValue('IS_HTTP'                             ),  // HTTP にするか否か
+  adminUserName      : getStringValue ('ADMIN_USER_NAME'      , 'CHANGE-THIS'),  // BASIC 認証に使用するユーザ名
+  adminPassword      : getStringValue ('ADMIN_PASSWORD'       , 'CHANGE-THIS'),  // BASIC 認証に使用するパスワード
   dbFilePath         : getStringValue ('DB_FILE_PATH'         , ''           ),  // DB ファイルパス : 未指定の場合は `app.module.ts` 内で初期値を設定する
   staticDirectoryPath: getStringValue ('STATIC_DIRECTORY_PATH', ''           ),  // 静的ファイルのディレクトリ : 未指定の場合は `app.module.ts` 内で初期値を設定する
   noColour           : getBooleanValue('NO_COLOR'                            )   // ロガーの色付けをしない : NestJS のロガー `cli-colors.util.js` と同じ環境変数名・確認のため宣言

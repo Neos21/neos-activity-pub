@@ -9,6 +9,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // Common
 import { configuration } from './common/configs/configuration';
 import { AccessLogMiddleware } from './common/middlewares/access-log.middleware';
+// TypeORM
+import { User } from './entities/user';
 // Modules
 import { WellKnownModule } from './well-known/well-known.module';
 import { ActivityPubModule } from './activity-pub/activity-pub.module';
@@ -31,7 +33,7 @@ import { AppController } from './app.controller';
         type: 'sqlite',
         database: configService.get<string>('dbFilePath') || path.resolve(__dirname, '../db/neos-activity-pub-backend.sqlite3.db'),
         entities: [
-          // TODO
+          User
         ],
         synchronize: true
       })

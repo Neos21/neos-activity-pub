@@ -1,17 +1,35 @@
-import { Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
+
+import { User } from '../entities/user';
+import { AdminService } from './admin.service';
+import { BasicAuthGuard } from './guards/basic-auth.guard';
 
 /**
  * Admin Controller
  * 
- * TODO : 特定の管理者だけがユーザ登録・削除できる API にする
- *        めんどくさいのでユーザ登録画面とかメール認証とかしたくないｗ
+ * - 特定の管理者だけがユーザ登録・削除できる API にする (ユーザ登録画面とかメール認証とか面倒臭いので実装省きたい)
  */
 @Controller('admin')
 export class AdminController {
-  /** TODO : ユーザ登録 */
+  constructor(private adminService: AdminService) { }
+  
+  /**
+   * ユーザ登録
+   * 
+   * @param user User
+   * @param res Response
+   */
   @Post('users')
-  public createUser() {
-    return 'TODO : ユーザ登録機能を実装する';
+  @UseGuards(BasicAuthGuard)
+  public async createUser(@Body() user: User, @Res() res: Response) {
+    try {
+      const createdUser = await this.adminService.createUser(user);
+      return res.status(HttpStatus.OK).json({ result: createdUser });
+    }
+    catch(error) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: error.toString() });
+    }
   }
   
   /**
@@ -20,6 +38,7 @@ export class AdminController {
    * @param id ID
    */
   @Delete('users/:id')
+  @UseGuards(BasicAuthGuard)
   public removeUser(@Param('id') id: number) {
     return `TODO : ユーザ削除機能を実装する [${id}]`;
   }

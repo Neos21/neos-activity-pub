@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import { cyan, yellow } from './common/utils/colour-logger';
 import { listRoutes } from './common/utils/list-routes';
@@ -18,8 +19,9 @@ async function bootstrap() {
     credentials: true  // `Access-Control-Allow-Credentials` を許可する
   });
   // Launch
-  await app.listen(3000);
-  logger.log(cyan(`Server started at port [`) + yellow(`${3000}`) + cyan(']'));
+  const port = app.get<ConfigService>(ConfigService).get<number>('port')!;
+  await app.listen(port);
+  logger.log(cyan(`Server started at port [`) + yellow(`${port}`) + cyan(']'));
   // List Routes
   const router = app.getHttpServer()._events.request._router;
   logger.log(listRoutes(router));
