@@ -1,5 +1,7 @@
 # DB
 db/*
+# nohup
+*.out
 
 # compiled output
 /dist
