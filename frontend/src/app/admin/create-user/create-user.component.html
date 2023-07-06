@@ -1,0 +1,12 @@
+<h2>ユーザ登録画面</h2>
+
+<form [formGroup]="form" (ngSubmit)="create()">
+  <dl>
+    <dt>ユーザ名 (小文字のみ)</dt>
+    <dd><input type="text" placeholder="User Name" formControlName="userName"></dd>
+    <dt>パスワード</dt>
+    <dd><input type="password" placeholder="Password" formControlName="password"></dd>
+  </dl>
+  <p><button type="submit" [disabled]="form.invalid">ユーザ登録</button></p>
+</form>
+<p *ngIf="error != null">{{ error }}</p>

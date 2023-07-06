@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
 import { User } from '../entities/user';
@@ -12,7 +13,29 @@ import { BasicAuthGuard } from './guards/basic-auth.guard';
  */
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) { }
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly adminService: AdminService
+  ) { }
+  
+  /**
+   * 管理者ログイン (簡易チェック)
+   * 
+   * @param adminUserName 管理者ユーザ名
+   * @param adminPassword 管理者パスワード
+   * @param res Response
+   */
+  @Post('login')
+  public async adminLogin(@Body('adminUserName') adminUserName: string, @Body('adminPassword') adminPassword: string, @Res() res: Response) {
+    const envAdminUserName = this.configService.get<string>('adminUserName');
+    const envAdminPassword = this.configService.get<string>('adminPassword');
+    if(adminUserName === envAdminUserName && adminPassword === envAdminPassword) {
+      return res.status(HttpStatus.OK).json({ result: 'OK' });
+    }
+    else {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Invali User Name Or Password.' });
+    }
+  }
   
   /**
    * ユーザ登録
