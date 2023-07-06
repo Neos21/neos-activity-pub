@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
-import { UsersService } from '../shared/services/users.service';
+import { UsersService } from '../users/users.service';
 
 @Controller('.well-known')
 export class WellKnownController {
@@ -17,7 +17,7 @@ export class WellKnownController {
    * @return Host Meta
    */
   @Get('host-meta')
-  public getHostMeta(@Res() res: Response) {
+  public getHostMeta(@Res() res: Response): Response {
     const host = this.configService.get<string>('host');
     const xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
       + '<XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">\n'
@@ -33,14 +33,14 @@ export class WellKnownController {
    * @return WebFinger
    */
   @Get('webfinger')
-  public async getWebFinger(@Query('resource') resource: string, @Res() res: Response) {
+  public async getWebFinger(@Query('resource') resource: string, @Res() res: Response): Promise<Response> {
     if(!resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
     
     const isHttp = this.configService.get<number>('isHttp');
     const host = this.configService.get<string>('host');
     const name = resource.replace('acct:', '').replace(`@${host}`, '');
     
-    const user = await this.usersService.findOneByName(name);
+    const user = await this.usersService.findOne(name);
     if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`Actor [${resource}] is not found.`);
     
     const json = {

@@ -2,20 +2,23 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { User } from '../entities/user';
-import { UsersService } from './services/users.service';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
-/** Shared Module */
+/** Users Module */
 @Module({
   imports: [
     TypeOrmModule.forFeature([User])  // Repository を使えるようにする
+  ],
+  controllers: [
+    UsersController
   ],
   providers: [
     UsersService
   ],
   exports: [
-    // Re-Exports
-    TypeOrmModule,
+    // 他 Module で使うため Re-Export する
     UsersService
   ]
 })
-export class SharedModule { }
+export class UsersModule { }

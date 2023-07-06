@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-/** ユーザアカウント */
+/** ユーザ */
 @Entity('users')
 export class User {
-  /** ユーザ名 (半角英小文字・数字・ハイフンのみ許容する) */
+  /** ユーザ名 (半角英小文字・数字・ハイフンのみ許容する・20文字まで) */
   @PrimaryColumn({ type: 'text', name: 'name' })
   public name: string;
   

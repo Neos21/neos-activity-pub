@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, Param, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
-import { UsersService } from '../shared/services/users.service';
+import { UsersService } from '../users/users.service';
 
 /** ActivityPub Controller */
 @Controller('activity-pub')
@@ -14,12 +14,12 @@ export class ActivityPubController {
   
   /** ユーザ情報を返す : https://qiita.com/wakin/items/94a0ff3f32f842b18a25 */
   @Get('users/:name')
-  public async getUser(@Param('name') name: string, @Res() res: Response) {
+  public async getUser(@Param('name') name: string, @Res() res: Response): Promise<Response> {
     const isHttp = this.configService.get<number>('isHttp');
     const host   = this.configService.get<string>('host');
     const domain = `http${isHttp ? '' : 's'}//${host}`;
     
-    const user = await this.usersService.findOneByName(name);
+    const user = await this.usersService.findOne(name);
     if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`User [${name}] is not found.`);
     
     const json = {

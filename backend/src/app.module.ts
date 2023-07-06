@@ -14,10 +14,10 @@ import { User } from './entities/user';
 // Modules
 import { WellKnownModule } from './well-known/well-known.module';
 import { ActivityPubModule } from './activity-pub/activity-pub.module';
-import { AdminModule } from './admin/admin.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 // Controllers
 import { AppController } from './app.controller';
-import { SharedModule } from './shared/shared.module';
 
 /** App Module */
 @Module({
@@ -29,37 +29,37 @@ import { SharedModule } from './shared/shared.module';
     }),
     // TypeORM : https://docs.nestjs.com/techniques/database
     TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: () => ({
         type: 'sqlite',
-        database: configService.get<string>('dbFilePath') || path.resolve(__dirname, '../db/neos-activity-pub-backend.sqlite3.db'),
+        database: path.resolve(__dirname, '../db/neos-activity-pub-backend.sqlite3.db'),
         entities: [
           User
         ],
         synchronize: true
       })
     }),
-    // ビルドした Angular 資材を配信する
+    // ビルドした Angular 資材を配信する・Angular のルーティングも認識される
     ServeStaticModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => [{
-        rootPath: configService.get<string>('staticDirectoryPath') || path.resolve(__dirname, '../../frontend/dist')
+      useFactory: () => [{
+        rootPath: path.resolve(__dirname, '../../frontend/dist')
       }]
     }),
     
-    // Well-Known
+    // Out-Side End-Points
     WellKnownModule,
     // API Modules
     ActivityPubModule,
-    AdminModule,
+    AuthModule,
+    UsersModule,
     // Angular 側で Proxy しやすくするため `/api` の Prefix を付ける : https://docs.nestjs.com/recipes/router-module
     RouterModule.register([{
       path: 'api',
       children: [
         ActivityPubModule,
-        AdminModule
+        AuthModule,
+        UsersModule
       ]
-    }]),
+    }])
   ],
   controllers: [
     AppController
