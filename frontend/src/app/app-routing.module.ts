@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'home'  , component: HomeComponent  , canActivate: [authGuard] },
   
-  { path: ''  , pathMatch: 'full', redirectTo: '/login' },  // TODO : Guard でログイン済の人は `/home` に飛ばす
+  { path: ''  , pathMatch: 'full', redirectTo: '/login' },  // ログイン済の人は `/home` に飛ばす
   { path: '**',                    redirectTo: ''       }   // 404 時は上の `/login` に飛ばし処理する
 ];
 

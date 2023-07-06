@@ -3,8 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
-import { ExtractJwt } from 'passport-jwt';
-
 /** JWT Guard */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -22,11 +20,7 @@ export class JwtAuthGuard implements CanActivate {
    */
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    
-    const testToken = ExtractJwt.fromAuthHeaderAsBearerToken();  // TODO
     const token = this.extractTokenFromHeader(request);
-    console.log('JWT', {testToken, token});  //TODO
-    
     if(!token) throw new UnauthorizedException();
     try {
       const payload = await this.jwtService.verifyAsync(

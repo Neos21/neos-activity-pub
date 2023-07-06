@@ -39,6 +39,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('test')
   public jwtTest(@Res() res: Response): Response {
-    return res.json({ result: 'JWT OK' });
+    return res.json({ result: 'TODO : JWT OK' });
   }
 }

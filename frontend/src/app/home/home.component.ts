@@ -19,14 +19,13 @@ export class HomeComponent implements OnInit {
   ) { }
   
   public ngOnInit(): void {
-    console.log('Init Test');
-    this.test();
+    this.test();  // TODO
   }
   
   // TODO
   public async test(): Promise<void> {
     const result = await firstValueFrom(this.httpClient.get('/api/auth/test'));
-    console.log('Test', result);
+    console.log('TODO : Test', result);
   }
   
   public logout(): void {
