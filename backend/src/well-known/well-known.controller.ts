@@ -34,7 +34,7 @@ export class WellKnownController {
    */
   @Get('webfinger')
   public async getWebFinger(@Query('resource') resource: string, @Res() res: Response): Promise<Response> {
-    if(!resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
+    if(resource == null || !resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
     
     const isHttp = this.configService.get<number>('isHttp');
     const host = this.configService.get<string>('host');

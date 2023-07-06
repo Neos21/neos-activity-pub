@@ -51,9 +51,9 @@ const getBooleanValue = (envName: string): boolean => {
 
 /** 環境変数のオブジェクトを返す : この関数内にオブジェクトを定義しないと環境変数が読み込まれない */
 export const configuration = (): { [key: string]: string | number | boolean } => ({
-  port     : getNumberValue ('PORT'      , 3000         ),  // ポート番号
-  host     : getStringValue ('HOST'      , 'example.com'),  // ホスト (`https://example.com/` の `example.com` 部分)
-  isHttp   : getBooleanValue('IS_HTTP'                  ),  // HTTP にするか否か
-  jwtSecret: getStringValue ('JWT_SECRET', 'CHANGE-THIS'),  // JWT 認証のシークレット
-  noColour : getBooleanValue('NO_COLOR'                 )   // ロガーの色付けをしない : NestJS のロガー `cli-colors.util.js` と同じ環境変数名・確認のため宣言
+  port     : getNumberValue ('PORT'      , 3000           ),  // ポート番号
+  host     : getStringValue ('HOST'      , 'neos21-oci.ml'),  // ホスト (`https://example.com/` の `example.com` 部分)
+  isHttp   : getBooleanValue('IS_HTTP'                    ),  // HTTP にするか否か
+  jwtSecret: getStringValue ('JWT_SECRET', 'CHANGE-THIS'  ),  // JWT 認証のシークレット
+  noColour : getBooleanValue('NO_COLOR'                   )   // ロガーの色付けをしない : NestJS のロガー `cli-colors.util.js` と同じ環境変数名・確認のため宣言
 });
