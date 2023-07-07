@@ -14,11 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var UsersService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
+const crypto = require("node:crypto");
+const util = require("node:util");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const bcryptjs = require("bcryptjs");
 const user_1 = require("../entities/user");
+const generateKeyPairAsync = util.promisify(crypto.generateKeyPair);
 let UsersService = exports.UsersService = UsersService_1 = class UsersService {
     constructor(usersRepository) {
         this.usersRepository = usersRepository;
@@ -32,6 +35,13 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
         const salt = await bcryptjs.genSalt();
         const hash = await bcryptjs.hash(user.password, salt);
         user.password = hash;
+        const { publicKey, privateKey } = await generateKeyPairAsync('rsa', {
+            modulusLength: 4096,
+            publicKeyEncoding: { type: 'spki', format: 'pem' },
+            privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+        });
+        user.publicKey = publicKey;
+        user.privateKey = privateKey;
         const insertResult = await this.usersRepository.insert(user);
         this.logger.debug('User Created', JSON.stringify(insertResult));
         return this.findOne(user.name);
@@ -46,6 +56,12 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
     async findOneWithPassword(name) {
         return this.usersRepository.findOne({
             select: { name: true, password: true },
+            where: { name }
+        });
+    }
+    async findOneWithPublicKey(name) {
+        return this.usersRepository.findOne({
+            select: { name: true, publicKey: true },
             where: { name }
         });
     }

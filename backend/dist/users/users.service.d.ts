@@ -7,4 +7,5 @@ export declare class UsersService {
     create(user: User): Promise<User>;
     findOne(name: string): Promise<User | null>;
     findOneWithPassword(name: string): Promise<User | null>;
+    findOneWithPublicKey(name: string): Promise<User | null>;
 }

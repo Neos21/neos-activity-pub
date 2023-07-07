@@ -25,7 +25,7 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
         const isHttp = this.configService.get('isHttp');
         const host = this.configService.get('host');
         const domain = `http${isHttp ? '' : 's'}//${host}`;
-        const user = await this.usersService.findOne(name);
+        const user = await this.usersService.findOneWithPublicKey(name);
         if (user == null)
             return res.status(common_1.HttpStatus.NOT_FOUND).send(`User [${name}] is not found.`);
         const json = {
@@ -44,6 +44,11 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
             manuallyApprovesFollowers: false,
             discoverable: true,
             published: '2023-07-07T00:00:00Z',
+            publicKey: {
+                id: `${domain}/@${user.name}#main-key`,
+                owner: `${domain}/@${user.name}`,
+                publicKeyPem: user.publicKey
+            },
             tag: [],
             attachment: [],
             icon: {

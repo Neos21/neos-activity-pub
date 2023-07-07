@@ -12,7 +12,7 @@ export class UsersController {
   /**
    * ユーザを登録する
    * 
-   * @param user User
+   * @param user User (Name・Password)
    * @param res Response
    */
   @Post('')

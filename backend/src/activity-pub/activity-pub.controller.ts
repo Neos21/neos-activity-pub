@@ -19,7 +19,7 @@ export class ActivityPubController {
     const host   = this.configService.get<string>('host');
     const domain = `http${isHttp ? '' : 's'}//${host}`;
     
-    const user = await this.usersService.findOne(name);
+    const user = await this.usersService.findOneWithPublicKey(name);
     if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`User [${name}] is not found.`);
     
     const json = {
@@ -37,7 +37,12 @@ export class ActivityPubController {
       url    : `${domain}/@${user.name}`,   // プロフィールページ
       manuallyApprovesFollowers: false,
       discoverable: true,
-      published: '2023-07-07T00:00:00Z',  // 恐らく登録日
+      published: '2023-07-07T00:00:00Z',  // 登録日
+      publicKey: {
+        id          : `${domain}/@${user.name}#main-key`,
+        owner       : `${domain}/@${user.name}`,  // `id` と一致させる
+        publicKeyPem: user.publicKey
+      },
       tag: [],
       attachment: [],  // 追加リンク部分
       icon: {

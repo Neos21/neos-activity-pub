@@ -10,4 +10,12 @@ export class User {
   /** パスワード (ハッシュ化した文字列を入れる) */
   @Column({ type: 'text', name: 'password' })
   public password: string;
+  
+  /** 公開鍵 */
+  @Column({ type: 'text', name: 'public_key' })
+  public publicKey: string;
+  
+  /** 秘密鍵 */
+  @Column({ type: 'text', name: 'private_key' })
+  public privateKey: string;
 }
