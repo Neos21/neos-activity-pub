@@ -1,3 +1,7 @@
 <h2>ホーム画面</h2>
-<p><button type="button" (click)="test()">Test</button></p>
+<p>ようこそ {{ name }} さん</p>
+<ul>
+  <li><a [routerLink]="['/users', name]">自分のプロフィールページ</a></li>
+</ul>
+<p><button type="button" (click)="test()">API Test (See Console)</button></p>
 <p><button type="button" (click)="logout()">Logout</button></p>

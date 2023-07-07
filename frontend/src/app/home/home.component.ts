@@ -12,13 +12,18 @@ import { AuthService } from '../shared/services/auth.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  /** ユーザ名 */
+  public name!: string;
+  
   constructor(
     private readonly httpClient: HttpClient,
     private readonly router: Router,
     private readonly authService: AuthService
   ) { }
   
+  /** 初期表示時 */
   public ngOnInit(): void {
+    this.name = this.authService.name;
     this.test();  // TODO
   }
   
@@ -28,6 +33,7 @@ export class HomeComponent implements OnInit {
     console.log('TODO : Test', result);
   }
   
+  /** ログアウトする */
   public logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);

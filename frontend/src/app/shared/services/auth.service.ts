@@ -4,6 +4,8 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  /** ユーザ名 */
+  public name: string = '';
   /** JWT アクセストークン : LocalStorage からのインメモリキャッシュ */
   public accessToken: string = '';
   
@@ -24,6 +26,7 @@ export class AuthService {
       const { accessToken } = await firstValueFrom(this.httpClient.post<{ accessToken: string; }>('/api/auth/login', { name, password }));
       // ログインできたら LocalStorage とキャッシュを保存する
       window.localStorage.setItem(this.authInfoStorageKey, JSON.stringify({ name, password, accessToken }));
+      this.name        = name;
       this.accessToken = accessToken;
       console.log('Login Succeeded', { accessToken });
     }
@@ -49,7 +52,8 @@ export class AuthService {
         console.log('Auto Re-Login : Auth Info Does Not Exist');
         return false;
       }
-      const { accessToken } = JSON.parse(authInfo);
+      const { name, accessToken } = JSON.parse(authInfo);
+      this.name        = name;
       this.accessToken = accessToken;  // ココで控えることで CustomInterceptor が JWT を使えるようになる
       console.log('Auto Re-Login : Succeeded', { accessToken });
       return true;
@@ -63,6 +67,7 @@ export class AuthService {
   /** ログアウトする */
   public logout(): void {
     window.localStorage.removeItem(this.authInfoStorageKey);
+    this.name        = '';
     this.accessToken = '';
     console.log('Logout');
   }

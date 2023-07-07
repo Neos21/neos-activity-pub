@@ -6,15 +6,18 @@ import { authGuard } from './shared/guards/auth.guard';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
+import { UserComponent } from './users/user.component';
+import { RedirectComponent } from './core/redirect.component';
 
 /** Routes */
 const routes: Routes = [
-  { path: 'login' , component: LoginComponent  },
-  { path: 'signup', component: SignupComponent },
-  { path: 'home'  , component: HomeComponent  , canActivate: [authGuard] },
+  { path: 'login'      , component: LoginComponent  },
+  { path: 'signup'     , component: SignupComponent },
+  { path: 'home'       , component: HomeComponent  , canActivate: [authGuard] },
+  { path: 'users/:name', component: UserComponent   },
   
   { path: ''  , pathMatch: 'full', redirectTo: '/login' },  // ログイン済の人は `/home` に飛ばす
-  { path: '**',                    redirectTo: ''       }   // 404 時は上の `/login` に飛ばし処理する
+  { path: '**', component: RedirectComponent }
 ];
 
 /** App Routing Module */

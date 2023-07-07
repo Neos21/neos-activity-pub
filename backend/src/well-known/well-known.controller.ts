@@ -38,18 +38,34 @@ export class WellKnownController {
     
     const isHttp = this.configService.get<number>('isHttp');
     const host = this.configService.get<string>('host');
-    const name = resource.replace('acct:', '').replace(`@${host}`, '');
+    const domain = `http${isHttp ? '' : 's'}://${host}`;
     
+    const name = resource.replace('acct:', '').replace(`@${host}`, '');
     const user = await this.usersService.findOne(name);
     if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`Actor [${resource}] is not found.`);
     
     const json = {
       subject: `acct:${user.name}@${host}`,
-      links: [{
-        rel : 'self',
-        type: 'application/activity+json',
-        href: `http${isHttp ? '' : 's'}://${host}/api/activity-pub/users/${user.name}`
-      }]
+      aliases: [
+        `${domain}/@${name}`,
+        `${domain}/users/${name}`
+      ],
+      links: [
+        {
+          rel : 'self',
+          type: 'application/activity+json',
+          href: `${domain}/api/activity-pub/users/${user.name}`
+        },
+        {
+          rel : 'http://webfinger.net/rel/profile-page',
+          type: 'text/html',
+          href: `${domain}/@${name}`
+        },
+        {
+          rel: 'http://ostatus.org/schema/1.0/subscribe',
+          template: `${domain}/authorize-follow?uri={uri}`  // TODO : フォロー画面への遷移
+        }
+      ]
     };
     return res.status(HttpStatus.OK).type('application/jrd+json').json(json);
   }

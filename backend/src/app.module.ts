@@ -2,22 +2,23 @@ import * as path from 'node:path';
 
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RouterModule } from '@nestjs/core';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 // Common
-import { configuration } from './common/configs/configuration';
-import { AccessLogMiddleware } from './common/middlewares/access-log.middleware';
+import { configuration } from './common/configuration';
+import { AccessLogMiddleware } from './common/access-log.middleware';
 // TypeORM
 import { User } from './entities/user';
-// Modules
-import { WellKnownModule } from './well-known/well-known.module';
-import { ActivityPubModule } from './activity-pub/activity-pub.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
 // Controllers
+import { ActivityPubController } from './activity-pub/activity-pub.controller';
+import { AuthController } from './auth/auth.controller';
+import { UsersController } from './users/users.controller';
+import { WellKnownController } from './well-known/well-known.controller';
 import { AppController } from './app.controller';
+// Providers
+import { UsersService } from './users/users.service';
 
 /** App Module */
 @Module({
@@ -26,6 +27,14 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({
       isGlobal: true,  // 各 Module での `imports` を不要にする
       load: [configuration]  // 環境変数を読み取り適宜デフォルト値を割り当てるオブジェクトをロードする
+    }),
+    // JWT Token
+    JwtModule.registerAsync({
+      inject: [ConfigService],  // `useFactory()` で使うサービスを注入する
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('jwtSecret'),  // 環境変数から注入する
+        signOptions: { expiresIn: '1y' }  // JWT アクセストークンの有効期限 : https://github.com/vercel/ms
+      })
     }),
     // TypeORM : https://docs.nestjs.com/techniques/database
     TypeOrmModule.forRootAsync({
@@ -38,31 +47,25 @@ import { AppController } from './app.controller';
         synchronize: true
       })
     }),
+    TypeOrmModule.forFeature([
+      User
+    ]),
     // ビルドした Angular 資材を配信する・Angular のルーティングも認識される
     ServeStaticModule.forRootAsync({
       useFactory: () => [{
         rootPath: path.resolve(__dirname, '../../frontend/dist')
       }]
-    }),
-    
-    // Out-Side End-Points
-    WellKnownModule,
-    // API Modules
-    ActivityPubModule,
-    AuthModule,
-    UsersModule,
-    // Angular 側で Proxy しやすくするため `/api` の Prefix を付ける : https://docs.nestjs.com/recipes/router-module
-    RouterModule.register([{
-      path: 'api',
-      children: [
-        ActivityPubModule,
-        AuthModule,
-        UsersModule
-      ]
-    }])
+    })
   ],
   controllers: [
+    ActivityPubController,
+    AuthController,
+    UsersController,
+    WellKnownController,
     AppController
+  ],
+  providers: [
+    UsersService
   ]
 })
 export class AppModule {

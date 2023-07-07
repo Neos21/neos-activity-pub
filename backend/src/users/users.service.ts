@@ -41,7 +41,10 @@ export class UsersService {
    * @return User (パスワードは取得しない)・見つからなかった場合は `null`
    */
   public async findOne(name: string): Promise<User | null> {
-    const user = this.usersRepository.findOne({ select: { name: true }, where: { name }});
+    const user = this.usersRepository.findOne({
+      select: { name: true },
+      where: { name }
+    });
     return user;
   }
   
@@ -52,6 +55,9 @@ export class UsersService {
    * @returns User (パスワードのハッシュ値も取得する)・見つからなかった場合は `null`
    */
   public async findOneWithPassword(name: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { name } });
+    return this.usersRepository.findOne({
+      select: { name: true, password: true },
+      where: { name }
+    });
   }
 }
