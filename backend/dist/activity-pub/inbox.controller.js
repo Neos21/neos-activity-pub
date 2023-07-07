@@ -21,7 +21,6 @@ let InboxController = exports.InboxController = InboxController_1 = class InboxC
     }
     inbox(name, req, res) {
         this.logger.log(`Inbox : ${name}`, req.body);
-        console.log(req.body);
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').end();
     }
 };

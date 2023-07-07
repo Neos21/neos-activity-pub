@@ -13,7 +13,7 @@ import { AuthService } from '../shared/services/auth.service';
 export class LoginComponent {
   /** ログインフォーム */
   public form!: FormGroup;
-  /** エラー */
+  /** エラーメッセージ */
   public error?: string;
   
   constructor(
@@ -22,8 +22,8 @@ export class LoginComponent {
     private readonly router: Router
   ) { }
   
-  /** 初期表示時 */
   public async ngOnInit(): Promise<void | boolean> {
+    // TODO : 初期表示終了まで画面全体を表示させないようにしたい
     this.form = this.formBuilder.group({
       name    : ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -33,14 +33,15 @@ export class LoginComponent {
   }
   
   /** ログインする */
-  public async login(): Promise<void> {
+  public async login(): Promise<void | boolean> {
+    // TODO : Submit ボタンの二度押しを回避する
     this.error = undefined;
-    try {
-      await this.authService.login(this.form.value.name, this.form.value.password);
-      this.router.navigate(['/home']);
+    const isSucceeded = await this.authService.login(this.form.value.name, this.form.value.password);
+    if(isSucceeded) {
+      return this.router.navigate(['/home']);
     }
-    catch(error) {
-      this.error = `ログイン失敗 : ${JSON.stringify(error)}`;
+    else {
+      this.error = 'ログイン失敗';
     }
   }
 }

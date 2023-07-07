@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 export class AuthService {
   /** ユーザ名 */
   public name: string = '';
-  /** JWT アクセストークン : LocalStorage からのインメモリキャッシュ */
+  /** JWT アクセストークン : LocalStorage からのインメモリキャッシュ・この有無でログイン済か否かを判定する */
   public accessToken: string = '';
   
   /** ユーザ名・パスワード・JWT アクセストークンを保存する LocalStorage キー名 */
@@ -19,8 +19,9 @@ export class AuthService {
    * 
    * @param name Name
    * @param password Password
+   * @return ログインに成功すれば `true`・失敗すれば `false`
    */
-  public async login(name: string, password: string): Promise<void> {
+  public async login(name: string, password: string): Promise<boolean> {
     try {
       // ログイン試行する
       const { accessToken } = await firstValueFrom(this.httpClient.post<{ accessToken: string; }>('/api/auth/login', { name, password }));
@@ -29,10 +30,11 @@ export class AuthService {
       this.name        = name;
       this.accessToken = accessToken;
       console.log('Login Succeeded', { accessToken });
+      return true;
     }
     catch(error) {
       console.warn('Login Failed', { name, password }, error);
-      throw error;
+      return false;
     }
   }
   
@@ -52,7 +54,7 @@ export class AuthService {
         console.log('Auto Re-Login : Auth Info Does Not Exist');
         return false;
       }
-      const { name, accessToken } = JSON.parse(authInfo);
+      const { name, accessToken } = JSON.parse(authInfo);  // Throws
       this.name        = name;
       this.accessToken = accessToken;  // ココで控えることで CustomInterceptor が JWT を使えるようになる
       console.log('Auto Re-Login : Succeeded', { accessToken });

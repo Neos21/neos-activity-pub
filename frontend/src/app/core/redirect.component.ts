@@ -13,7 +13,6 @@ export class RedirectComponent implements OnInit {
     private readonly router: Router
   ) { }
   
-  /** 初期表示時 */
   public ngOnInit(): void | Promise<boolean> {
     const path = this.activatedRoute.snapshot.url?.[0]?.path;
     

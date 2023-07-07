@@ -7,7 +7,7 @@ export class User {
   @PrimaryColumn({ type: 'text', name: 'name' })
   public name: string;
   
-  /** パスワード (ハッシュ化した文字列を入れる) */
+  /** パスワード (ハッシュ化した文字列) */
   @Column({ type: 'text', name: 'password' })
   public password: string;
   

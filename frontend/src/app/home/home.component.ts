@@ -21,13 +21,11 @@ export class HomeComponent implements OnInit {
     private readonly authService: AuthService
   ) { }
   
-  /** 初期表示時 */
   public ngOnInit(): void {
     this.name = this.authService.name;
     this.test();  // TODO
   }
   
-  // TODO
   public async test(): Promise<void> {
     const result = await firstValueFrom(this.httpClient.get('/api/auth/test'));
     console.log('TODO : Test', result);

@@ -4,10 +4,10 @@ import * as expressListEndpoints from 'express-list-endpoints';
 import { cyan, green, grey, red, yellow } from './colour-logger';
 
 /**
- * List Routes : https://qiita.com/18kondo/items/1b9793e67b320f640ddd
+ * ルーティング一覧を組み立てる https://qiita.com/18kondo/items/1b9793e67b320f640ddd
  * 
  * @param router Express Router
- * @return Log Text
+ * @return ルーティング一覧のテキスト
  */
 export const listRoutes = (router: Express) => {
   const endpoints: Array<expressListEndpoints.Endpoint> = expressListEndpoints(router);

@@ -6,7 +6,6 @@ import * as bcryptjs from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
-/** Auth Controller */
 @Controller('api/auth')
 export class AuthController {
   constructor(
@@ -19,7 +18,7 @@ export class AuthController {
    * 
    * @param name Name
    * @param password Password
-   * @return Response (JWT)
+   * @return JWT
    */
   @Post('login')
   public async login(@Body('name') name: string, @Body('password') password: string, @Res() res: Response): Promise<Response> {
@@ -35,7 +34,7 @@ export class AuthController {
     return res.json(json);
   }
   
-  // TODO
+  // TODO : テスト用 API
   @UseGuards(JwtAuthGuard)
   @Get('test')
   public jwtTest(@Res() res: Response): Response {

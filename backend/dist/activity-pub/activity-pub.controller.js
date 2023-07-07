@@ -14,39 +14,37 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ActivityPubController = void 0;
 const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
+const host_url_service_1 = require("../shared/services/host-url/host-url.service");
 const users_service_1 = require("../users/users.service");
 let ActivityPubController = exports.ActivityPubController = class ActivityPubController {
-    constructor(configService, usersService) {
-        this.configService = configService;
+    constructor(hostUrlService, usersService) {
+        this.hostUrlService = hostUrlService;
         this.usersService = usersService;
     }
     async getUser(name, res) {
-        const isHttp = this.configService.get('isHttp');
-        const host = this.configService.get('host');
-        const domain = `http${isHttp ? '' : 's'}://${host}`;
         const user = await this.usersService.findOneWithPublicKey(name);
         if (user == null)
             return res.status(common_1.HttpStatus.NOT_FOUND).send(`User [${name}] is not found.`);
+        const fqdn = this.hostUrlService.fqdn;
         const json = {
             '@context': [
                 'https://www.w3.org/ns/activitystreams',
                 'https://w3id.org/security/v1'
             ],
             type: 'Person',
-            id: `${domain}/api/activity-pub/users/${user.name}`,
+            id: `${fqdn}/api/activity-pub/users/${user.name}`,
             name: user.name,
             preferredUsername: user.name,
             summary: `<p>User : ${user.name}</p>`,
-            inbox: `${domain}/api/activity-pub/users/${user.name}/inbox`,
-            outbox: `${domain}/api/activity-pub/users/${user.name}/outbox`,
-            url: `${domain}/api/activity-pub/users/${user.name}`,
+            inbox: `${fqdn}/api/activity-pub/users/${user.name}/inbox`,
+            outbox: `${fqdn}/api/activity-pub/users/${user.name}/outbox`,
+            url: `${fqdn}/api/activity-pub/users/${user.name}`,
             manuallyApprovesFollowers: false,
             discoverable: true,
             published: '2023-07-07T00:00:00Z',
             publicKey: {
-                id: `${domain}/api/activity-pub/users/${user.name}#main-key`,
-                owner: `${domain}/api/activity-pub/users/${user.name}`,
+                id: `${fqdn}/api/activity-pub/users/${user.name}#main-key`,
+                owner: `${fqdn}/api/activity-pub/users/${user.name}`,
                 publicKeyPem: user.publicKey
             },
             tag: [],
@@ -54,30 +52,28 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
             icon: {
                 type: 'Image',
                 mediaType: 'image/jpeg',
-                url: `${domain}/assets/icon.jpg`
+                url: `${fqdn}/assets/icon.jpg`
             },
             image: {
                 type: 'Image',
                 mediaType: 'image/jpeg',
-                url: `${domain}/assets/icon.jpg`
+                url: `${fqdn}/assets/icon.jpg`
             }
         };
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
     }
     getNote(name, res) {
-        const isHttp = this.configService.get('isHttp');
-        const host = this.configService.get('host');
-        const domain = `http${isHttp ? '' : 's'}://${host}`;
+        const fqdn = this.hostUrlService.fqdn;
         const json = {
             '@context': 'https://www.w3.org/ns/activitystreams',
             type: 'Note',
-            id: `${domain}/api/activity-pub/users/${name}/note`,
-            attributedTo: `${domain}/api/activity-pub/users/${name}`,
+            id: `${fqdn}/api/activity-pub/users/${name}/note`,
+            attributedTo: `${fqdn}/api/activity-pub/users/${name}`,
             content: `<p>仮投稿 ${name}</p>`,
             published: '2023-07-07T00:00:00+09:00',
             to: [
                 'https://www.w3.org/ns/activitystreams#Public',
-                `${domain}/api/activity-pub/users/${name}/follower`,
+                `${fqdn}/api/activity-pub/users/${name}/follower`,
             ]
         };
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
@@ -101,7 +97,7 @@ __decorate([
 ], ActivityPubController.prototype, "getNote", null);
 exports.ActivityPubController = ActivityPubController = __decorate([
     (0, common_1.Controller)('api/activity-pub'),
-    __metadata("design:paramtypes", [config_1.ConfigService,
+    __metadata("design:paramtypes", [host_url_service_1.HostUrlService,
         users_service_1.UsersService])
 ], ActivityPubController);
 //# sourceMappingURL=activity-pub.controller.js.map

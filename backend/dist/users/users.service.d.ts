@@ -8,4 +8,5 @@ export declare class UsersService {
     findOne(name: string): Promise<User | null>;
     findOneWithPassword(name: string): Promise<User | null>;
     findOneWithPublicKey(name: string): Promise<User | null>;
+    private findOneBase;
 }

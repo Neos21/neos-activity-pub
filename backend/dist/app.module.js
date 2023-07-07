@@ -23,6 +23,7 @@ const auth_controller_1 = require("./auth/auth.controller");
 const users_controller_1 = require("./users/users.controller");
 const well_known_controller_1 = require("./well-known/well-known.controller");
 const app_controller_1 = require("./app.controller");
+const host_url_service_1 = require("./shared/services/host-url/host-url.service");
 const users_service_1 = require("./users/users.service");
 let AppModule = exports.AppModule = class AppModule {
     configure(middlewareConsumer) {
@@ -72,6 +73,7 @@ exports.AppModule = AppModule = __decorate([
             app_controller_1.AppController
         ],
         providers: [
+            host_url_service_1.HostUrlService,
             users_service_1.UsersService
         ]
     })

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
-/** User Component */
+import { UsersService } from './users.service';
+
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
@@ -10,15 +11,28 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 export class UserComponent {
   /** ユーザ名 */
   public name!: string;
+  /** TODO : 登録日 */
+  public signUpDate!: string;
   
-  constructor(private readonly activatedRoute: ActivatedRoute) { }
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly router: Router,
+    private readonly usersService: UsersService
+  ) { }
   
-  /** 初期表示時 */
   public ngOnInit(): void {
-    this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+    this.activatedRoute.paramMap.subscribe(async (params: ParamMap): Promise<void | boolean> => {
       const name = params.get('name');
-      if(name == null) throw new Error('User Name Is Empty');  // TODO
-      this.name = name;  // TODO : 本来は DB から取得する・存在しない名前の場合はエラー画面に飛ばすなど
+      if(name == null) return this.router.navigate(['/']);  // ユーザ名画未指定の場合はトップに戻す
+      
+      try {
+        const user = await this.usersService.findOne(name);
+        this.name = user.name;  // TODO : 登録日を取得・表示する
+      }
+      catch(error) {
+        console.warn('UserComponent : Invalid User Name', error);
+        return this.router.navigate(['/']);  // ユーザが見つからなかった場合はトップに戻す
+      }
     });
   }
 }

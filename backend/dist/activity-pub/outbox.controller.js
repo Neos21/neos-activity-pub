@@ -21,7 +21,6 @@ let OutboxController = exports.OutboxController = OutboxController_1 = class Out
     }
     outbox(name, req, res) {
         this.logger.log(`Outbox : ${name}`, req.body);
-        console.log(req.body);
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').end();
     }
 };

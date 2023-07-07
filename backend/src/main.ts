@@ -7,7 +7,6 @@ import { cyan, yellow } from './common/utils/colour-logger';
 import { listRoutes } from './common/utils/list-routes';
 import { AppModule } from './app.module';
 
-/** Bootstrap */
 async function bootstrap() {
   const logger = new Logger(bootstrap.name);
   
@@ -26,14 +25,13 @@ async function bootstrap() {
     credentials: true  // `Access-Control-Allow-Credentials` を許可する
   });
   
-  // Launch
+  // サーバを起動する
   const port = app.get<ConfigService>(ConfigService).get<number>('port')!;
   await app.listen(port);
   logger.log(cyan(`Server started at port [`) + yellow(`${port}`) + cyan(']'));
   
-  // List Routes
+  // ルーティング一覧を出力する
   const router = app.getHttpServer()._events.request._router;
   logger.log(listRoutes(router));
 }
-
 void bootstrap();

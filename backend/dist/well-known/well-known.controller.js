@@ -14,27 +14,26 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WellKnownController = void 0;
 const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
+const host_url_service_1 = require("../shared/services/host-url/host-url.service");
 const users_service_1 = require("../users/users.service");
 let WellKnownController = exports.WellKnownController = class WellKnownController {
-    constructor(configService, usersService) {
-        this.configService = configService;
+    constructor(hostUrlService, usersService) {
+        this.hostUrlService = hostUrlService;
         this.usersService = usersService;
     }
     getHostMeta(res) {
-        const host = this.configService.get('host');
+        const fqdn = this.hostUrlService.fqdn;
         const xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
             + '<XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">\n'
-            + '  <Link rel="lrdd" template="https://' + host + '/.well-known/webfinger?resource={uri}"/>\n'
+            + '  <Link rel="lrdd" template="' + fqdn + '/.well-known/webfinger?resource={uri}"/>\n'
             + '</XRD>\n';
         return res.status(common_1.HttpStatus.OK).type('application/xrd+xml').send(xml);
     }
     async getWebFinger(resource, res) {
         if (resource == null || !resource.startsWith('acct:'))
             return res.status(common_1.HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
-        const isHttp = this.configService.get('isHttp');
-        const host = this.configService.get('host');
-        const domain = `http${isHttp ? '' : 's'}://${host}`;
+        const host = this.hostUrlService.host;
+        const fqdn = this.hostUrlService.fqdn;
         const name = resource.replace('acct:', '').replace(`@${host}`, '');
         const user = await this.usersService.findOne(name);
         if (user == null)
@@ -42,22 +41,22 @@ let WellKnownController = exports.WellKnownController = class WellKnownControlle
         const json = {
             subject: `acct:${user.name}@${host}`,
             aliases: [
-                `${domain}/api/activity-pub/users/${user.name}`
+                `${fqdn}/api/activity-pub/users/${user.name}`
             ],
             links: [
                 {
                     rel: 'self',
                     type: 'application/activity+json',
-                    href: `${domain}/api/activity-pub/users/${user.name}`
+                    href: `${fqdn}/api/activity-pub/users/${user.name}`
                 },
                 {
                     rel: 'http://webfinger.net/rel/profile-page',
                     type: 'text/html',
-                    href: `${domain}/@${name}`
+                    href: `${fqdn}/@${name}`
                 },
                 {
                     rel: 'http://ostatus.org/schema/1.0/subscribe',
-                    template: `${domain}/authorize-follow?uri={uri}`
+                    template: `${fqdn}/authorize-follow?uri={uri}`
                 }
             ]
         };
@@ -81,7 +80,7 @@ __decorate([
 ], WellKnownController.prototype, "getWebFinger", null);
 exports.WellKnownController = WellKnownController = __decorate([
     (0, common_1.Controller)('.well-known'),
-    __metadata("design:paramtypes", [config_1.ConfigService,
+    __metadata("design:paramtypes", [host_url_service_1.HostUrlService,
         users_service_1.UsersService])
 ], WellKnownController);
 //# sourceMappingURL=well-known.controller.js.map

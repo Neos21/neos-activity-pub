@@ -23,11 +23,17 @@ let UsersController = exports.UsersController = class UsersController {
     async create(user, res) {
         try {
             const createdUser = await this.usersService.create(user);
-            return res.status(common_1.HttpStatus.OK).json({ result: createdUser });
+            return res.status(common_1.HttpStatus.OK).json(createdUser);
         }
         catch (error) {
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: error.toString() });
         }
+    }
+    async findOne(name, res) {
+        const user = await this.usersService.findOne(name);
+        if (user == null)
+            return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
+        return res.status(common_1.HttpStatus.OK).json(user);
     }
 };
 __decorate([
@@ -38,6 +44,14 @@ __decorate([
     __metadata("design:paramtypes", [user_1.User, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(':name'),
+    __param(0, (0, common_1.Param)('name')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findOne", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('api/users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

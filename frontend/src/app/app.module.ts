@@ -16,7 +16,6 @@ import { RedirectComponent } from './core/redirect.component';
 
 import { CustomInterceptor } from './core/custom.interceptor';
 
-/** App Module */
 @NgModule({
   imports: [
     BrowserModule,
@@ -34,7 +33,6 @@ import { CustomInterceptor } from './core/custom.interceptor';
     HomeComponent,
     UserComponent,
     RedirectComponent,
-    
     AppComponent
   ],
   providers: [

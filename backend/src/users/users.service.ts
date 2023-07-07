@@ -3,15 +3,14 @@ import * as util from 'node:util';
 
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsSelect, Repository } from 'typeorm';
 import * as bcryptjs from 'bcryptjs';
 
 import { User } from '../entities/user';
 
-/** Generate Key Pair Async */
+/** 鍵ペアを非同期に生成する */
 const generateKeyPairAsync = util.promisify(crypto.generateKeyPair);
 
-/** Users Service */
 @Injectable()
 export class UsersService {
   private readonly logger: Logger = new Logger(UsersService.name);
@@ -19,10 +18,11 @@ export class UsersService {
   constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) { }
   
   /**
-   * 登録する
+   * ユーザを登録する
    * 
    * @param user User (Name・Password)
    * @return 登録した User 情報
+   * @throws バリデーションエラー時、登録失敗時
    */
   public async create(user: User): Promise<User> {
     // ユーザ名 : 英小文字・数字・ハイフンのみ許容する
@@ -45,49 +45,52 @@ export class UsersService {
     user.privateKey = privateKey;
       
     // Insert
-    const insertResult = await this.usersRepository.insert(user);
+    const insertResult = await this.usersRepository.insert(user); // Throws
     this.logger.debug('User Created', JSON.stringify(insertResult));
     // Result
     return this.findOne(user.name);
   }
   
   /**
-   * 一意に取得する
+   * ユーザを一意に取得する
    * 
    * @param name Name
-   * @return User (パスワードは取得しない)・見つからなかった場合は `null`
+   * @return User・見つからなかった場合は `null`
    */
   public async findOne(name: string): Promise<User | null> {
-    const user = this.usersRepository.findOne({
-      select: { name: true },
-      where: { name }
-    });
-    return user;
+    return this.findOneBase(name, { name: true });
   }
   
   /**
-   * 一意に取得する・パスワードのハッシュ値も取得する
+   * ユーザを一意に取得する・パスワードのハッシュ値も取得する
    * 
    * @param name Name
-   * @returns User (パスワードのハッシュ値も取得する)・見つからなかった場合は `null`
+   * @returns User・見つからなかった場合は `null`
    */
   public async findOneWithPassword(name: string): Promise<User | null> {
-    return this.usersRepository.findOne({
-      select: { name: true, password: true },
-      where: { name }
-    });
+    return this.findOneBase(name, { name: true, password: true });
   }
   
   /**
-   * 一意に取得する・公開鍵も取得する
+   * ユーザを一意に取得する・公開鍵も取得する
    * 
    * @param name Name
-   * @returns User (公開鍵も取得する)・見つからなかった場合は `null`
+   * @returns User・見つからなかった場合は `null`
    */
-  
   public async findOneWithPublicKey(name: string): Promise<User | null> {
+    return this.findOneBase(name, { name: true, publicKey: true });
+  }
+  
+  /**
+   * ユーザを一意に取得するベース関数
+   * 
+   * @param name Name
+   * @param selectOptions 取得する項目名の連想配列
+   * @return User・見つからなかった場合は `null`
+   */
+  private async findOneBase(name: string, selectOptions: FindOptionsSelect<User>): Promise<User | null> {
     return this.usersRepository.findOne({
-      select: { name: true, publicKey: true },
+      select: selectOptions,
       where: { name }
     });
   }

@@ -47,21 +47,17 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
         return this.findOne(user.name);
     }
     async findOne(name) {
-        const user = this.usersRepository.findOne({
-            select: { name: true },
-            where: { name }
-        });
-        return user;
+        return this.findOneBase(name, { name: true });
     }
     async findOneWithPassword(name) {
-        return this.usersRepository.findOne({
-            select: { name: true, password: true },
-            where: { name }
-        });
+        return this.findOneBase(name, { name: true, password: true });
     }
     async findOneWithPublicKey(name) {
+        return this.findOneBase(name, { name: true, publicKey: true });
+    }
+    async findOneBase(name, selectOptions) {
         return this.usersRepository.findOne({
-            select: { name: true, publicKey: true },
+            select: selectOptions,
             where: { name }
         });
     }

@@ -5,7 +5,6 @@ import { timeout } from 'rxjs/operators';
 
 import { AuthService } from '../shared/services/auth.service';
 
-/** カスタム HttpClient インターセプタ */
 @Injectable({ providedIn: 'root' })
 export class CustomInterceptor implements HttpInterceptor {
   constructor(private readonly authService: AuthService) { }
@@ -13,9 +12,9 @@ export class CustomInterceptor implements HttpInterceptor {
   /**
    * HttpClient からの通信時に以下の割り込み処理を行う
    * 
-   * @param request リクエスト
-   * @param next ハンドラ
-   * @return HttpEvent の Observable
+   * @param request Request
+   * @param next HttpHandler
+   * @return Observable HttpEvent
    */
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // クッキーによるセッション管理を有効にする

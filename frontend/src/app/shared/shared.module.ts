@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-/** Shared Module */
 @NgModule({
   imports: [
     CommonModule,
@@ -11,8 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  exports: [
-    // Re-Export
+  exports: [  // Re-Export
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

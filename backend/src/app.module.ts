@@ -20,9 +20,9 @@ import { UsersController } from './users/users.controller';
 import { WellKnownController } from './well-known/well-known.controller';
 import { AppController } from './app.controller';
 // Providers
+import { HostUrlService } from './shared/services/host-url/host-url.service';
 import { UsersService } from './users/users.service';
 
-/** App Module */
 @Module({
   imports: [
     // 環境変数を注入する
@@ -49,6 +49,7 @@ import { UsersService } from './users/users.service';
         synchronize: true
       })
     }),
+    // Repository を使えるようにする
     TypeOrmModule.forFeature([
       User
     ]),
@@ -60,18 +61,22 @@ import { UsersService } from './users/users.service';
     })
   ],
   controllers: [
+    // ActivityPub
     ActivityPubController,
     InboxController,
     OutboxController,
-    
+    // API
     AuthController,
     UsersController,
-    
+    // Out-Side API (For ActivityPub)
     WellKnownController,
-    
+    // App
     AppController
   ],
   providers: [
+    // Shared
+    HostUrlService,
+    // Models
     UsersService
   ]
 })

@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
-/** JWT Guard */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
@@ -12,7 +11,7 @@ export class JwtAuthGuard implements CanActivate {
   ) { }
   
   /**
-   * JWT を認証する
+   * JWT 認証する
    * 
    * @param context Context
    * @return 認証成功なら `true`
