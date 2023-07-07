@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as express from 'express';
 
 import { cyan, yellow } from './common/utils/colour-logger';
 import { listRoutes } from './common/utils/list-routes';
@@ -11,6 +12,11 @@ async function bootstrap() {
   const logger = new Logger(bootstrap.name);
   
   const app = await NestFactory.create(AppModule);
+  
+  // `activity+json` を解釈できるようにする
+  app.use(express.json({
+    type: ['application/activity+json', 'application/json']
+  }));
   
   // CORS を有効にする : https://github.com/expressjs/cors#configuration-options
   app.enableCors({
