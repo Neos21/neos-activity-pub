@@ -64,6 +64,24 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
         };
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
     }
+    getNote(name, res) {
+        const isHttp = this.configService.get('isHttp');
+        const host = this.configService.get('host');
+        const domain = `http${isHttp ? '' : 's'}://${host}`;
+        const json = {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            type: 'Note',
+            id: `${domain}/api/activity-pub/users/${name}/note`,
+            attributedTo: `${domain}/api/activity-pub/users/${name}`,
+            content: `<p>仮投稿 ${name}</p>`,
+            published: '2023-07-07T00:00:00+09:00',
+            to: [
+                'https://www.w3.org/ns/activitystreams#Public',
+                `${domain}/api/activity-pub/users/${name}/follower`,
+            ]
+        };
+        return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
+    }
 };
 __decorate([
     (0, common_1.Get)('users/:name'),
@@ -73,6 +91,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ActivityPubController.prototype, "getUser", null);
+__decorate([
+    (0, common_1.Get)('users/:name/note'),
+    __param(0, (0, common_1.Param)('name')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Object)
+], ActivityPubController.prototype, "getNote", null);
 exports.ActivityPubController = ActivityPubController = __decorate([
     (0, common_1.Controller)('api/activity-pub'),
     __metadata("design:paramtypes", [config_1.ConfigService,

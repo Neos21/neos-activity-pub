@@ -6,4 +6,5 @@ export declare class ActivityPubController {
     private readonly usersService;
     constructor(configService: ConfigService, usersService: UsersService);
     getUser(name: string, res: Response): Promise<Response>;
+    getNote(name: string, res: Response): Response;
 }

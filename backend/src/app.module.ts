@@ -13,6 +13,8 @@ import { AccessLogMiddleware } from './common/access-log.middleware';
 import { User } from './entities/user';
 // Controllers
 import { ActivityPubController } from './activity-pub/activity-pub.controller';
+import { InboxController } from './activity-pub/inbox.controller';
+import { OutboxController } from './activity-pub/outbox.controller';
 import { AuthController } from './auth/auth.controller';
 import { UsersController } from './users/users.controller';
 import { WellKnownController } from './well-known/well-known.controller';
@@ -59,9 +61,14 @@ import { UsersService } from './users/users.service';
   ],
   controllers: [
     ActivityPubController,
+    InboxController,
+    OutboxController,
+    
     AuthController,
     UsersController,
+    
     WellKnownController,
+    
     AppController
   ],
   providers: [

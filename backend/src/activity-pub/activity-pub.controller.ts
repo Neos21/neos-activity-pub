@@ -34,7 +34,7 @@ export class ActivityPubController {
       summary: `<p>User : ${user.name}</p>`,                            // 概要
       inbox  : `${domain}/api/activity-pub/users/${user.name}/inbox`,   // このユーザへの宛先
       outbox : `${domain}/api/activity-pub/users/${user.name}/outbox`,  // このユーザの発信元
-      url    : `${domain}/api/activity-pub/users/${user.name}`,   // プロフィールページ
+      url    : `${domain}/api/activity-pub/users/${user.name}`,         // プロフィールページ
       manuallyApprovesFollowers: false,
       discoverable: true,
       published: '2023-07-07T00:00:00Z',  // 登録日
@@ -56,7 +56,28 @@ export class ActivityPubController {
         url: `${domain}/assets/icon.jpg`
       }
     };
+    return res.status(HttpStatus.OK).type('application/activity+json').json(json);
+  }
+  
+  // TODO : お試しでノート情報を返す
+  @Get('users/:name/note')
+  public getNote(@Param('name') name: string, @Res() res: Response): Response {
+    const isHttp = this.configService.get<number>('isHttp');
+    const host   = this.configService.get<string>('host');
+    const domain = `http${isHttp ? '' : 's'}://${host}`;
     
+    const json = {
+      '@context'  : 'https://www.w3.org/ns/activitystreams',
+      type        : 'Note',
+      id          : `${domain}/api/activity-pub/users/${name}/note`,  // Fediverse で一意
+      attributedTo: `${domain}/api/activity-pub/users/${name}`,       // 投稿者の `Person#id`
+      content     : `<p>仮投稿 ${name}</p>`,                          // XHTML で記述された投稿内容
+      published   : '2023-07-07T00:00:00+09:00',                      // ISO 形式の投稿日時
+      to: [                                                           // 公開範囲
+        'https://www.w3.org/ns/activitystreams#Public',               // 公開
+        `${domain}/api/activity-pub/users/${name}/follower`,          // フォロワー
+      ]
+    };
     return res.status(HttpStatus.OK).type('application/activity+json').json(json);
   }
 }

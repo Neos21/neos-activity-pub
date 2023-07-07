@@ -17,6 +17,8 @@ const configuration_1 = require("./common/configuration");
 const access_log_middleware_1 = require("./common/access-log.middleware");
 const user_1 = require("./entities/user");
 const activity_pub_controller_1 = require("./activity-pub/activity-pub.controller");
+const inbox_controller_1 = require("./activity-pub/inbox.controller");
+const outbox_controller_1 = require("./activity-pub/outbox.controller");
 const auth_controller_1 = require("./auth/auth.controller");
 const users_controller_1 = require("./users/users.controller");
 const well_known_controller_1 = require("./well-known/well-known.controller");
@@ -62,6 +64,8 @@ exports.AppModule = AppModule = __decorate([
         ],
         controllers: [
             activity_pub_controller_1.ActivityPubController,
+            inbox_controller_1.InboxController,
+            outbox_controller_1.OutboxController,
             auth_controller_1.AuthController,
             users_controller_1.UsersController,
             well_known_controller_1.WellKnownController,
