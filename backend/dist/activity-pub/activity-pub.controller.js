@@ -34,19 +34,19 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
                 'https://w3id.org/security/v1'
             ],
             type: 'Person',
-            id: `${domain}/@${user.name}`,
+            id: `${domain}/api/activity-pub/users${user.name}`,
             name: user.name,
             preferredUsername: user.name,
             summary: `<p>User : ${user.name}</p>`,
             inbox: `${domain}/api/activity-pub/users/${user.name}/inbox`,
             outbox: `${domain}/api/activity-pub/users/${user.name}/outbox`,
-            url: `${domain}/@${user.name}`,
+            url: `${domain}/api/activity-pub/users/${user.name}`,
             manuallyApprovesFollowers: false,
             discoverable: true,
             published: '2023-07-07T00:00:00Z',
             publicKey: {
-                id: `${domain}/@${user.name}#main-key`,
-                owner: `${domain}/@${user.name}`,
+                id: `${domain}/api/activity-pub/users/${user.name}#main-key`,
+                owner: `${domain}/api/activity-pub/users/${user.name}`,
                 publicKeyPem: user.publicKey
             },
             tag: [],

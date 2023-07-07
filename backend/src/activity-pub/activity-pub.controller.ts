@@ -28,19 +28,19 @@ export class ActivityPubController {
         'https://w3id.org/security/v1'
       ],
       type   : 'Person',
-      id     : `${domain}/@${user.name}`,     // Fediverse で一意
-      name   : user.name,                     // 表示名
-      preferredUsername: user.name,           // ユーザ ID
-      summary: `<p>User : ${user.name}</p>`,  // 概要
+      id     : `${domain}/api/activity-pub/users${user.name}`,          // Fediverse で一意・ActivityPub を話せる URL であること
+      name   : user.name,                                               // 表示名
+      preferredUsername: user.name,                                     // ユーザ ID
+      summary: `<p>User : ${user.name}</p>`,                            // 概要
       inbox  : `${domain}/api/activity-pub/users/${user.name}/inbox`,   // このユーザへの宛先
       outbox : `${domain}/api/activity-pub/users/${user.name}/outbox`,  // このユーザの発信元
-      url    : `${domain}/@${user.name}`,   // プロフィールページ
+      url    : `${domain}/api/activity-pub/users/${user.name}`,   // プロフィールページ
       manuallyApprovesFollowers: false,
       discoverable: true,
       published: '2023-07-07T00:00:00Z',  // 登録日
       publicKey: {
-        id          : `${domain}/@${user.name}#main-key`,
-        owner       : `${domain}/@${user.name}`,  // `id` と一致させる
+        id          : `${domain}/api/activity-pub/users/${user.name}#main-key`,
+        owner       : `${domain}/api/activity-pub/users/${user.name}`,  // `id` と一致させる
         publicKeyPem: user.publicKey
       },
       tag: [],

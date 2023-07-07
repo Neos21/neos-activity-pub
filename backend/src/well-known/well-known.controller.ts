@@ -47,8 +47,7 @@ export class WellKnownController {
     const json = {
       subject: `acct:${user.name}@${host}`,
       aliases: [
-        `${domain}/@${name}`,
-        `${domain}/users/${name}`
+        `${domain}/api/activity-pub/users/${user.name}`
       ],
       links: [
         {
