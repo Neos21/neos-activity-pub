@@ -19,15 +19,16 @@ let InboxController = exports.InboxController = InboxController_1 = class InboxC
     constructor() {
         this.logger = new common_1.Logger(InboxController_1.name);
     }
-    inbox(name, body, res) {
-        this.logger.log(`Inbox : ${name}`, body);
+    inbox(name, req, res) {
+        this.logger.log(`Inbox : ${name}`, req.body);
+        console.log(req.body);
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').end();
     }
 };
 __decorate([
     (0, common_1.Post)('users/:name/inbox'),
     __param(0, (0, common_1.Param)('name')),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object, Object]),

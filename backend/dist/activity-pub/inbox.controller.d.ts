@@ -1,5 +1,5 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 export declare class InboxController {
     private readonly logger;
-    inbox(name: string, body: any, res: Response): Response;
+    inbox(name: string, req: Request, res: Response): Response;
 }

@@ -70,7 +70,7 @@ export class ActivityPubController {
       '@context'  : 'https://www.w3.org/ns/activitystreams',
       type        : 'Note',
       id          : `${domain}/api/activity-pub/users/${name}/note`,  // Fediverse で一意
-      attributedTo: `${domain}/api/activity-pub/users/${name}`,       // 投稿者の `Person#id`
+      attributedTo: `${domain}/api/activity-pub/users/${name}`,       // 投稿者の `Person#id`・このエンドポイントにアクセスできないと投稿が認識されない
       content     : `<p>仮投稿 ${name}</p>`,                          // XHTML で記述された投稿内容
       published   : '2023-07-07T00:00:00+09:00',                      // ISO 形式の投稿日時
       to: [                                                           // 公開範囲

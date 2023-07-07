@@ -1,5 +1,5 @@
-import { Body, Controller, HttpStatus, Logger, Param, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, HttpStatus, Logger, Param, Post, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 
 /** Inbox Controller */
 @Controller('api/activity-pub')
@@ -8,8 +8,9 @@ export class InboxController {
   
   // TODO : Inbox
   @Post('users/:name/inbox')
-  public inbox(@Param('name') name: string, @Body() body: any, @Res() res: Response): Response {
-    this.logger.log(`Inbox : ${name}`, body);
+  public inbox(@Param('name') name: string, @Req() req: Request, @Res() res: Response): Response {
+    this.logger.log(`Inbox : ${name}`, req.body);
+    console.log(req.body);
     return res.status(HttpStatus.OK).type('application/activity+json').end();
   }
 }
