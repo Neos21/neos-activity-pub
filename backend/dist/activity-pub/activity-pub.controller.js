@@ -34,7 +34,7 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
                 'https://w3id.org/security/v1'
             ],
             type: 'Person',
-            id: `${domain}/api/activity-pub/users${user.name}`,
+            id: `${domain}/api/activity-pub/users/${user.name}`,
             name: user.name,
             preferredUsername: user.name,
             summary: `<p>User : ${user.name}</p>`,

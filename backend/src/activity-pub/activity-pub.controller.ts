@@ -28,7 +28,7 @@ export class ActivityPubController {
         'https://w3id.org/security/v1'
       ],
       type   : 'Person',
-      id     : `${domain}/api/activity-pub/users${user.name}`,          // Fediverse で一意・ActivityPub を話せる URL であること
+      id     : `${domain}/api/activity-pub/users/${user.name}`,         // Fediverse で一意・ActivityPub を話せる URL であること
       name   : user.name,                                               // 表示名
       preferredUsername: user.name,                                     // ユーザ ID
       summary: `<p>User : ${user.name}</p>`,                            // 概要
