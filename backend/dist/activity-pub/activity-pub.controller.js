@@ -24,7 +24,7 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
     async getUser(name, res) {
         const isHttp = this.configService.get('isHttp');
         const host = this.configService.get('host');
-        const domain = `http${isHttp ? '' : 's'}//${host}`;
+        const domain = `http${isHttp ? '' : 's'}://${host}`;
         const user = await this.usersService.findOneWithPublicKey(name);
         if (user == null)
             return res.status(common_1.HttpStatus.NOT_FOUND).send(`User [${name}] is not found.`);
