@@ -15,13 +15,27 @@ var OutboxController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OutboxController = void 0;
 const common_1 = require("@nestjs/common");
+const host_url_service_1 = require("../shared/services/host-url/host-url.service");
+const users_service_1 = require("../users/users.service");
 let OutboxController = exports.OutboxController = OutboxController_1 = class OutboxController {
-    constructor() {
+    constructor(usersService, hostUrlService) {
+        this.usersService = usersService;
+        this.hostUrlService = hostUrlService;
         this.logger = new common_1.Logger(OutboxController_1.name);
     }
-    outbox(name, req, res) {
+    async outbox(name, req, res) {
         this.logger.log(`Outbox : ${name}`, req.body);
-        return res.status(common_1.HttpStatus.OK).type('application/activity+json').end();
+        const user = await this.usersService.findOne(name);
+        if (user == null)
+            return res.status(common_1.HttpStatus.NOT_FOUND).send('User Not Found');
+        const fqdn = this.hostUrlService.fqdn;
+        const json = {
+            id: `${fqdn}/api/activity-pub/${name}/outbox`,
+            type: 'OrderedCollection',
+            totalItems: 1,
+            first: `${fqdn}/api/activity-pub/${name}/posts`,
+        };
+        return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
     }
 };
 __decorate([
@@ -31,9 +45,11 @@ __decorate([
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object, Object]),
-    __metadata("design:returntype", Object)
+    __metadata("design:returntype", Promise)
 ], OutboxController.prototype, "outbox", null);
 exports.OutboxController = OutboxController = OutboxController_1 = __decorate([
-    (0, common_1.Controller)('api/activity-pub')
+    (0, common_1.Controller)('api/activity-pub'),
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        host_url_service_1.HostUrlService])
 ], OutboxController);
 //# sourceMappingURL=outbox.controller.js.map

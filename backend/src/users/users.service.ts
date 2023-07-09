@@ -82,6 +82,16 @@ export class UsersService {
   }
   
   /**
+   * ユーザを一意に取得する・秘密鍵も取得する
+   * 
+   * @param name Name
+   * @returns User・見つからなかった場合は `null`
+   */
+  public async findOneWithPrivateKey(name: string): Promise<User | null> {
+    return this.findOneBase(name, { name: true, privateKey: true });
+  }
+  
+  /**
    * ユーザを一意に取得するベース関数
    * 
    * @param name Name

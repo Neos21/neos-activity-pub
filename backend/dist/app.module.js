@@ -13,6 +13,7 @@ const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
 const serve_static_1 = require("@nestjs/serve-static");
+const axios_1 = require("@nestjs/axios");
 const configuration_1 = require("./common/configuration");
 const access_log_middleware_1 = require("./common/access-log.middleware");
 const user_1 = require("./entities/user");
@@ -61,7 +62,8 @@ exports.AppModule = AppModule = __decorate([
                 useFactory: () => [{
                         rootPath: path.resolve(__dirname, '../../frontend/dist')
                     }]
-            })
+            }),
+            axios_1.HttpModule
         ],
         controllers: [
             activity_pub_controller_1.ActivityPubController,

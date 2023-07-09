@@ -55,7 +55,7 @@ export class ActivityPubController {
     return res.status(HttpStatus.OK).type('application/activity+json').json(json);
   }
   
-  // TODO : お試しでノート情報を返す
+  // TODO : お試しでノート1件を返す
   @Get('users/:name/note')
   public getNote(@Param('name') name: string, @Res() res: Response): Response {
     const fqdn = this.hostUrlService.fqdn;

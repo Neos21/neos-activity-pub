@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { HttpModule } from '@nestjs/axios';
 
 // Common
 import { configuration } from './common/configuration';
@@ -58,7 +59,9 @@ import { UsersService } from './users/users.service';
       useFactory: () => [{
         rootPath: path.resolve(__dirname, '../../frontend/dist')
       }]
-    })
+    }),
+    // HTTP 通信する用
+    HttpModule
   ],
   controllers: [
     // ActivityPub

@@ -55,6 +55,9 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
     async findOneWithPublicKey(name) {
         return this.findOneBase(name, { name: true, publicKey: true });
     }
+    async findOneWithPrivateKey(name) {
+        return this.findOneBase(name, { name: true, privateKey: true });
+    }
     async findOneBase(name, selectOptions) {
         return this.usersRepository.findOne({
             select: selectOptions,
