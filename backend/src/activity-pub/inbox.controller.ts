@@ -133,7 +133,7 @@ export class InboxController {
       '@context': 'https://www.w3.org/ns/activitystreams',
       id        : `${fqdn}/api/activity-pub/users/${user.name}/activities/${id}`,  // TODO : 存在しなくていいのかな https://github.com/yuforium/api/blob/main/src/modules/activity-pub/services/inbox-processor.service.ts#L90-L97
       type      : 'Accept',
-      actor     : `https://${fqdn}/api/activity-pub/users/${user.name}`,
+      actor     : `${fqdn}/api/activity-pub/users/${user.name}`,
       object    : followObject
     };
     

@@ -109,7 +109,7 @@ let InboxController = exports.InboxController = InboxController_1 = class InboxC
             '@context': 'https://www.w3.org/ns/activitystreams',
             id: `${fqdn}/api/activity-pub/users/${user.name}/activities/${id}`,
             type: 'Accept',
-            actor: `https://${fqdn}/api/activity-pub/users/${user.name}`,
+            actor: `${fqdn}/api/activity-pub/users/${user.name}`,
             object: followObject
         };
         const sha256Digest = 'SHA-256=' + crypto.createHash('sha256').update(JSON.stringify(json)).digest('base64');
