@@ -18,4 +18,8 @@ export class User {
   /** 秘密鍵 */
   @Column({ type: 'text', name: 'private_key' })
   public privateKey: string;
+  
+  /** 登録日 (YYYY-MM-DD) */
+  @Column({ type: 'text', name: 'created_at' })
+  public createdAt: string;
 }

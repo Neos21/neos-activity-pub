@@ -41,7 +41,7 @@ let ActivityPubController = exports.ActivityPubController = class ActivityPubCon
             url: `${fqdn}/api/activity-pub/users/${user.name}`,
             manuallyApprovesFollowers: false,
             discoverable: true,
-            published: '2023-07-07T00:00:00Z',
+            published: `${user.createdAt}T00:00:00Z`,
             publicKey: {
                 id: `${fqdn}/api/activity-pub/users/${user.name}#main-key`,
                 owner: `${fqdn}/api/activity-pub/users/${user.name}`,

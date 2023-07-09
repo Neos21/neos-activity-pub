@@ -29,7 +29,7 @@ export class AuthController {
 		const isSame = await bcryptjs.compare(password, user.password);
     if(!isSame) throw new UnauthorizedException();  // パスワード誤り
     // JWT を生成しレスポンスする
-    const payload = { sub: name };
+    const payload = { sub: name, name };  // コレが `req.user` に入る
     const json = { accessToken: await this.jwtService.signAsync(payload) };
     return res.json(json);
   }

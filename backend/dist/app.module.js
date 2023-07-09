@@ -26,6 +26,7 @@ const well_known_controller_1 = require("./well-known/well-known.controller");
 const app_controller_1 = require("./app.controller");
 const host_url_service_1 = require("./shared/services/host-url/host-url.service");
 const users_service_1 = require("./users/users.service");
+const posts_controller_1 = require("./posts/posts.controller");
 let AppModule = exports.AppModule = class AppModule {
     configure(middlewareConsumer) {
         middlewareConsumer.apply(access_log_middleware_1.AccessLogMiddleware).forRoutes('*');
@@ -72,7 +73,8 @@ exports.AppModule = AppModule = __decorate([
             auth_controller_1.AuthController,
             users_controller_1.UsersController,
             well_known_controller_1.WellKnownController,
-            app_controller_1.AppController
+            app_controller_1.AppController,
+            posts_controller_1.PostsController
         ],
         providers: [
             host_url_service_1.HostUrlService,

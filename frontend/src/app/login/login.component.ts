@@ -11,8 +11,12 @@ import { AuthService } from '../shared/services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  /** 初期表示が完了したかどうか */
+  public isLoaded: boolean = false;
   /** ログインフォーム */
   public form!: FormGroup;
+  /** 処理中かどうか */
+  public isProcessing: boolean = false;
   /** エラーメッセージ */
   public error?: string;
   
@@ -23,19 +27,19 @@ export class LoginComponent {
   ) { }
   
   public async ngOnInit(): Promise<void | boolean> {
-    // TODO : 初期表示終了まで画面全体を表示させないようにしたい
     this.form = this.formBuilder.group({
       name    : ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
     // ログイン済ならこの画面を表示しない (ログアウト処理をちゃんと通させる)
     if(this.authService.accessToken) return this.router.navigate(['/home']);
+    this.isLoaded = true;
   }
   
   /** ログインする */
   public async login(): Promise<void | boolean> {
-    // TODO : Submit ボタンの二度押しを回避する
     this.error = undefined;
+    this.isProcessing = true;
     const isSucceeded = await this.authService.login(this.form.value.name, this.form.value.password);
     if(isSucceeded) {
       return this.router.navigate(['/home']);
@@ -43,5 +47,6 @@ export class LoginComponent {
     else {
       this.error = 'ログイン失敗';
     }
+    this.isProcessing = false;
   }
 }

@@ -30,7 +30,7 @@ let AuthController = exports.AuthController = class AuthController {
         const isSame = await bcryptjs.compare(password, user.password);
         if (!isSame)
             throw new common_1.UnauthorizedException();
-        const payload = { sub: name };
+        const payload = { sub: name, name };
         const json = { accessToken: await this.jwtService.signAsync(payload) };
         return res.json(json);
     }

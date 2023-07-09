@@ -29,11 +29,10 @@ export class AuthService {
       window.localStorage.setItem(this.authInfoStorageKey, JSON.stringify({ name, password, accessToken }));
       this.name        = name;
       this.accessToken = accessToken;
-      console.log('Login Succeeded', { accessToken });
       return true;
     }
     catch(error) {
-      console.warn('Login Failed', { name, password }, error);
+      console.warn('AuthService : Login : Failed', error);
       return false;
     }
   }
@@ -44,24 +43,17 @@ export class AuthService {
    * @return 自動再ログインに成功すれば `true`・失敗すれば `false`
    */
   public autoReLogin(): boolean {
-    if(this.accessToken) {
-      console.log('Auto Re-Login : Access Token Exists');
-      return true;
-    }
+    if(this.accessToken) return true;
     try {
       const authInfo = window.localStorage.getItem(this.authInfoStorageKey);
-      if(authInfo == null) {
-        console.log('Auto Re-Login : Auth Info Does Not Exist');
-        return false;
-      }
+      if(authInfo == null) return false;
       const { name, accessToken } = JSON.parse(authInfo);  // Throws
       this.name        = name;
       this.accessToken = accessToken;  // ココで控えることで CustomInterceptor が JWT を使えるようになる
-      console.log('Auto Re-Login : Succeeded', { accessToken });
       return true;
     }
     catch(error) {
-      console.warn('Auto Re-Login : Failed', error);
+      console.warn('AuthService : Auto Re-Login : Failed', error);
       return false;
     }
   }
@@ -71,6 +63,5 @@ export class AuthService {
     window.localStorage.removeItem(this.authInfoStorageKey);
     this.name        = '';
     this.accessToken = '';
-    console.log('Logout');
   }
 }

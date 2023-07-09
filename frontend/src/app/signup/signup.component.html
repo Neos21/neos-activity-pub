@@ -1,15 +1,17 @@
-<h2>ユーザ登録画面</h2>
-<form [formGroup]="form" (ngSubmit)="signup()">
-  <dl>
-    <dt>ユーザ名 (ID・英小文字と数字・ハイフンのみ)</dt>
-    <dd><input type="text" placeholder="User Name" formControlName="name"></dd>
-    <dt>パスワード</dt>
-    <dd><input type="password" placeholder="Password" formControlName="password"></dd>
-  </dl>
-  <p><button type="submit" [disabled]="form.invalid || isSucceeded">登録</button></p>
-</form>
-<p *ngIf="isSucceeded">ユーザ登録が完了しました。<a [routerLink]="'/login'">ログイン画面に移動する</a></p>
-<p *ngIf="error != null">{{ error }}</p>
-
-<hr>
-<p><a [routerLink]="'/'">トップに戻る</a></p>
+<ng-container *ngIf="isLoaded">
+  <h2>Sign Up</h2>
+  <form [formGroup]="form" (ngSubmit)="signup()">
+    <dl>
+      <dt>ユーザ名 (ID・英小文字と数字・ハイフンのみ)</dt>
+      <dd><input type="text" placeholder="User Name" formControlName="name"></dd>
+      <dt>パスワード</dt>
+      <dd><input type="password" placeholder="Password" formControlName="password"></dd>
+    </dl>
+    <p><button type="submit" [disabled]="form.invalid || isProcessing || isSucceeded">登録</button></p>
+  </form>
+  <p *ngIf="isSucceeded">ユーザ登録が完了しました。<a [routerLink]="'/login'">ログイン画面に移動する</a></p>
+  <app-error [error]="error"></app-error>
+  
+  <hr>
+  <p><a [routerLink]="'/'">トップに戻る</a></p>
+</ng-container>

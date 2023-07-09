@@ -33,7 +33,7 @@ export class ActivityPubController {
       url    : `${fqdn}/api/activity-pub/users/${user.name}`,         // プロフィールページ
       manuallyApprovesFollowers: false,
       discoverable: true,
-      published: '2023-07-07T00:00:00Z',  // TODO : 登録日
+      published: `${user.createdAt}T00:00:00Z`,  // 登録日
       publicKey: {
         id          : `${fqdn}/api/activity-pub/users/${user.name}#main-key`,
         owner       : `${fqdn}/api/activity-pub/users/${user.name}`,  // `id` と一致させる
@@ -41,12 +41,12 @@ export class ActivityPubController {
       },
       tag: [],
       attachment: [],  // 追加リンク部分
-      icon: {
+      icon: {  // アイコン
         type: 'Image',
         mediaType: 'image/jpeg',
         url: `${fqdn}/assets/icon.jpg`
       },
-      image: {
+      image: {  // ヘッダ背景
         type: 'Image',
         mediaType: 'image/jpeg',
         url: `${fqdn}/assets/icon.jpg`

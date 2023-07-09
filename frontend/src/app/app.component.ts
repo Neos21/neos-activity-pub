@@ -8,12 +8,14 @@ import { AuthService } from './shared/services/auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public title: string = 'Neo\'s ActivityPub';  // TODO : いつか消す
-  
   constructor(private readonly authService: AuthService) { }
   
   /** アプリ初期表示時 */
   public ngOnInit(): void {
     this.authService.autoReLogin();  // ログイン済のユーザが再描画した時に復旧する
+  }
+  
+  public isLoggedIn(): boolean {
+    return this.authService.accessToken !== '';
   }
 }

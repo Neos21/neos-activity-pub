@@ -42,12 +42,13 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
         });
         user.publicKey = publicKey;
         user.privateKey = privateKey;
+        user.createdAt = new Date().toISOString().slice(0, 10);
         const insertResult = await this.usersRepository.insert(user);
         this.logger.debug('User Created', JSON.stringify(insertResult));
         return this.findOne(user.name);
     }
     async findOne(name) {
-        return this.findOneBase(name, { name: true });
+        return this.findOneBase(name, { name: true, createdAt: true });
     }
     async findOneWithPassword(name) {
         return this.findOneBase(name, { name: true, password: true });

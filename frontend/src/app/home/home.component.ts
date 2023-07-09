@@ -23,7 +23,6 @@ export class HomeComponent implements OnInit {
   
   public ngOnInit(): void {
     this.name = this.authService.name;
-    this.test();  // TODO
   }
   
   public async test(): Promise<void> {

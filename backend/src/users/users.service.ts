@@ -43,7 +43,10 @@ export class UsersService {
     });
     user.publicKey  = publicKey;
     user.privateKey = privateKey;
-      
+    
+    // 登録日を設定する
+    user.createdAt = new Date().toISOString().slice(0, 10);
+    
     // Insert
     const insertResult = await this.usersRepository.insert(user); // Throws
     this.logger.debug('User Created', JSON.stringify(insertResult));
@@ -58,7 +61,7 @@ export class UsersService {
    * @return User・見つからなかった場合は `null`
    */
   public async findOne(name: string): Promise<User | null> {
-    return this.findOneBase(name, { name: true });
+    return this.findOneBase(name, { name: true, createdAt: true });
   }
   
   /**

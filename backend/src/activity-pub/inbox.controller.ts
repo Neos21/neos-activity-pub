@@ -37,6 +37,7 @@ export class InboxController {
     
     const type = body?.type?.toLowerCase();  // 小文字に統一する
     if(type === 'follow') {  // フォローされた
+      // TODO : フォロワー情報を追加する・フォローされた通知を追加する
       // フォローを承認する
       const isSucceeded = await this.acceptFollow(user, body);
       if(isSucceeded) {
@@ -47,16 +48,17 @@ export class InboxController {
       }
     }
     else if(type === 'like') {  // いいねされた
-      // TODO : いいねを受信したことを記録する
+      // TODO : いいね情報を追加する・いいねされた通知を追加する
       return res.status(HttpStatus.OK).end();
     }
     else if(type === 'announce') {  // ブーストされた
-      // TODO : ブーストされたことを記録する
+      // TODO : ブーストされた通知を追加する
       return res.status(HttpStatus.OK).end();
     }
     else if(type === 'undo') {  // 何らかの処理が取り消された
       const objectType = body.object?.type?.toLowerCase();
       if(objectType === 'follow') {  // アンフォローされた
+        // TODO : フォロワー情報を削除する
         // アンフォローを承認する
         const isSucceeded = await this.acceptFollow(user, body.object);  // Undo 内の Follow Object を使用する
         if(isSucceeded) {
@@ -67,6 +69,7 @@ export class InboxController {
         }
       }
       else if(objectType === 'like') {  // いいねが外された
+        // TODO : いいね情報を削除する
         return res.status(HttpStatus.OK).end();
       }
       else if(objectType === 'announce') {  // ブーストが外された
@@ -86,24 +89,10 @@ export class InboxController {
         return res.status(HttpStatus.BAD_REQUEST).send('Type Create But Unknown Object Type');
       }
     }
-    else if(type === 'update') {
-      // TODO : どういうイベントなのかよく分からない
+    else if(['update', 'delete', 'accept', 'reject'].includes(type)) {  // その他のイベント
       return res.status(HttpStatus.OK).end();
     }
-    else if(type === 'delete') {
-      // TODO : どういうイベントなのかよく分からない
-      return res.status(HttpStatus.OK).end();
-    }
-    else if(type === 'accept') {
-      // TODO : どういうイベントなのかよく分からない
-      return res.status(HttpStatus.OK).end();
-    }
-    else if(type === 'reject') {
-      // TODO : どういうイベントなのかよく分からない
-      return res.status(HttpStatus.OK).end();
-    }
-    else {
-      // 未知の Type だったら 400 にする
+    else {  // 未知の Type だったら 400 にする
       return res.status(HttpStatus.BAD_REQUEST).send('Unknown Type');
     }
   }

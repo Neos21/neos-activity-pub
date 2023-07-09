@@ -15,6 +15,7 @@ import { UserComponent } from './users/user.component';
 import { RedirectComponent } from './core/redirect.component';
 
 import { CustomInterceptor } from './core/custom.interceptor';
+import { PostComponent } from './home/post/post.component';
 
 @NgModule({
   imports: [
@@ -33,7 +34,8 @@ import { CustomInterceptor } from './core/custom.interceptor';
     HomeComponent,
     UserComponent,
     RedirectComponent,
-    AppComponent
+    AppComponent,
+    PostComponent
   ],
   providers: [
     {

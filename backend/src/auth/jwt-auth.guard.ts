@@ -26,8 +26,7 @@ export class JwtAuthGuard implements CanActivate {
         token,
         { secret: this.configService.get<string>('jwtSecret') }
       );
-      // We're assigning the payload to the request object here so that we can access it in our route handlers
-      request['user'] = payload;
+      request.user = payload;  // リクエストオブジェクトのこの名前に Payload が入るようにする
     }
     catch(_error) {
       throw new UnauthorizedException();

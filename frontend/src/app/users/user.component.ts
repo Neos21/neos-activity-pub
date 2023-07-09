@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 import { UsersService } from './users.service';
+import { User } from '../shared/classes/user';
 
 @Component({
   selector: 'app-user',
@@ -10,9 +11,7 @@ import { UsersService } from './users.service';
 })
 export class UserComponent {
   /** ユーザ名 */
-  public name!: string;
-  /** TODO : 登録日 */
-  public signUpDate!: string;
+  public user?: User;
   
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -26,8 +25,7 @@ export class UserComponent {
       if(name == null) return this.router.navigate(['/']);  // ユーザ名画未指定の場合はトップに戻す
       
       try {
-        const user = await this.usersService.findOne(name);
-        this.name = user.name;  // TODO : 登録日を取得・表示する
+        this.user = await this.usersService.findOne(name);
       }
       catch(error) {
         console.warn('UserComponent : Invalid User Name', error);

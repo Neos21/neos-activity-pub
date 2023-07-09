@@ -1,0 +1,5 @@
+<form [formGroup]="form" (ngSubmit)="post()">
+  <p><textarea placeholder="Post Text" formControlName="text" [disabled]="isProcessing"></textarea></p>
+  <p><button type="submit" [disabled]="form.invalid || isProcessing">投稿</button></p>
+</form>
+<app-error [error]="error"></app-error>

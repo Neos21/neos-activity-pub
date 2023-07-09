@@ -23,6 +23,7 @@ import { AppController } from './app.controller';
 // Providers
 import { HostUrlService } from './shared/services/host-url/host-url.service';
 import { UsersService } from './users/users.service';
+import { PostsController } from './posts/posts.controller';
 
 @Module({
   imports: [
@@ -74,7 +75,8 @@ import { UsersService } from './users/users.service';
     // Out-Side API (For ActivityPub)
     WellKnownController,
     // App
-    AppController
+    AppController,
+    PostsController
   ],
   providers: [
     // Shared

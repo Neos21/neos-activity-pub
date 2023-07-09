@@ -3,4 +3,5 @@ export declare class User {
     password: string;
     publicKey: string;
     privateKey: string;
+    createdAt: string;
 }

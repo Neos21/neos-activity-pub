@@ -79,16 +79,7 @@ let InboxController = exports.InboxController = InboxController_1 = class InboxC
                 return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Create But Unknown Object Type');
             }
         }
-        else if (type === 'update') {
-            return res.status(common_1.HttpStatus.OK).end();
-        }
-        else if (type === 'delete') {
-            return res.status(common_1.HttpStatus.OK).end();
-        }
-        else if (type === 'accept') {
-            return res.status(common_1.HttpStatus.OK).end();
-        }
-        else if (type === 'reject') {
+        else if (['update', 'delete', 'accept', 'reject'].includes(type)) {
             return res.status(common_1.HttpStatus.OK).end();
         }
         else {

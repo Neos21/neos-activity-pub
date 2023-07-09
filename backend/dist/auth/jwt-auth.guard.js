@@ -25,7 +25,7 @@ let JwtAuthGuard = exports.JwtAuthGuard = class JwtAuthGuard {
             throw new common_1.UnauthorizedException();
         try {
             const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get('jwtSecret') });
-            request['user'] = payload;
+            request.user = payload;
         }
         catch (_error) {
             throw new common_1.UnauthorizedException();

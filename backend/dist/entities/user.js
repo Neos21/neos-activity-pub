@@ -29,6 +29,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'text', name: 'private_key' }),
     __metadata("design:type", String)
 ], User.prototype, "privateKey", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', name: 'created_at' }),
+    __metadata("design:type", String)
+], User.prototype, "createdAt", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users')
 ], User);
