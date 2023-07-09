@@ -163,10 +163,11 @@ export class InboxController {
     };
     
     // Inbox URL に向けて Accept を POST する
-    const result = await firstValueFrom(this.httpService.post(inboxUrl, json, {
+    const result = await firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), {
       headers: requestHeaders
     }));
     console.log('POST', result);  // TODO
+    console.log('POST Data', result.data);  // TODO
     return true;
   }
   
@@ -180,7 +181,6 @@ export class InboxController {
     const actorResponse = await firstValueFrom(this.httpService.get(actorUrl, {
       headers: { Accept: 'application/activity+json' }
     }));  // https://docs.nestjs.com/techniques/http-module
-    console.log('Get Inbox URL', actorResponse);  // TODO
     return actorResponse?.data?.inbox;
   }
 }

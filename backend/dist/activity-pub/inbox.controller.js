@@ -133,17 +133,17 @@ let InboxController = exports.InboxController = InboxController_1 = class InboxC
             Accept: 'application/activity+json',
             'Content-Type': 'application/activity+json'
         };
-        const result = await (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, json, {
+        const result = await (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, JSON.stringify(json), {
             headers: requestHeaders
         }));
         console.log('POST', result);
+        console.log('POST Data', result.data);
         return true;
     }
     async getInboxUrl(actorUrl) {
         const actorResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(actorUrl, {
             headers: { Accept: 'application/activity+json' }
         }));
-        console.log('Get Inbox URL', actorResponse);
         return actorResponse?.data?.inbox;
     }
 };
