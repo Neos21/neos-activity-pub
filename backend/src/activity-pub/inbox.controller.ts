@@ -137,7 +137,7 @@ export class InboxController {
       object    : followObject
     };
     
-    // SHA256 ダイジェストを作る
+    // SHA256 ダイジェストを作る https://gitlab.com/acefed/strawberryfields-express/-/blob/master/index.js#L35-85
     const sha256Digest = 'SHA-256=' + crypto.createHash('sha256').update(JSON.stringify(json)).digest('base64');
     // 署名を作る
     const signature = crypto.createSign('sha256').update([
@@ -163,11 +163,9 @@ export class InboxController {
     };
     
     // Inbox URL に向けて Accept を POST する
-    const result = await firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), {
+    await firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), {
       headers: requestHeaders
     }));
-    console.log('POST', result);  // TODO
-    console.log('POST Data', result.data);  // TODO
     return true;
   }
   
