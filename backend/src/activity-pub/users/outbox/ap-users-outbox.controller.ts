@@ -19,14 +19,14 @@ export class APUsersOutboxController {
     
     // ユーザ存在確認
     const user = await this.usersService.findOne(name);
-    if(user == null) return res.status(HttpStatus.NOT_FOUND).send('User Not Found');
+    if(user == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
     
     const fqdn = this.hostUrlService.fqdn;
     const json = {
-      id  : `${fqdn}/api/activity-pub/${name}/outbox`,
+      id  : `${fqdn}/api/activity-pub/users/${name}/outbox`,
       type: 'OrderedCollection',
       totalItems: 1,
-      first: `${fqdn}/api/activity-pub/${name}/posts`,  // TODO : 投稿を取得できるエンドポイント https://zenn.dev/link/comments/b7dcc3a8163b5b
+      first: `${fqdn}/api/activity-pub/users/${name}/notes`,  // NOTE : 投稿を取得できるエンドポイントあるべき https://zenn.dev/link/comments/b7dcc3a8163b5b
     };
     return res.status(HttpStatus.OK).type('application/activity+json').json(json);
   }

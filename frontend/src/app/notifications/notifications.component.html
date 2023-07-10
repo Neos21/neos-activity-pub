@@ -1,8 +1,7 @@
 <app-loading *ngIf="notifications == null"></app-loading>
 <ng-container *ngIf="notifications != null">
-  <ng-container *ngIf="notifications.length === 0">
-    <div>通知はありません</div>
-  </ng-container>
+  <h2>Notifications</h2>
+  <p *ngIf="notifications.length === 0">通知はありません</p>
   
   <dl *ngIf="notifications.length > 0">
     <ng-container *ngFor="let notification of notifications">

@@ -15,6 +15,7 @@ export declare class PostsService {
     constructor(httpService: HttpService, postsRepository: Repository<Post>, followersService: FollowersService, hostUrlService: HostUrlService, signHeaderService: SignHeaderService, usersService: UsersService);
     create(userName: string, text: string): Promise<Post>;
     publishNote(post: Post): Promise<void>;
-    private findOne;
+    findAll(userName: string): Promise<Array<Post>>;
+    findOne(id: number): Promise<Post>;
     private renderCreateNote;
 }

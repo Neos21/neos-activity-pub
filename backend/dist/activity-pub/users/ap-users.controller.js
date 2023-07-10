@@ -24,7 +24,7 @@ let APUsersController = exports.APUsersController = class APUsersController {
     async getUser(name, res) {
         const user = await this.usersService.findOneWithPublicKey(name);
         if (user == null)
-            return res.status(common_1.HttpStatus.NOT_FOUND).send(`User [${name}] is not found.`);
+            return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
         const fqdn = this.hostUrlService.fqdn;
         const json = {
             '@context': [

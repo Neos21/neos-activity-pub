@@ -14,8 +14,9 @@ import { AppComponent } from './app.component';
 import { FollowersComponent } from './users/followers/followers.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
+import { NewPostComponent } from './home/new-post/new-post.component';
 import { NotificationsComponent } from './notifications/notifications.component';
-import { PostComponent } from './home/post/post.component';
+import { PostsComponent } from './users/posts/posts.component';
 import { RedirectComponent } from './core/redirect.component';
 import { SignupComponent } from './signup/signup.component';
 import { UserComponent } from './users/user.component';
@@ -34,8 +35,9 @@ import { UserComponent } from './users/user.component';
     FollowersComponent,
     HomeComponent,
     LoginComponent,
+    NewPostComponent,
     NotificationsComponent,
-    PostComponent,
+    PostsComponent,
     RedirectComponent,
     SignupComponent,
     UserComponent,

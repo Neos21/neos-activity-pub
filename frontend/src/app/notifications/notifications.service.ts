@@ -13,7 +13,9 @@ export class NotificationsService {
    * 
    * @throws ユーザが見つからなかった場合 (404)・サーバエラー時
    */
-  public findAll(): Promise<Array<Notification>> {
-    return firstValueFrom(this.httpClient.get<Array<Notification>>(`/api/notifications`));
+  public async findAll(): Promise<Array<Notification>> {
+    const notifications = await firstValueFrom(this.httpClient.get<Array<Notification>>(`/api/notifications`));
+    notifications.forEach(notification => notification.createdAt = notification.createdAt.slice(0, 19).replace('T', ' '));  // `YYYY-MM-DD HH:mm:SS` にする
+    return notifications;
   }
 }

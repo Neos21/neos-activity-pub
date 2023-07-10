@@ -15,7 +15,7 @@ export class APUsersController {
   @Get(':name')
   public async getUser(@Param('name') name: string, @Res() res: Response): Promise<Response> {
     const user = await this.usersService.findOneWithPublicKey(name);
-    if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`User [${name}] is not found.`);
+    if(user == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
     
     const fqdn = this.hostUrlService.fqdn;
     const json = {

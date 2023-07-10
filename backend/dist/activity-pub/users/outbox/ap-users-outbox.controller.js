@@ -27,13 +27,13 @@ let APUsersOutboxController = exports.APUsersOutboxController = APUsersOutboxCon
         this.logger.log(`Outbox : ${name}`, req.body);
         const user = await this.usersService.findOne(name);
         if (user == null)
-            return res.status(common_1.HttpStatus.NOT_FOUND).send('User Not Found');
+            return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
         const fqdn = this.hostUrlService.fqdn;
         const json = {
-            id: `${fqdn}/api/activity-pub/${name}/outbox`,
+            id: `${fqdn}/api/activity-pub/users/${name}/outbox`,
             type: 'OrderedCollection',
             totalItems: 1,
-            first: `${fqdn}/api/activity-pub/${name}/posts`,
+            first: `${fqdn}/api/activity-pub/users/${name}/notes`,
         };
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
     }

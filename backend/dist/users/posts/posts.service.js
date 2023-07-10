@@ -48,9 +48,16 @@ let PostsService = exports.PostsService = class PostsService {
         const json = this.renderCreateNote(post);
         for (const follower of followers) {
             const requestHeaders = this.signHeaderService.signHeader(json, follower.inboxUrl, user.name, user.privateKey);
-            await (0, rxjs_1.firstValueFrom)(this.httpService.post(follower.inboxUrl, JSON.stringify(json), { headers: requestHeaders })).catch(error => console.log('Create Note Error', error));
+            await (0, rxjs_1.firstValueFrom)(this.httpService.post(follower.inboxUrl, JSON.stringify(json), { headers: requestHeaders })).catch(_error => null);
         }
-        console.log('終了');
+    }
+    findAll(userName) {
+        return this.postsRepository.createQueryBuilder('posts')
+            .where('posts.userName = :userName')
+            .orderBy('posts.createdAt', 'DESC')
+            .take(50)
+            .setParameters({ userName })
+            .getMany();
     }
     findOne(id) {
         return this.postsRepository.findOne({ where: { id } });

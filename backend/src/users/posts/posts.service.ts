@@ -37,19 +37,28 @@ export class PostsService {
     return this.findOne(createdId);
   }
   
-  /** フォロワーを取得し、そのフォロワーの Inbox に Create を投げる … TODO : BullMQ でやりたい */
+  /** フォロワーを取得し、そのフォロワーの Inbox に Create を投げる (TODO : BullMQ でやりたい) */
   public async publishNote(post: Post): Promise<void> {
     const user = await this.usersService.findOneWithPrivateKey(post.userName);
     const followers = await this.followersService.findAll(post.userName);
     const json = this.renderCreateNote(post);
     for(const follower of followers) {
       const requestHeaders = this.signHeaderService.signHeader(json, follower.inboxUrl, user.name, user.privateKey);
-      await firstValueFrom(this.httpService.post(follower.inboxUrl, JSON.stringify(json), { headers: requestHeaders })).catch(error => console.log('Create Note Error', error));
+      await firstValueFrom(this.httpService.post(follower.inboxUrl, JSON.stringify(json), { headers: requestHeaders })).catch(_error => null);
     }
-    console.log('終了');
   }
   
-  private findOne(id: number): Promise<Post> {
+  /** 投稿を新しいモノから順番に一覧で返す https://typeorm.io/#using-querybuilder */
+  public findAll(userName: string): Promise<Array<Post>> {
+    return this.postsRepository.createQueryBuilder('posts')
+      .where('posts.userName = :userName')
+      .orderBy('posts.createdAt', 'DESC')
+      .take(50)  // 最大50件に絞る
+      .setParameters({ userName })
+      .getMany();
+  }
+  
+  public findOne(id: number): Promise<Post> {
     return this.postsRepository.findOne({ where: { id } });
   }
   

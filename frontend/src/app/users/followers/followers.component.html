@@ -1,8 +1,7 @@
 <app-loading *ngIf="followers == null"></app-loading>
 <ng-container *ngIf="followers != null">
-  <ng-container *ngIf="followers.length === 0">
-    <div>フォロワーはいません</div>
-  </ng-container>
+  <h2>Followers</h2>
+  <p *ngIf="followers.length === 0">フォロワーはいません</p>
   
   <dl *ngIf="followers.length > 0">
     <ng-container *ngFor="let follower of followers">

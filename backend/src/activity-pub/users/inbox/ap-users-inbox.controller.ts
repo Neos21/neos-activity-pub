@@ -30,22 +30,22 @@ export class APUsersInboxController {
     
     // ユーザ存在確認
     const user = await this.usersService.findOneWithPrivateKey(name);  // Accept 処理で使うので秘密鍵も取得しておく
-    if(user == null) return res.status(HttpStatus.NOT_FOUND).send('User Not Found');
+    if(user == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
     
     const type = body?.type?.toLowerCase();  // 小文字に統一する
     if(type === 'follow') {  // フォローされた
       // Actor・Inbox URL を取得する
       const actor = await this.getActor(body?.actor);
-      if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).send('Type Follow But Invalid Inbox URL');  // Inbox URL が不明なので処理できない
+      if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
       // フォロワー情報を追加する
       const isCreated = await this.followersService.create(user.name, actor);
-      if(!isCreated) return res.status(HttpStatus.BAD_REQUEST).send('Type Follow But Invalid Actor (Follower)');
+      if(!isCreated) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Follower)' });
       // フォローされた通知を追加する
       const isNotified = await this.notificationsService.createFollow(user.name, actor);
-      if(!isNotified) return res.status(HttpStatus.BAD_REQUEST).send('Type Follow But Invalid Actor (Notification)');
+      if(!isNotified) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Notification)' });
       // フォローを承認する
       const isAccepted = await this.acceptFollow(user, body, actor.inbox);
-      if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).send('Type Follow But Invalid Body (Accept)');
+      if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Body (Accept)' });
       // 成功
       return res.status(HttpStatus.OK).end();
     }
@@ -62,12 +62,12 @@ export class APUsersInboxController {
       if(objectType === 'follow') {  // アンフォローされた
         // Actor・Inbox URL を取得する
         const actor = await this.getActor(body?.actor);
-        if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Inbox URL');  // Inbox URL が不明なので処理できない
+        if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
         // フォロワー情報を削除する (失敗しても続行する)
         await this.followersService.remove(user.name, actor);
         // アンフォローを承認する
         const isAccepted = await this.acceptFollow(user, body.object, actor.inbox);  // Undo 内の Follow Object を使用する
-        if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Body');
+        if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Body' });
         // 成功
         return res.status(HttpStatus.OK).end();
       }
@@ -79,7 +79,7 @@ export class APUsersInboxController {
         return res.status(HttpStatus.OK).end();
       }
       else {  // 未知の Undo イベント
-        return res.status(HttpStatus.BAD_REQUEST).send('Type Create But Unknown Object Type');
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
       }
     }
     else if(type === 'create') {
@@ -89,14 +89,14 @@ export class APUsersInboxController {
         return res.status(HttpStatus.OK).end();
       }
       else {  // 未知の Create イベント
-        return res.status(HttpStatus.BAD_REQUEST).send('Type Create But Unknown Object Type');
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
       }
     }
     else if(['update', 'delete', 'accept', 'reject'].includes(type)) {  // その他のイベント
       return res.status(HttpStatus.OK).end();
     }
     else {  // 未知の Type だったら 400 にする
-      return res.status(HttpStatus.BAD_REQUEST).send('Unknown Type');
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Unknown Type' });
     }
   }
   
@@ -124,7 +124,7 @@ export class APUsersInboxController {
     const fqdn = this.hostUrlService.fqdn;
     const json = {
       '@context': 'https://www.w3.org/ns/activitystreams',
-      id        : `${fqdn}/api/activity-pub/users/${user.name}/activities/${Date.now()}`,  // 存在しなくても動いてる https://github.com/yuforium/api/blob/main/src/modules/activity-pub/services/inbox-processor.service.ts#L90-L97
+      id        : `${fqdn}/api/activity-pub/users/${user.name}/activities/${Date.now()}`,  // NOTE : 存在しなくても動いてる https://github.com/yuforium/api/blob/main/src/modules/activity-pub/services/inbox-processor.service.ts#L90-L97
       type      : 'Accept',
       actor     : `${fqdn}/api/activity-pub/users/${user.name}`,
       object    : followObject
