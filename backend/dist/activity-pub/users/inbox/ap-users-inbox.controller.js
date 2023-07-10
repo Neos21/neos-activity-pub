@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var APUsersInboxController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.APUsersInboxController = void 0;
-const crypto = require("node:crypto");
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const rxjs_1 = require("rxjs");
@@ -22,13 +21,15 @@ const followers_service_1 = require("../../../users/followers/followers.service"
 const host_url_service_1 = require("../../../shared/services/host-url.service");
 const notifications_service_1 = require("../../../notifications/notifications.service");
 const users_service_1 = require("../../../users/users.service");
+const sign_header_service_1 = require("../../sign-header.service");
 let APUsersInboxController = exports.APUsersInboxController = APUsersInboxController_1 = class APUsersInboxController {
-    constructor(httpService, followersService, hostUrlService, notificationsService, usersService) {
+    constructor(httpService, followersService, hostUrlService, notificationsService, usersService, signHeaderService) {
         this.httpService = httpService;
         this.followersService = followersService;
         this.hostUrlService = hostUrlService;
         this.notificationsService = notificationsService;
         this.usersService = usersService;
+        this.signHeaderService = signHeaderService;
         this.logger = new common_1.Logger(APUsersInboxController_1.name);
     }
     async inbox(name, body, res) {
@@ -107,38 +108,15 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
         }
     }
     async acceptFollow(user, followObject, inboxUrl) {
-        const date = new Date();
-        const id = date.getTime();
-        const utc = date.toUTCString();
         const fqdn = this.hostUrlService.fqdn;
         const json = {
             '@context': 'https://www.w3.org/ns/activitystreams',
-            id: `${fqdn}/api/activity-pub/users/${user.name}/activities/${id}`,
+            id: `${fqdn}/api/activity-pub/users/${user.name}/activities/${Date.now()}`,
             type: 'Accept',
             actor: `${fqdn}/api/activity-pub/users/${user.name}`,
             object: followObject
         };
-        const sha256Digest = 'SHA-256=' + crypto.createHash('sha256').update(JSON.stringify(json)).digest('base64');
-        const signature = crypto.createSign('sha256').update([
-            `(request-target): post ${new URL(inboxUrl).pathname}`,
-            `host: ${new URL(inboxUrl).hostname}`,
-            `date: ${utc}`,
-            `digest: ${sha256Digest}`
-        ].join('\n')).end();
-        const base64Signature = signature.sign(user.privateKey, 'base64');
-        const requestHeaders = {
-            Host: new URL(inboxUrl).hostname,
-            Date: utc,
-            Digest: `${sha256Digest}`,
-            Signature: [
-                `keyId="${fqdn}/api/activity-pub/users/${user.name}#main-key"`,
-                'algorithm="rsa-sha256"',
-                'headers="(request-target) host date digest"',
-                `signature="${base64Signature}"`
-            ].join(','),
-            Accept: 'application/activity+json',
-            'Content-Type': 'application/activity+json'
-        };
+        const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, user.name, user.privateKey);
         await (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));
         return true;
     }
@@ -158,6 +136,7 @@ exports.APUsersInboxController = APUsersInboxController = APUsersInboxController
         followers_service_1.FollowersService,
         host_url_service_1.HostUrlService,
         notifications_service_1.NotificationsService,
-        users_service_1.UsersService])
+        users_service_1.UsersService,
+        sign_header_service_1.SignHeaderService])
 ], APUsersInboxController);
 //# sourceMappingURL=ap-users-inbox.controller.js.map

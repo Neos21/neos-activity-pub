@@ -1,5 +1,3 @@
-import * as crypto from 'node:crypto';
-
 import { Body, Controller, HttpStatus, Logger, Param, Post, Res } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Response } from 'express';
@@ -9,6 +7,7 @@ import { FollowersService } from 'src/users/followers/followers.service';
 import { HostUrlService } from 'src/shared/services/host-url.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { UsersService } from 'src/users/users.service';
+import { SignHeaderService } from 'src/activity-pub/sign-header.service';
 
 import { User } from 'src/entities/user';
 
@@ -22,6 +21,7 @@ export class APUsersInboxController {
     private hostUrlService: HostUrlService,
     private notificationsService: NotificationsService,
     private usersService: UsersService,
+    private signHeaderService: SignHeaderService,
   ) { }
   
   @Post(':name/inbox')
@@ -120,46 +120,17 @@ export class APUsersInboxController {
    * @throws リクエスト失敗時
    */
   private async acceptFollow(user: User, followObject: any, inboxUrl: string): Promise<boolean> {
-    // 現在日時を利用して ID と認証ヘッダ用の文字列にする
-    const date = new Date();
-    const id   = date.getTime();  // Date.now()
-    const utc  = date.toUTCString();
     // リクエスト本文を作る
     const fqdn = this.hostUrlService.fqdn;
     const json = {
       '@context': 'https://www.w3.org/ns/activitystreams',
-      id        : `${fqdn}/api/activity-pub/users/${user.name}/activities/${id}`,  // TODO : 存在しなくていいのかな https://github.com/yuforium/api/blob/main/src/modules/activity-pub/services/inbox-processor.service.ts#L90-L97
+      id        : `${fqdn}/api/activity-pub/users/${user.name}/activities/${Date.now()}`,  // 存在しなくても動いてる https://github.com/yuforium/api/blob/main/src/modules/activity-pub/services/inbox-processor.service.ts#L90-L97
       type      : 'Accept',
       actor     : `${fqdn}/api/activity-pub/users/${user.name}`,
       object    : followObject
     };
-    
-    // SHA256 ダイジェストを作る https://gitlab.com/acefed/strawberryfields-express/-/blob/master/index.js#L35-85
-    const sha256Digest = 'SHA-256=' + crypto.createHash('sha256').update(JSON.stringify(json)).digest('base64');
-    // 署名を作る
-    const signature = crypto.createSign('sha256').update([
-      `(request-target): post ${new URL(inboxUrl).pathname}`,
-      `host: ${new URL(inboxUrl).hostname}`,
-      `date: ${utc}`,
-      `digest: ${sha256Digest}`
-    ].join('\n')).end();
-    const base64Signature = signature.sign(user.privateKey, 'base64');
-    // リクエストヘッダを組み立てる
-    const requestHeaders = {
-      Host     : new URL(inboxUrl).hostname,
-      Date     : utc,
-      Digest   : `${sha256Digest}`,
-      Signature: [
-        `keyId="${fqdn}/api/activity-pub/users/${user.name}#main-key"`,
-        'algorithm="rsa-sha256"',
-        'headers="(request-target) host date digest"',
-        `signature="${base64Signature}"`
-      ].join(','),
-      Accept        : 'application/activity+json',
-      'Content-Type': 'application/activity+json'
-    };
-    
     // Inbox URL に向けて Accept を POST する
+    const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, user.name, user.privateKey);
     await firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));  // Throws
     return true;
   }

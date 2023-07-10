@@ -33,6 +33,7 @@ import { FollowersService } from './users/followers/followers.service';
 import { HostUrlService } from './shared/services/host-url.service';
 import { NotificationsService } from './notifications/notifications.service';
 import { PostsService } from './users/posts/posts.service';
+import { SignHeaderService } from './activity-pub/sign-header.service';
 import { UsersService } from './users/users.service';
 
 @Module({
@@ -99,6 +100,7 @@ import { UsersService } from './users/users.service';
     HostUrlService,
     NotificationsService,
     PostsService,
+    SignHeaderService,
     UsersService,
   ]
 })

@@ -7,8 +7,7 @@ import { HostUrlService } from 'src/shared/services/host-url.service';
 export class APUsersNotesController {
   constructor(private hostUrlService: HostUrlService) { }
   
-  // TODO
-  @Get(':name/notes/:id')
+  @Get(':name/notes/:id')  // TODO : DB から取る
   public getNote(@Param('name') name: string, @Param('id') id: number, @Res() res: Response): Response {
     const fqdn = this.hostUrlService.fqdn;
     const json = {
