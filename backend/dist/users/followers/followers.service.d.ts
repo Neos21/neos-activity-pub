@@ -7,4 +7,5 @@ export declare class FollowersService {
     constructor(followersRepository: Repository<Follower>, actorObjectSerice: ActorObjectService);
     create(userName: string, actorObject: any): Promise<boolean>;
     findAll(userName: string): Promise<Array<Follower>>;
+    remove(userName: string, actorObject: any): Promise<boolean>;
 }

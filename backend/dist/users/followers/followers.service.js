@@ -34,8 +34,7 @@ let FollowersService = exports.FollowersService = class FollowersService {
             await this.followersRepository.insert(follower);
             return true;
         }
-        catch (error) {
-            console.error('TODO', error);
+        catch (_error) {
             return false;
         }
     }
@@ -44,6 +43,18 @@ let FollowersService = exports.FollowersService = class FollowersService {
             where: { userName },
             order: { createdAt: 'DESC' }
         });
+    }
+    async remove(userName, actorObject) {
+        try {
+            await this.followersRepository.delete({
+                userName: userName,
+                followerName: this.actorObjectSerice.getFullName(actorObject)
+            });
+            return true;
+        }
+        catch (_error) {
+            return false;
+        }
     }
 };
 exports.FollowersService = FollowersService = __decorate([

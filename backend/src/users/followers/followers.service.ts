@@ -30,8 +30,7 @@ export class FollowersService {
       await this.followersRepository.insert(follower);  // Throws
       return true;
     }
-    catch(error) {
-      console.error('TODO', error);
+    catch(_error) {
       return false;
     }
   }
@@ -47,5 +46,25 @@ export class FollowersService {
       where: { userName },
       order: { createdAt: 'DESC' }
     });
+  }
+  
+  /**
+   * フォロワー情報を削除する
+   * 
+   * @param userName User Name
+   * @param actorObject Actor Object
+   * @return 成功なら `true`・失敗なら `false`
+   */
+  public async remove(userName: string, actorObject: any): Promise<boolean> {
+    try {
+      await this.followersRepository.delete({
+        userName    : userName,
+        followerName: this.actorObjectSerice.getFullName(actorObject)
+      });
+      return true;
+    }
+    catch(_error) {
+      return false;
+    }
   }
 }

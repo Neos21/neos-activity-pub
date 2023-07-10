@@ -74,7 +74,9 @@ export class APUsersInboxController {
         const actor = await this.getActor(actorUrl);
         const inboxUrl = actor?.inbox;
         if(inboxUrl == null) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Inbox URL');  // Inbox URL が不明なので処理できない
-        // TODO : フォロワー情報を削除する
+        // フォロワー情報を削除する
+        const isRemoved = await this.followersService.remove(user.name, actor);
+        if(!isRemoved) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Failed To Remove Follower');
         // アンフォローを承認する
         const isAccepted = await this.acceptFollow(user, body.object, inboxUrl);  // Undo 内の Follow Object を使用する
         if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Body');

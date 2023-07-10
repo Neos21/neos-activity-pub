@@ -68,6 +68,9 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
                 const inboxUrl = actor?.inbox;
                 if (inboxUrl == null)
                     return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Inbox URL');
+                const isRemoved = await this.followersService.remove(user.name, actor);
+                if (!isRemoved)
+                    return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Undo Follow But Failed To Remove Follower');
                 const isAccepted = await this.acceptFollow(user, body.object, inboxUrl);
                 if (!isAccepted)
                     return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Body');
