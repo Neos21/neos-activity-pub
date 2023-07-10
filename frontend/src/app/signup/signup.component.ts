@@ -54,6 +54,6 @@ export class SignupComponent {
     catch(error) {
       this.error = `ユーザ登録失敗 : ${JSON.stringify(error)}`;
     }
-    this.isProcessing = true;
+    this.isProcessing = false;
   }
 }
