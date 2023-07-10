@@ -1,37 +1,32 @@
 # NestJS Backend
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
 ## Installation
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Running The App (`http://localhost:3000/`)
 
 ```bash
-# development
-$ npm run start
+# Development
+$ npm run dev
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Production Mode
+$ npm run build
+$ npm start
 ```
 
 ## Test
 
 ```bash
-# unit tests
-$ npm run test
+# Unit Tests
+$ npm test
+# Watch
+$ npm run test:watch
+# Debug
+$ npm run test:debug
 
-# e2e tests
+# E2E Tests
 $ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```

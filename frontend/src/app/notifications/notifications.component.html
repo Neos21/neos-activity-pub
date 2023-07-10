@@ -1,0 +1,15 @@
+<app-loading *ngIf="notifications == null"></app-loading>
+<ng-container *ngIf="notifications != null">
+  <h2>Notifications</h2>
+  <p *ngIf="notifications.length === 0">通知はありません</p>
+  
+  <dl *ngIf="notifications.length > 0">
+    <ng-container *ngFor="let notification of notifications">
+      <dt>{{ notification.createdAt }} … @{{ notification.actorName }}<ng-container *ngIf="notification.remoteHost != null">@{{ notification.remoteHost }}</ng-container></dt>
+      <dd>
+        <div *ngIf="notification.type === 'follow'">フォローされました</div>
+        <div *ngIf="notification.type === 'like'">ふぁぼられました</div>
+      </dd>
+    </ng-container>
+  </dl>
+</ng-container>

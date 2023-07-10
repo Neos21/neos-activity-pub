@@ -3,13 +3,8 @@ import * as expressListEndpoints from 'express-list-endpoints';
 
 import { cyan, green, grey, red, yellow } from './colour-logger';
 
-/**
- * List Routes : https://qiita.com/18kondo/items/1b9793e67b320f640ddd
- * 
- * @param router Express Router
- * @return Log Text
- */
-export const listRoutes = (router: Express) => {
+/** ルーティング一覧を組み立てる https://qiita.com/18kondo/items/1b9793e67b320f640ddd */
+export const listRoutes = (router: Express): string => {
   const endpoints: Array<expressListEndpoints.Endpoint> = expressListEndpoints(router);
   // 最長のパスに合わせて整形する
   const longestPathLength = Math.max(...endpoints.map((endpoint) => endpoint.path.length));

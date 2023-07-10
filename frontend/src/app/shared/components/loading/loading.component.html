@@ -1,0 +1,1 @@
+<div class="loader"><span>Loading...</span></div>

@@ -6,60 +6,43 @@ import { firstValueFrom } from 'rxjs';
 export class AuthService {
   /** ユーザ名 */
   public name: string = '';
-  /** JWT アクセストークン : LocalStorage からのインメモリキャッシュ */
+  /** JWT アクセストークン : LocalStorage からのインメモリキャッシュ・この有無でログイン済か否かを判定する */
   public accessToken: string = '';
-  
   /** ユーザ名・パスワード・JWT アクセストークンを保存する LocalStorage キー名 */
-  private readonly authInfoStorageKey = 'auth_info';
+  private authInfoStorageKey = 'auth_info';
   
-  constructor(private readonly httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) { }
   
-  /**
-   * ログインする
-   * 
-   * @param name Name
-   * @param password Password
-   */
-  public async login(name: string, password: string): Promise<void> {
+  /** ログインする・成功すれば `true`・失敗すれば `false` */
+  public async login(name: string, password: string): Promise<boolean> {
     try {
       // ログイン試行する
-      const { accessToken } = await firstValueFrom(this.httpClient.post<{ accessToken: string; }>('/api/auth/login', { name, password }));
+      const { accessToken } = await firstValueFrom(this.httpClient.post<{ accessToken: string; }>('/api/auth/login', { name, password }));  // Throws
       // ログインできたら LocalStorage とキャッシュを保存する
       window.localStorage.setItem(this.authInfoStorageKey, JSON.stringify({ name, password, accessToken }));
       this.name        = name;
       this.accessToken = accessToken;
-      console.log('Login Succeeded', { accessToken });
+      return true;
     }
     catch(error) {
-      console.warn('Login Failed', { name, password }, error);
-      throw error;
+      console.warn('AuthService : Login : Failed', error);
+      return false;
     }
   }
   
-  /**
-   * 自動再ログインする : LocalStorage から JWT を取得し控える
-   * 
-   * @return 自動再ログインに成功すれば `true`・失敗すれば `false`
-   */
+  /** 自動再ログインする : LocalStorage から JWT を取得し控える */
   public autoReLogin(): boolean {
-    if(this.accessToken) {
-      console.log('Auto Re-Login : Access Token Exists');
-      return true;
-    }
+    if(this.accessToken) return true;
     try {
       const authInfo = window.localStorage.getItem(this.authInfoStorageKey);
-      if(authInfo == null) {
-        console.log('Auto Re-Login : Auth Info Does Not Exist');
-        return false;
-      }
-      const { name, accessToken } = JSON.parse(authInfo);
+      if(authInfo == null) return false;
+      const { name, accessToken } = JSON.parse(authInfo);  // Throws
       this.name        = name;
       this.accessToken = accessToken;  // ココで控えることで CustomInterceptor が JWT を使えるようになる
-      console.log('Auto Re-Login : Succeeded', { accessToken });
       return true;
     }
     catch(error) {
-      console.warn('Auto Re-Login : Failed', error);
+      console.warn('AuthService : Auto Re-Login : Failed', error);
       return false;
     }
   }
@@ -69,6 +52,5 @@ export class AuthService {
     window.localStorage.removeItem(this.authInfoStorageKey);
     this.name        = '';
     this.accessToken = '';
-    console.log('Logout');
   }
 }

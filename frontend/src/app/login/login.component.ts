@@ -11,36 +11,37 @@ import { AuthService } from '../shared/services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  /** 初期表示が完了したかどうか */
+  public isLoaded: boolean = false;
   /** ログインフォーム */
   public form!: FormGroup;
-  /** エラー */
+  /** 処理中かどうか */
+  public isProcessing: boolean = false;
+  /** エラーメッセージ */
   public error?: string;
   
   constructor(
-    private readonly formBuilder: FormBuilder,
-    private readonly authService: AuthService,
-    private readonly router: Router
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
   ) { }
   
-  /** 初期表示時 */
-  public async ngOnInit(): Promise<void | boolean> {
+  public ngOnInit(): void | Promise<boolean> {
     this.form = this.formBuilder.group({
       name    : ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
-    // ログイン済ならこの画面を表示しない (ログアウト処理をちゃんと通させる)
+    // ログイン済ならこの画面を表示しない
     if(this.authService.accessToken) return this.router.navigate(['/home']);
+    this.isLoaded = true;
   }
   
-  /** ログインする */
-  public async login(): Promise<void> {
+  public async login(): Promise<void | boolean> {
     this.error = undefined;
-    try {
-      await this.authService.login(this.form.value.name, this.form.value.password);
-      this.router.navigate(['/home']);
-    }
-    catch(error) {
-      this.error = `ログイン失敗 : ${JSON.stringify(error)}`;
-    }
+    this.isProcessing = true;
+    const isSucceeded = await this.authService.login(this.form.value.name, this.form.value.password);
+    if(isSucceeded) return this.router.navigate(['/home']);
+    this.error = 'ログイン失敗';
+    this.isProcessing = false;
   }
 }

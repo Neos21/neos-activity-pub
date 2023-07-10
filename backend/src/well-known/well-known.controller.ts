@@ -1,69 +1,55 @@
 import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 
-import { UsersService } from '../users/users.service';
+import { HostUrlService } from 'src/shared/services/host-url.service';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('.well-known')
 export class WellKnownController {
   constructor(
-    private readonly configService: ConfigService,
-    private readonly usersService: UsersService
+    private hostUrlService: HostUrlService,
+    private usersService: UsersService
   ) { }
   
-  /**
-   * Get Host Meta
-   * 
-   * @return Host Meta
-   */
+  /** Host Meta を返す */
   @Get('host-meta')
   public getHostMeta(@Res() res: Response): Response {
-    const host = this.configService.get<string>('host');
+    const fqdn = this.hostUrlService.fqdn;
     const xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
       + '<XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">\n'
-      + '  <Link rel="lrdd" template="https://' + host + '/.well-known/webfinger?resource={uri}"/>\n'
+      + '  <Link rel="lrdd" template="' + fqdn + '/.well-known/webfinger?resource={uri}"/>\n'
       + '</XRD>\n';
     return res.status(HttpStatus.OK).type('application/xrd+xml').send(xml);
   }
   
-  /**
-   * Get WebFinger
-   * 
-   * @param resource Resource
-   * @return WebFinger
-   */
+  /** WebFinger を返す */
   @Get('webfinger')
   public async getWebFinger(@Query('resource') resource: string, @Res() res: Response): Promise<Response> {
-    if(resource == null || !resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
-    
-    const isHttp = this.configService.get<number>('isHttp');
-    const host = this.configService.get<string>('host');
-    const domain = `http${isHttp ? '' : 's'}://${host}`;
-    
+    if(resource == null || !resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Bad Request' });
+    // ユーザを取得する
+    const host = this.hostUrlService.host;
+    const fqdn = this.hostUrlService.fqdn;
     const name = resource.replace('acct:', '').replace(`@${host}`, '');
     const user = await this.usersService.findOne(name);
-    if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`Actor [${resource}] is not found.`);
-    
+    if(user == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'Actor Not Found' });
+    // JSON を用意する
     const json = {
       subject: `acct:${user.name}@${host}`,
-      aliases: [
-        `${domain}/@${name}`,
-        `${domain}/users/${name}`
-      ],
+      aliases: [`${fqdn}/api/activity-pub/users/${user.name}`],
       links: [
         {
           rel : 'self',
           type: 'application/activity+json',
-          href: `${domain}/api/activity-pub/users/${user.name}`
+          href: `${fqdn}/api/activity-pub/users/${user.name}`
         },
         {
           rel : 'http://webfinger.net/rel/profile-page',
           type: 'text/html',
-          href: `${domain}/@${name}`
+          href: `${fqdn}/@${name}`
         },
         {
           rel: 'http://ostatus.org/schema/1.0/subscribe',
-          template: `${domain}/authorize-follow?uri={uri}`  // TODO : フォロー画面への遷移
+          template: `${fqdn}/authorize-follow?uri={uri}`  // NOTE : フォロー画面へ遷移できるようにするべき
         }
       ]
     };

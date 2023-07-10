@@ -1,10 +1,4 @@
-/**
- * 環境変数より文字列値を取得する・環境変数が存在しなければデフォルト値を使用する
- * 
- * @param envName 環境変数名
- * @param defaultValue デフォルト値
- * @return 値
- */
+/** 環境変数より文字列値を取得する・環境変数が存在しなければデフォルト値を使用する */
 const getStringValue = (envName: string, defaultValue: string): string => {
   if(process.env[envName] == null || process.env[envName]!.trim() === '') {
     console.log(`configuration#getStringValue()  : Env [${envName}] is empty. Use default value [${defaultValue}]`);
@@ -15,13 +9,7 @@ const getStringValue = (envName: string, defaultValue: string): string => {
   return stringValue;
 };
 
-/**
- * 環境変数より値を取得し数値型で返す・環境変数が存在しないか数値型に変換できない場合はデフォルト値を使用する
- * 
- * @param envName 環境変数名
- * @param defaultValue デフォルト値
- * @return 値
- */
+/** 環境変数より値を取得し数値型で返す・環境変数が存在しないか数値型に変換できない場合はデフォルト値を使用する */
 const getNumberValue = (envName: string, defaultValue: number): number => {
   if(process.env[envName] == null || process.env[envName]!.trim() === '') {
     console.log(`configuration#getNumberValue()  : Env [${envName}] is empty. Use default value [${defaultValue}]`);
@@ -37,12 +25,7 @@ const getNumberValue = (envName: string, defaultValue: number): number => {
   return numberValue;
 };
 
-/**
- * 環境変数より値が設定されているか否かで Boolean 値を返す
- * 
- * @param envName 環境変数名
- * @return 当該環境変数に何らかの値が設定されていれば `true`・未定義であれば `false`
- */
+/** 当該の環境変数に何らかの値が設定されていれば `true`・未定義であれば `false` を返す */
 const getBooleanValue = (envName: string): boolean => {
   const isTruthy = process.env[envName] != null;
   console.log(`configuration#getBooleanValue() : Env [${envName}] = [${isTruthy}]`);

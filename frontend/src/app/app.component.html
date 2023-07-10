@@ -1,8 +1,18 @@
-<h1>{{ title }}</h1>
-<ul>
-  <li><a [routerLink]="'/login'">Login</a></li>
-  <li><a [routerLink]="'/signup'">Sign Up</a></li>
-  <li><a [routerLink]="'/home'">Home</a></li>
-</ul>
-
-<router-outlet></router-outlet>
+<div class="app">
+  <header class="header">
+    <div class="header-inner">
+      <h1><a [routerLink]="'/'">Neo's ActivityPub</a></h1>
+      <div>
+        <ul>
+          <li *ngIf="!isLoggedIn()"><a [routerLink]="'/login'">Login</a></li>
+          <li *ngIf="!isLoggedIn()"><a [routerLink]="'/signup'">Sign Up</a></li>
+          <li *ngIf="isLoggedIn()" ><a [routerLink]="'/home'">Home</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+  
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
