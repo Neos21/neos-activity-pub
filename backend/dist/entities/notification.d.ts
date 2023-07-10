@@ -1,4 +1,5 @@
 export declare class Notification {
+    id: number;
     userName: string;
     type: string;
     actorName: string;

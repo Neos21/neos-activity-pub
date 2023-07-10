@@ -17,7 +17,11 @@ let Notification = exports.Notification = class Notification {
     }
 };
 __decorate([
-    (0, typeorm_1.PrimaryColumn)({ type: 'text', name: 'user_name' }),
+    (0, typeorm_1.PrimaryGeneratedColumn)({ name: 'id' }),
+    __metadata("design:type", Number)
+], Notification.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', name: 'user_name' }),
     __metadata("design:type", String)
 ], Notification.prototype, "userName", void 0);
 __decorate([

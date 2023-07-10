@@ -1,10 +1,14 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 /** 通知 */
 @Entity('notifications')
 export class Notification {
+  /** ID */
+  @PrimaryGeneratedColumn({ name: 'id' })
+  public id: number;
+  
   /** ユーザ名 */
-  @PrimaryColumn({ type: 'text', name: 'user_name' })
+  @Column({ type: 'text', name: 'user_name' })
   public userName: string;
   
   /** 通知タイプ : `follow`・`like` */

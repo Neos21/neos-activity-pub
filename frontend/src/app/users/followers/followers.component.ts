@@ -27,6 +27,7 @@ export class FollowersComponent {
       try {
         const followers = await this.followersService.findAll(name);  // Throws
         this.followers = followers;
+        console.log('TODO', { followers });
       }
       catch(_error) {
         this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時
