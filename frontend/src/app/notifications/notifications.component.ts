@@ -22,7 +22,6 @@ export class NotificationsComponent {
     try {
       const notifications = await this.notificationsService.findAll();  // Throws
       this.notifications = notifications;
-      console.log('TODO', { notifications });
     }
     catch(_error) {
       this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時
