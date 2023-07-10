@@ -6,7 +6,7 @@
   
   <dl *ngIf="followers.length > 0">
     <ng-container *ngFor="let follower of followers">
-      <dt><a [routerLink]="[follower.actorUrl]">@{{ follower.followerName }}</a></dt>
+      <dt><a [href]="follower.actorUrl">@{{ follower.followerName }}</a></dt>
       <dd>{{ follower.createdAt }} 〜</dd>
     </ng-container>
   </dl>
