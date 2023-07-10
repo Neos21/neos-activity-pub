@@ -1,2 +1,13 @@
-<p>followers works!</p>
-<p>{{ followers }}</p>
+<app-loading *ngIf="followers == null"></app-loading>
+<ng-container *ngIf="followers != null">
+  <ng-container *ngIf="followers.length === 0">
+    <div>フォロワーはいません</div>
+  </ng-container>
+  
+  <dl *ngIf="followers.length > 0">
+    <ng-container *ngFor="let follower of followers">
+      <dt><a [routerLink]="[follower.actorUrl]">@{{ follower.followerName }}</a></dt>
+      <dd>{{ follower.createdAt }} 〜</dd>
+    </ng-container>
+  </dl>
+</ng-container>

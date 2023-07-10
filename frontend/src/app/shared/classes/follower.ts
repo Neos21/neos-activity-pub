@@ -4,6 +4,8 @@ export class Follower {
   public userName!: string;
   /** フォロワー名 */
   public followerName!: string;
+  /** Actor URL */
+  public actorUrl!: string;
   /** 登録日時 */
   public createdAt!: string;
   
