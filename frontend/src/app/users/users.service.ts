@@ -6,16 +6,15 @@ import { User } from '../shared/classes/user';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
-  constructor(private readonly httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) { }
   
   /**
    * ユーザを取得する
    * 
    * @param name User Name
-   * @return User
-   * @throws Request Response Error
+   * @return User・取得できなかった場合は `null`
    */
-  public async findOne(name: string): Promise<User> {
-    return await firstValueFrom(this.httpClient.get<User>(`/api/users/${name}`));
+  public async findOne(name: string): Promise<User | null> {
+    return await firstValueFrom(this.httpClient.get<User>(`/api/users/${name}`)).catch(_error => null);
   }
 }

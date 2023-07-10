@@ -1,30 +1,28 @@
 import * as crypto from 'node:crypto';
 import * as util from 'node:util';
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsSelect, Repository } from 'typeorm';
 import * as bcryptjs from 'bcryptjs';
 
-import { User } from '../entities/user';
+import { User } from 'src/entities/user';
 
 /** 鍵ペアを非同期に生成する */
 const generateKeyPairAsync = util.promisify(crypto.generateKeyPair);
 
 @Injectable()
 export class UsersService {
-  private readonly logger: Logger = new Logger(UsersService.name);
-  
-  constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) { }
+  constructor(@InjectRepository(User) private usersRepository: Repository<User>) { }
   
   /**
    * ユーザを登録する
    * 
    * @param user User (Name・Password)
-   * @return 登録した User 情報
+   * @return 登録成功したら `true`
    * @throws バリデーションエラー時、登録失敗時
    */
-  public async create(user: User): Promise<User> {
+  public async create(user: User): Promise<boolean> {
     // ユーザ名 : 英小文字・数字・ハイフンのみ許容する
     if(!(/^[a-z0-9-]+$/u).test(user.name)) throw new Error('Invalid User Name');
     // パスワード : 未入力でなければよしとする
@@ -44,14 +42,9 @@ export class UsersService {
     user.publicKey  = publicKey;
     user.privateKey = privateKey;
     
-    // 登録日を設定する
-    user.createdAt = new Date().toISOString().slice(0, 10);
-    
     // Insert
-    const insertResult = await this.usersRepository.insert(user); // Throws
-    this.logger.debug('User Created', JSON.stringify(insertResult));
-    // Result
-    return this.findOne(user.name);
+    await this.usersRepository.insert(user); // Throws
+    return true;
   }
   
   /**
@@ -81,7 +74,7 @@ export class UsersService {
    * @returns User・見つからなかった場合は `null`
    */
   public async findOneWithPublicKey(name: string): Promise<User | null> {
-    return this.findOneBase(name, { name: true, publicKey: true });
+    return this.findOneBase(name, { name: true, createdAt: true, publicKey: true });
   }
   
   /**

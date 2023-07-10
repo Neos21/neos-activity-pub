@@ -1,14 +1,14 @@
 import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 
-import { HostUrlService } from '../shared/services/host-url/host-url.service';
-import { UsersService } from '../users/users.service';
+import { HostUrlService } from 'src/shared/services/host-url.service';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('.well-known')
 export class WellKnownController {
   constructor(
-    private readonly hostUrlService: HostUrlService,
-    private readonly usersService: UsersService
+    private hostUrlService: HostUrlService,
+    private usersService: UsersService
   ) { }
   
   /**

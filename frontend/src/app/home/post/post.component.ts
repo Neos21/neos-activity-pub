@@ -17,8 +17,8 @@ export class PostComponent implements OnInit {
   public error?: string;
   
   constructor(
-    private readonly formBuilder: FormBuilder,
-    private readonly httpClient: HttpClient
+    private formBuilder: FormBuilder,
+    private httpClient: HttpClient
   ) { }
   
   public ngOnInit(): void {
@@ -32,12 +32,11 @@ export class PostComponent implements OnInit {
     this.error = undefined;
     try {
       const text = this.form.value.text;
-      await firstValueFrom(this.httpClient.post('/api/posts', { text }));
+      await firstValueFrom(this.httpClient.post('/api/posts', { text }));  // Throws
       this.form.setValue({ text: '' });
     }
     catch(error) {
-      console.warn('PostComponent : Post : Failed', error);
-      this.error = '投稿に失敗しました';
+      this.error = `投稿に失敗しました : ${JSON.stringify(error)}`;
     }
     this.isProcessing = false;
   }

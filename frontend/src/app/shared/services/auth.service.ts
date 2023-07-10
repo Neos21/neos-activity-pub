@@ -10,9 +10,9 @@ export class AuthService {
   public accessToken: string = '';
   
   /** ユーザ名・パスワード・JWT アクセストークンを保存する LocalStorage キー名 */
-  private readonly authInfoStorageKey = 'auth_info';
+  private authInfoStorageKey = 'auth_info';
   
-  constructor(private readonly httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) { }
   
   /**
    * ログインする
@@ -24,7 +24,7 @@ export class AuthService {
   public async login(name: string, password: string): Promise<boolean> {
     try {
       // ログイン試行する
-      const { accessToken } = await firstValueFrom(this.httpClient.post<{ accessToken: string; }>('/api/auth/login', { name, password }));
+      const { accessToken } = await firstValueFrom(this.httpClient.post<{ accessToken: string; }>('/api/auth/login', { name, password }));  // Throws
       // ログインできたら LocalStorage とキャッシュを保存する
       window.localStorage.setItem(this.authInfoStorageKey, JSON.stringify({ name, password, accessToken }));
       this.name        = name;

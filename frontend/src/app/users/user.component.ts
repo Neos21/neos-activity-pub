@@ -14,23 +14,21 @@ export class UserComponent {
   public user?: User;
   
   constructor(
-    private readonly activatedRoute: ActivatedRoute,
-    private readonly router: Router,
-    private readonly usersService: UsersService
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private usersService: UsersService
   ) { }
   
   public ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(async (params: ParamMap): Promise<void | boolean> => {
       const name = params.get('name');
-      if(name == null) return this.router.navigate(['/']);  // ユーザ名画未指定の場合はトップに戻す
+      if(name == null) return this.router.navigate(['/']);  // ユーザ名が未指定の場合はトップに戻す
       
-      try {
-        this.user = await this.usersService.findOne(name);
-      }
-      catch(error) {
-        console.warn('UserComponent : Invalid User Name', error);
-        return this.router.navigate(['/']);  // ユーザが見つからなかった場合はトップに戻す
-      }
+      const user = await this.usersService.findOne(name);
+      if(user == null) return this.router.navigate(['/']);  // ユーザが見つからなかった場合はトップに戻す
+      
+      user.createdAt = user.createdAt.slice(0 ,10);  // SQLite の都合上 `YYYY-MM-DDTHH:mm:SS.SSSZ` 形式の文字列で届くので年月日だけにする
+      this.user = user;
     });
   }
 }

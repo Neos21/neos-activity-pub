@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WellKnownController = void 0;
 const common_1 = require("@nestjs/common");
-const host_url_service_1 = require("../shared/services/host-url/host-url.service");
+const host_url_service_1 = require("../shared/services/host-url.service");
 const users_service_1 = require("../users/users.service");
 let WellKnownController = exports.WellKnownController = class WellKnownController {
     constructor(hostUrlService, usersService) {

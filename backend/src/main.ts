@@ -3,8 +3,9 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as express from 'express';
 
-import { cyan, yellow } from './common/utils/colour-logger';
-import { listRoutes } from './common/utils/list-routes';
+import { cyan, yellow } from './core/utils/colour-logger';
+import { listRoutes } from './core/utils/list-routes';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {

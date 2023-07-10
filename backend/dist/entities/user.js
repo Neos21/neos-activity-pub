@@ -12,6 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 let User = exports.User = class User {
+    constructor(partial) {
+        Object.assign(this, partial);
+    }
 };
 __decorate([
     (0, typeorm_1.PrimaryColumn)({ type: 'text', name: 'name' }),
@@ -30,10 +33,11 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "privateKey", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'text', name: 'created_at' }),
-    __metadata("design:type", String)
+    (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
+    __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
 exports.User = User = __decorate([
-    (0, typeorm_1.Entity)('users')
+    (0, typeorm_1.Entity)('users'),
+    __metadata("design:paramtypes", [Object])
 ], User);
 //# sourceMappingURL=user.js.map

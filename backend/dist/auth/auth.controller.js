@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const bcryptjs = require("bcryptjs");
 const users_service_1 = require("../users/users.service");
-const jwt_auth_guard_1 = require("./jwt-auth.guard");
 let AuthController = exports.AuthController = class AuthController {
     constructor(jwtService, usersService) {
         this.jwtService = jwtService;
@@ -25,7 +24,7 @@ let AuthController = exports.AuthController = class AuthController {
     }
     async login(name, password, res) {
         const user = await this.usersService.findOneWithPassword(name);
-        if (!user)
+        if (user == null)
             throw new common_1.UnauthorizedException();
         const isSame = await bcryptjs.compare(password, user.password);
         if (!isSame)
@@ -33,9 +32,6 @@ let AuthController = exports.AuthController = class AuthController {
         const payload = { sub: name, name };
         const json = { accessToken: await this.jwtService.signAsync(payload) };
         return res.json(json);
-    }
-    jwtTest(res) {
-        return res.json({ result: 'TODO : JWT OK' });
     }
 };
 __decorate([
@@ -47,14 +43,6 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Get)('test'),
-    __param(0, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Object)
-], AuthController.prototype, "jwtTest", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('api/auth'),
     __metadata("design:paramtypes", [jwt_1.JwtService,

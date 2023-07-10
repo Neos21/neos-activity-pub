@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../shared/services/auth.service';
 
@@ -16,18 +14,12 @@ export class HomeComponent implements OnInit {
   public name!: string;
   
   constructor(
-    private readonly httpClient: HttpClient,
-    private readonly router: Router,
-    private readonly authService: AuthService
+    private router: Router,
+    private authService: AuthService
   ) { }
   
   public ngOnInit(): void {
     this.name = this.authService.name;
-  }
-  
-  public async test(): Promise<void> {
-    const result = await firstValueFrom(this.httpClient.get('/api/auth/test'));
-    console.log('TODO : Test', result);
   }
   
   /** ログアウトする */

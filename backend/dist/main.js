@@ -4,8 +4,8 @@ const core_1 = require("@nestjs/core");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const express = require("express");
-const colour_logger_1 = require("./common/utils/colour-logger");
-const list_routes_1 = require("./common/utils/list-routes");
+const colour_logger_1 = require("./core/utils/colour-logger");
+const list_routes_1 = require("./core/utils/list-routes");
 const app_module_1 = require("./app.module");
 async function bootstrap() {
     const logger = new common_1.Logger(bootstrap.name);

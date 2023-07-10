@@ -1,12 +1,12 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 
-import { User } from '../entities/user';
+import { User } from 'src/entities/user';
 import { UsersService } from './users.service';
 
 @Controller('api/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private usersService: UsersService) { }
   
   /**
    * ユーザを登録する
@@ -18,8 +18,8 @@ export class UsersController {
   @Post('')
   public async create(@Body() user: User, @Res() res: Response): Promise<Response> {
     try {
-      const createdUser = await this.usersService.create(user);
-      return res.status(HttpStatus.OK).json(createdUser);
+      await this.usersService.create(user);
+      return res.status(HttpStatus.OK).end();
     }
     catch(error) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: error.toString() });

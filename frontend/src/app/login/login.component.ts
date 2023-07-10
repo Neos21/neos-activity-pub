@@ -21,9 +21,9 @@ export class LoginComponent {
   public error?: string;
   
   constructor(
-    private readonly formBuilder: FormBuilder,
-    private readonly authService: AuthService,
-    private readonly router: Router
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router
   ) { }
   
   public async ngOnInit(): Promise<void | boolean> {

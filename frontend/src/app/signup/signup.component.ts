@@ -26,10 +26,10 @@ export class SignupComponent {
   public error?: string;
   
   constructor(
-    private readonly formBuilder: FormBuilder,
-    private readonly httpClient: HttpClient,
-    private readonly router: Router,
-    private readonly authService: AuthService
+    private formBuilder: FormBuilder,
+    private httpClient: HttpClient,
+    private router: Router,
+    private authService: AuthService
   ) { }
   
   public async ngOnInit(): Promise<void | boolean> {
@@ -50,7 +50,7 @@ export class SignupComponent {
     try {
       const name     = this.form.value.name;
       const password = this.form.value.password;
-      await firstValueFrom(this.httpClient.post<User>('/api/users', { name, password }));
+      await firstValueFrom(this.httpClient.post<User>('/api/users', { name, password }));  // Throws
       this.isSucceeded = true;
     }
     catch(error) {

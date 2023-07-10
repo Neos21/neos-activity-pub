@@ -14,19 +14,27 @@ const jwt_1 = require("@nestjs/jwt");
 const typeorm_1 = require("@nestjs/typeorm");
 const serve_static_1 = require("@nestjs/serve-static");
 const axios_1 = require("@nestjs/axios");
-const configuration_1 = require("./common/configuration");
-const access_log_middleware_1 = require("./common/access-log.middleware");
+const configuration_1 = require("./core/configuration");
+const access_log_middleware_1 = require("./core/access-log.middleware");
 const user_1 = require("./entities/user");
-const activity_pub_controller_1 = require("./activity-pub/activity-pub.controller");
-const inbox_controller_1 = require("./activity-pub/inbox.controller");
-const outbox_controller_1 = require("./activity-pub/outbox.controller");
+const post_1 = require("./entities/post");
+const follower_1 = require("./entities/follower");
+const notification_1 = require("./entities/notification");
+const ap_users_controller_1 = require("./activity-pub/users/ap-users.controller");
+const ap_users_inbox_controller_1 = require("./activity-pub/users/inbox/ap-users-inbox.controller");
+const ap_users_outbox_controller_1 = require("./activity-pub/users/outbox/ap-users-outbox.controller");
 const auth_controller_1 = require("./auth/auth.controller");
 const users_controller_1 = require("./users/users.controller");
+const posts_controller_1 = require("./users/posts/posts.controller");
 const well_known_controller_1 = require("./well-known/well-known.controller");
 const app_controller_1 = require("./app.controller");
-const host_url_service_1 = require("./shared/services/host-url/host-url.service");
+const host_url_service_1 = require("./shared/services/host-url.service");
+const actor_object_service_1 = require("./shared/services/actor-object.service");
 const users_service_1 = require("./users/users.service");
-const posts_controller_1 = require("./posts/posts.controller");
+const followers_service_1 = require("./users/followers/followers.service");
+const notifications_service_1 = require("./notifications/notifications.service");
+const followers_controller_1 = require("./users/followers/followers.controller");
+const notifications_controller_1 = require("./notifications/notifications.controller");
 let AppModule = exports.AppModule = class AppModule {
     configure(middlewareConsumer) {
         middlewareConsumer.apply(access_log_middleware_1.AccessLogMiddleware).forRoutes('*');
@@ -51,13 +59,19 @@ exports.AppModule = AppModule = __decorate([
                     type: 'sqlite',
                     database: path.resolve(__dirname, '../db/neos-activity-pub-backend.sqlite3.db'),
                     entities: [
-                        user_1.User
+                        user_1.User,
+                        post_1.Post,
+                        follower_1.Follower,
+                        notification_1.Notification
                     ],
                     synchronize: true
                 })
             }),
             typeorm_1.TypeOrmModule.forFeature([
-                user_1.User
+                user_1.User,
+                post_1.Post,
+                follower_1.Follower,
+                notification_1.Notification
             ]),
             serve_static_1.ServeStaticModule.forRootAsync({
                 useFactory: () => [{
@@ -67,18 +81,23 @@ exports.AppModule = AppModule = __decorate([
             axios_1.HttpModule
         ],
         controllers: [
-            activity_pub_controller_1.ActivityPubController,
-            inbox_controller_1.InboxController,
-            outbox_controller_1.OutboxController,
+            ap_users_controller_1.APUsersController,
+            ap_users_inbox_controller_1.APUsersInboxController,
+            ap_users_outbox_controller_1.APUsersOutboxController,
             auth_controller_1.AuthController,
             users_controller_1.UsersController,
+            posts_controller_1.PostsController,
             well_known_controller_1.WellKnownController,
             app_controller_1.AppController,
-            posts_controller_1.PostsController
+            followers_controller_1.FollowersController,
+            notifications_controller_1.NotificationsController
         ],
         providers: [
             host_url_service_1.HostUrlService,
-            users_service_1.UsersService
+            actor_object_service_1.ActorObjectService,
+            users_service_1.UsersService,
+            followers_service_1.FollowersService,
+            notifications_service_1.NotificationsService
         ]
     })
 ], AppModule);

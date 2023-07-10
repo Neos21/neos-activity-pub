@@ -5,6 +5,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { SharedModule } from './shared/shared.module';
 import { AppRoutingModule } from './app-routing.module';
+import { CustomInterceptor } from './core/custom.interceptor';
 
 import { AppComponent } from './app.component';
 
@@ -13,9 +14,9 @@ import { SignupComponent } from './signup/signup.component';
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './users/user.component';
 import { RedirectComponent } from './core/redirect.component';
-
-import { CustomInterceptor } from './core/custom.interceptor';
 import { PostComponent } from './home/post/post.component';
+import { FollowersComponent } from './users/followers/followers.component';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 @NgModule({
   imports: [
@@ -33,9 +34,11 @@ import { PostComponent } from './home/post/post.component';
     LoginComponent,
     HomeComponent,
     UserComponent,
+    PostComponent,
+    FollowersComponent,
+    NotificationsComponent,
     RedirectComponent,
-    AppComponent,
-    PostComponent
+    AppComponent
   ],
   providers: [
     {

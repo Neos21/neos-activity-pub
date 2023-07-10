@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
 
 /** ユーザ */
 @Entity('users')
@@ -19,7 +19,11 @@ export class User {
   @Column({ type: 'text', name: 'private_key' })
   public privateKey: string;
   
-  /** 登録日 (YYYY-MM-DD) */
-  @Column({ type: 'text', name: 'created_at' })
-  public createdAt: string;
+  /** 登録日時 */
+  @CreateDateColumn({ name: 'created_at' })
+  public createdAt: Date;
+  
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

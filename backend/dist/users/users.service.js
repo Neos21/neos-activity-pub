@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var UsersService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const crypto = require("node:crypto");
@@ -22,10 +21,9 @@ const typeorm_2 = require("typeorm");
 const bcryptjs = require("bcryptjs");
 const user_1 = require("../entities/user");
 const generateKeyPairAsync = util.promisify(crypto.generateKeyPair);
-let UsersService = exports.UsersService = UsersService_1 = class UsersService {
+let UsersService = exports.UsersService = class UsersService {
     constructor(usersRepository) {
         this.usersRepository = usersRepository;
-        this.logger = new common_1.Logger(UsersService_1.name);
     }
     async create(user) {
         if (!(/^[a-z0-9-]+$/u).test(user.name))
@@ -42,10 +40,8 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
         });
         user.publicKey = publicKey;
         user.privateKey = privateKey;
-        user.createdAt = new Date().toISOString().slice(0, 10);
-        const insertResult = await this.usersRepository.insert(user);
-        this.logger.debug('User Created', JSON.stringify(insertResult));
-        return this.findOne(user.name);
+        await this.usersRepository.insert(user);
+        return true;
     }
     async findOne(name) {
         return this.findOneBase(name, { name: true, createdAt: true });
@@ -54,7 +50,7 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
         return this.findOneBase(name, { name: true, password: true });
     }
     async findOneWithPublicKey(name) {
-        return this.findOneBase(name, { name: true, publicKey: true });
+        return this.findOneBase(name, { name: true, createdAt: true, publicKey: true });
     }
     async findOneWithPrivateKey(name) {
         return this.findOneBase(name, { name: true, privateKey: true });
@@ -66,7 +62,7 @@ let UsersService = exports.UsersService = UsersService_1 = class UsersService {
         });
     }
 };
-exports.UsersService = UsersService = UsersService_1 = __decorate([
+exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository])

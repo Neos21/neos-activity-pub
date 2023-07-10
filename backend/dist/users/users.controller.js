@@ -22,8 +22,8 @@ let UsersController = exports.UsersController = class UsersController {
     }
     async create(user, res) {
         try {
-            const createdUser = await this.usersService.create(user);
-            return res.status(common_1.HttpStatus.OK).json(createdUser);
+            await this.usersService.create(user);
+            return res.status(common_1.HttpStatus.OK).end();
         }
         catch (error) {
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: error.toString() });
