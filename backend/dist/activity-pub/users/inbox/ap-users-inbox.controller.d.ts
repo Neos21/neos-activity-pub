@@ -1,17 +1,17 @@
 import { HttpService } from '@nestjs/axios';
 import { Response } from 'express';
-import { UsersService } from 'src/users/users.service';
-import { HostUrlService } from 'src/shared/services/host-url.service';
 import { FollowersService } from 'src/users/followers/followers.service';
+import { HostUrlService } from 'src/shared/services/host-url.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { UsersService } from 'src/users/users.service';
 export declare class APUsersInboxController {
     private httpService;
-    private usersService;
-    private hostUrlService;
     private followersService;
+    private hostUrlService;
     private notificationsService;
+    private usersService;
     private logger;
-    constructor(httpService: HttpService, usersService: UsersService, hostUrlService: HostUrlService, followersService: FollowersService, notificationsService: NotificationsService);
+    constructor(httpService: HttpService, followersService: FollowersService, hostUrlService: HostUrlService, notificationsService: NotificationsService, usersService: UsersService);
     inbox(name: string, body: any, res: Response): Promise<Response>;
     private getActor;
     private acceptFollow;

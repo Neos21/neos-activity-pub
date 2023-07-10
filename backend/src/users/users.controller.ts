@@ -1,20 +1,15 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 
-import { User } from 'src/entities/user';
 import { UsersService } from './users.service';
+
+import { User } from 'src/entities/user';
 
 @Controller('api/users')
 export class UsersController {
   constructor(private usersService: UsersService) { }
   
-  /**
-   * ユーザを登録する
-   * 
-   * @param user User (Name・Password)
-   * @param res Response
-   * @return Response
-   */
+  /** ユーザを登録する */
   @Post('')
   public async create(@Body() user: User, @Res() res: Response): Promise<Response> {
     try {
@@ -26,13 +21,7 @@ export class UsersController {
     }
   }
   
-  /**
-   * ユーザ情報を返す　
-   * 
-   * @param name User Name
-   * @param res Response
-   * @return Response
-   */
+  /** ユーザ情報を返す */
   @Get(':name')
   public async findOne(@Param('name') name: string, @Res() res: Response): Promise<Response> {
     const user = await this.usersService.findOne(name);

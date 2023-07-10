@@ -13,7 +13,6 @@ export class JwtAuthGuard implements CanActivate {
   /**
    * JWT 認証する
    * 
-   * @param context Context
    * @return 認証成功なら `true`
    * @throws 認証失敗時
    */
@@ -34,12 +33,7 @@ export class JwtAuthGuard implements CanActivate {
     return true;
   }
   
-  /**
-   * ヘッダからトークンを取得する
-   * 
-   * @param request Request
-   * @return Bearer Token・なければ `null`
-   */
+  /** リクエストヘッダから Bearer トークンを取得する */
   private extractTokenFromHeader(request: Request): string | null {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : null;

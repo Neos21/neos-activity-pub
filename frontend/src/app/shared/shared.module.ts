@@ -11,20 +11,20 @@ import { LoadingComponent } from './components/loading/loading.component';
   imports: [
     CommonModule,
     FormsModule,
+    HttpClientModule,
     ReactiveFormsModule,
-    HttpClientModule
   ],
   declarations: [
     ErrorComponent,
     InfoComponent,
-    LoadingComponent
+    LoadingComponent,
   ],
   exports: [  // Re-Export
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
     HttpClientModule,
-    
+    ReactiveFormsModule,
+    // Components
     ErrorComponent,
     InfoComponent,
     LoadingComponent

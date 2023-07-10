@@ -10,11 +10,7 @@ export class ErrorComponent {
   @Input()
   public error?: Error | string;
   
-  /**
-   * エラーメッセージを表示する
-   * 
-   * @return エラーメッセージ
-   */
+  /** エラーメッセージを表示する */
   public errorMessage(): string {
     if(this.error == null) return 'Unknown Error';
     if(typeof this.error === 'string') return this.error;

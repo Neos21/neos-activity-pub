@@ -15,14 +15,13 @@ export class HomeComponent implements OnInit {
   
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) { }
   
   public ngOnInit(): void {
     this.name = this.authService.name;
   }
   
-  /** ログアウトする */
   public logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);

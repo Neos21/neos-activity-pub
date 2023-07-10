@@ -12,9 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Post = void 0;
 const typeorm_1 = require("typeorm");
 let Post = exports.Post = class Post {
-    constructor(partial) {
-        Object.assign(this, partial);
-    }
+    constructor(partial) { Object.assign(this, partial); }
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)({ name: 'id' }),

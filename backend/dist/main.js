@@ -10,9 +10,7 @@ const app_module_1 = require("./app.module");
 async function bootstrap() {
     const logger = new common_1.Logger(bootstrap.name);
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    app.use(express.json({
-        type: ['application/activity+json', 'application/json']
-    }));
+    app.use(express.json({ type: ['application/activity+json', 'application/json'] }));
     app.enableCors({
         origin: (/localhost/),
         methods: 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
@@ -22,8 +20,7 @@ async function bootstrap() {
     const port = app.get(config_1.ConfigService).get('port');
     await app.listen(port);
     logger.log((0, colour_logger_1.cyan)(`Server started at port [`) + (0, colour_logger_1.yellow)(`${port}`) + (0, colour_logger_1.cyan)(']'));
-    const router = app.getHttpServer()._events.request._router;
-    logger.log((0, list_routes_1.listRoutes)(router));
+    logger.log((0, list_routes_1.listRoutes)(app.getHttpServer()._events.request._router));
 }
 void bootstrap();
 //# sourceMappingURL=main.js.map

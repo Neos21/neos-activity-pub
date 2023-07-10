@@ -17,9 +17,9 @@ const common_1 = require("@nestjs/common");
 const followers_service_1 = require("./followers.service");
 const users_service_1 = require("../users.service");
 let FollowersController = exports.FollowersController = class FollowersController {
-    constructor(usersService, followersService) {
-        this.usersService = usersService;
+    constructor(followersService, usersService) {
         this.followersService = followersService;
+        this.usersService = usersService;
     }
     async findAll(name, res) {
         try {
@@ -44,7 +44,7 @@ __decorate([
 ], FollowersController.prototype, "findAll", null);
 exports.FollowersController = FollowersController = __decorate([
     (0, common_1.Controller)('api/users'),
-    __metadata("design:paramtypes", [users_service_1.UsersService,
-        followers_service_1.FollowersService])
+    __metadata("design:paramtypes", [followers_service_1.FollowersService,
+        users_service_1.UsersService])
 ], FollowersController);
 //# sourceMappingURL=followers.controller.js.map

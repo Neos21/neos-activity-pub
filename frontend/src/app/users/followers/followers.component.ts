@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
-import { Follower } from 'src/app/shared/classes/follower';
 import { FollowersService } from './followers.service';
+
+import { Follower } from 'src/app/shared/classes/follower';
 
 @Component({
   selector: 'app-followers',
@@ -23,10 +24,8 @@ export class FollowersComponent {
     this.activatedRoute.paramMap.subscribe(async (params: ParamMap): Promise<void | boolean> => {
       const name = params.get('name');
       if(name == null) return this.router.navigate(['/']);  // ユーザ名が未指定の場合はトップに戻す
-      
       try {
-        const followers = await this.followersService.findAll(name);  // Throws
-        this.followers = followers;
+        this.followers = await this.followersService.findAll(name);  // Throws
       }
       catch(_error) {
         this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時

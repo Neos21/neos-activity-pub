@@ -31,18 +31,16 @@ let WellKnownController = exports.WellKnownController = class WellKnownControlle
     }
     async getWebFinger(resource, res) {
         if (resource == null || !resource.startsWith('acct:'))
-            return res.status(common_1.HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
+            return res.status(common_1.HttpStatus.BAD_REQUEST).send('Bad Request');
         const host = this.hostUrlService.host;
         const fqdn = this.hostUrlService.fqdn;
         const name = resource.replace('acct:', '').replace(`@${host}`, '');
         const user = await this.usersService.findOne(name);
         if (user == null)
-            return res.status(common_1.HttpStatus.NOT_FOUND).send(`Actor [${resource}] is not found.`);
+            return res.status(common_1.HttpStatus.NOT_FOUND).send('Actor Not Found');
         const json = {
             subject: `acct:${user.name}@${host}`,
-            aliases: [
-                `${fqdn}/api/activity-pub/users/${user.name}`
-            ],
+            aliases: [`${fqdn}/api/activity-pub/users/${user.name}`],
             links: [
                 {
                     rel: 'self',

@@ -5,7 +5,5 @@ export class User {
   /** 登録日 */
   public createdAt!: string;
   
-  constructor(partial: Partial<User>) {
-    Object.assign(this, partial);
-  }
+  constructor(partial: Partial<User>) { Object.assign(this, partial); }
 }

@@ -13,7 +13,5 @@ export class Notification {
   /** 登録日時 */
   public createdAt!: string;
   
-  constructor(partial: Partial<Notification>) {
-    Object.assign(this, partial);
-  }
+  constructor(partial: Partial<Notification>) { Object.assign(this, partial); }
 }

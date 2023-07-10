@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NotificationsService } from './notifications.service';
+
 import { Notification } from '../shared/classes/notification';
 
 @Component({
@@ -15,13 +16,12 @@ export class NotificationsComponent {
   
   constructor(
     private router: Router,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
   ) { }
   
   public async ngOnInit(): Promise<void> {
     try {
-      const notifications = await this.notificationsService.findAll();  // Throws
-      this.notifications = notifications;
+      this.notifications = await this.notificationsService.findAll();  // Throws
     }
     catch(_error) {
       this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時

@@ -3,12 +3,11 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class HostUrlService {
-  /** ホスト名 */
+  /** ホスト名 (`example.com` の形) */
   public host: string;
   /** HTTP か否か (`false` なら HTTPS) */
   public isHttp: boolean;
-  
-  /** FQDN ()`https://example.com` の形) */
+  /** FQDN (`https://example.com` の形) */
   public fqdn: string;
   
   constructor(private configService: ConfigService) {

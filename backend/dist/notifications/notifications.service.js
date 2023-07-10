@@ -11,19 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var NotificationsService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const notification_1 = require("../entities/notification");
 const actor_object_service_1 = require("../shared/services/actor-object.service");
-let NotificationsService = exports.NotificationsService = NotificationsService_1 = class NotificationsService {
+const notification_1 = require("../entities/notification");
+let NotificationsService = exports.NotificationsService = class NotificationsService {
     constructor(notificationsRepository, actorObjectSerice) {
         this.notificationsRepository = notificationsRepository;
         this.actorObjectSerice = actorObjectSerice;
-        this.logger = new common_1.Logger(NotificationsService_1.name);
     }
     async createFollow(userName, actorObject) {
         try {
@@ -36,8 +34,7 @@ let NotificationsService = exports.NotificationsService = NotificationsService_1
             await this.notificationsRepository.insert(notification);
             return true;
         }
-        catch (error) {
-            this.logger.error('Failed To Create Follow', error);
+        catch (_error) {
             return false;
         }
     }
@@ -48,7 +45,7 @@ let NotificationsService = exports.NotificationsService = NotificationsService_1
         });
     }
 };
-exports.NotificationsService = NotificationsService = NotificationsService_1 = __decorate([
+exports.NotificationsService = NotificationsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(notification_1.Notification)),
     __metadata("design:paramtypes", [typeorm_2.Repository,

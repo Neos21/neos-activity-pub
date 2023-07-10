@@ -26,7 +26,7 @@ let PostsController = exports.PostsController = class PostsController {
 };
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Post)(':name/posts'),
+    (0, common_1.Post)(''),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Param)('name')),
     __param(2, (0, common_1.Body)('text')),
@@ -36,6 +36,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PostsController.prototype, "create", null);
 exports.PostsController = PostsController = __decorate([
-    (0, common_1.Controller)('api')
+    (0, common_1.Controller)('api/posts')
 ], PostsController);
 //# sourceMappingURL=posts.controller.js.map

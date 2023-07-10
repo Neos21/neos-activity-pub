@@ -9,13 +9,7 @@ import { AuthService } from '../shared/services/auth.service';
 export class CustomInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) { }
   
-  /**
-   * HttpClient からの通信時に以下の割り込み処理を行う
-   * 
-   * @param request Request
-   * @param next HttpHandler
-   * @return Observable HttpEvent
-   */
+  /** HttpClient からの通信時に以下の割り込み処理を行う */
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // クッキーによるセッション管理を有効にする
     request = request.clone({ withCredentials: true });

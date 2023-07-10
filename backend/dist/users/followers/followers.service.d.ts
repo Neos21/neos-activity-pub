@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
-import { Follower } from 'src/entities/follower';
 import { ActorObjectService } from 'src/shared/services/actor-object.service';
+import { Follower } from 'src/entities/follower';
 export declare class FollowersService {
     private followersRepository;
     private actorObjectSerice;

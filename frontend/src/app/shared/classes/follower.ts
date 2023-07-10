@@ -9,7 +9,5 @@ export class Follower {
   /** 登録日時 */
   public createdAt!: string;
   
-  constructor(partial: Partial<Follower>) {
-    Object.assign(this, partial);
-  }
+  constructor(partial: Partial<Follower>) { Object.assign(this, partial); }
 }

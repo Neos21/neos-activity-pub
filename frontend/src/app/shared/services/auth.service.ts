@@ -8,19 +8,12 @@ export class AuthService {
   public name: string = '';
   /** JWT アクセストークン : LocalStorage からのインメモリキャッシュ・この有無でログイン済か否かを判定する */
   public accessToken: string = '';
-  
   /** ユーザ名・パスワード・JWT アクセストークンを保存する LocalStorage キー名 */
   private authInfoStorageKey = 'auth_info';
   
   constructor(private httpClient: HttpClient) { }
   
-  /**
-   * ログインする
-   * 
-   * @param name Name
-   * @param password Password
-   * @return ログインに成功すれば `true`・失敗すれば `false`
-   */
+  /** ログインする・成功すれば `true`・失敗すれば `false` */
   public async login(name: string, password: string): Promise<boolean> {
     try {
       // ログイン試行する
@@ -37,11 +30,7 @@ export class AuthService {
     }
   }
   
-  /**
-   * 自動再ログインする : LocalStorage から JWT を取得し控える
-   * 
-   * @return 自動再ログインに成功すれば `true`・失敗すれば `false`
-   */
+  /** 自動再ログインする : LocalStorage から JWT を取得し控える */
   public autoReLogin(): boolean {
     if(this.accessToken) return true;
     try {

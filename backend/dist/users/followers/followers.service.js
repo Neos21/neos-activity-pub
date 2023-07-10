@@ -16,8 +16,8 @@ exports.FollowersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const follower_1 = require("../../entities/follower");
 const actor_object_service_1 = require("../../shared/services/actor-object.service");
+const follower_1 = require("../../entities/follower");
 let FollowersService = exports.FollowersService = class FollowersService {
     constructor(followersRepository, actorObjectSerice) {
         this.followersRepository = followersRepository;

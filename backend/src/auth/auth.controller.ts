@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Res, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import * as bcryptjs from 'bcryptjs';
@@ -15,10 +15,8 @@ export class AuthController {
   /**
    * ログインする : https://docs.nestjs.com/security/authentication
    * 
-   * @param name Name
-   * @param password Password
    * @return JWT
-   * @throw ログイン失敗時
+   * @throws ログイン失敗時
    */
   @Post('login')
   public async login(@Body('name') name: string, @Body('password') password: string, @Res() res: Response): Promise<Response> {

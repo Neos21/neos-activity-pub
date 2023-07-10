@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Follower } from 'src/entities/follower';
 import { ActorObjectService } from 'src/shared/services/actor-object.service';
+
+import { Follower } from 'src/entities/follower';
 
 @Injectable()
 export class FollowersService {
@@ -12,13 +13,7 @@ export class FollowersService {
     private actorObjectSerice: ActorObjectService
   ) { }
   
-  /**
-   * フォロワー情報を追加する
-   * 
-   * @param userName User Name
-   * @param actorObject Actor Object
-   * @return 成功なら `true`・失敗なら `false`
-   */
+  /** フォロワー情報を追加する */
   public async create(userName: string, actorObject: any): Promise<boolean> {
     try {
       const follower = new Follower({
@@ -35,12 +30,7 @@ export class FollowersService {
     }
   }
   
-  /**
-   * フォロワーを新しいモノから順番に一覧で返す
-   * 
-   * @param userName User Name
-   * @return フォロワー一覧
-   */
+  /** フォロワーを新しいモノから順番に一覧で返す */
   public async findAll(userName: string): Promise<Array<Follower>> {
     return await this.followersRepository.find({
       where: { userName },
@@ -48,13 +38,7 @@ export class FollowersService {
     });
   }
   
-  /**
-   * フォロワー情報を削除する
-   * 
-   * @param userName User Name
-   * @param actorObject Actor Object
-   * @return 成功なら `true`・失敗なら `false`
-   */
+  /** フォロワー情報を削除する */
   public async remove(userName: string, actorObject: any): Promise<boolean> {
     try {
       await this.followersRepository.delete({

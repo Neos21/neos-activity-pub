@@ -12,9 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Notification = void 0;
 const typeorm_1 = require("typeorm");
 let Notification = exports.Notification = class Notification {
-    constructor(partial) {
-        Object.assign(this, partial);
-    }
+    constructor(partial) { Object.assign(this, partial); }
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)({ name: 'id' }),

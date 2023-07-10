@@ -11,12 +11,7 @@ export class WellKnownController {
     private usersService: UsersService
   ) { }
   
-  /**
-   * Host Meta を返す
-   * 
-   * @param res Response
-   * @return Host Meta
-   */
+  /** Host Meta を返す */
   @Get('host-meta')
   public getHostMeta(@Res() res: Response): Response {
     const fqdn = this.hostUrlService.fqdn;
@@ -27,28 +22,20 @@ export class WellKnownController {
     return res.status(HttpStatus.OK).type('application/xrd+xml').send(xml);
   }
   
-  /**
-   * WebFinger を返す
-   * 
-   * @param resource Resource
-   * @param res Response
-   * @return WebFinger
-   */
+  /** WebFinger を返す */
   @Get('webfinger')
   public async getWebFinger(@Query('resource') resource: string, @Res() res: Response): Promise<Response> {
-    if(resource == null || !resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).send('Bad request. Please make sure "acct:USER@DOMAIN" is what you are sending as the "resource" query parameter.');
-    
+    if(resource == null || !resource.startsWith('acct:')) return res.status(HttpStatus.BAD_REQUEST).send('Bad Request');
+    // ユーザを取得する
     const host = this.hostUrlService.host;
     const fqdn = this.hostUrlService.fqdn;
     const name = resource.replace('acct:', '').replace(`@${host}`, '');
     const user = await this.usersService.findOne(name);
-    if(user == null) return res.status(HttpStatus.NOT_FOUND).send(`Actor [${resource}] is not found.`);
-    
+    if(user == null) return res.status(HttpStatus.NOT_FOUND).send('Actor Not Found');
+    // JSON を用意する
     const json = {
       subject: `acct:${user.name}@${host}`,
-      aliases: [
-        `${fqdn}/api/activity-pub/users/${user.name}`
-      ],
+      aliases: [`${fqdn}/api/activity-pub/users/${user.name}`],
       links: [
         {
           rel : 'self',

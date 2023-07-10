@@ -29,7 +29,7 @@ export class SignupComponent {
     private formBuilder: FormBuilder,
     private httpClient: HttpClient,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) { }
   
   public async ngOnInit(): Promise<void | boolean> {
@@ -37,20 +37,18 @@ export class SignupComponent {
       name    : ['', [Validators.required, Validators.min(1), Validators.max(20), Validators.pattern('[a-z0-9-]*')]],
       password: ['', [Validators.required, Validators.min(1), Validators.max(20)]]
     });
-    // ログイン済ならこの画面を表示しない (ログアウト処理をちゃんと通させる)
+    // ログイン済ならこの画面を表示しない
     if(this.authService.accessToken) return this.router.navigate(['/home']);
     this.isLoaded = true;
   }
   
-  /** ユーザ登録する */
   public async signup(): Promise<void> {
     this.isSucceeded = false;
     this.error = undefined;
     this.isProcessing = true;
     try {
-      const name     = this.form.value.name;
-      const password = this.form.value.password;
-      await firstValueFrom(this.httpClient.post<User>('/api/users', { name, password }));  // Throws
+      const { name, password } = this.form.value;
+      await firstValueFrom(this.httpClient.post('/api/users', { name, password }));  // Throws
       this.isSucceeded = true;
     }
     catch(error) {

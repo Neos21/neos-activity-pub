@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class RedirectComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) { }
   
   public ngOnInit(): void | Promise<boolean> {

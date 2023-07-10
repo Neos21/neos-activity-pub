@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 import { UsersService } from './users.service';
+
 import { User } from '../shared/classes/user';
 
 @Component({

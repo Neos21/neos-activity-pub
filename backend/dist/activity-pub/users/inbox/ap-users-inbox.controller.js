@@ -18,17 +18,17 @@ const crypto = require("node:crypto");
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const rxjs_1 = require("rxjs");
-const users_service_1 = require("../../../users/users.service");
-const host_url_service_1 = require("../../../shared/services/host-url.service");
 const followers_service_1 = require("../../../users/followers/followers.service");
+const host_url_service_1 = require("../../../shared/services/host-url.service");
 const notifications_service_1 = require("../../../notifications/notifications.service");
+const users_service_1 = require("../../../users/users.service");
 let APUsersInboxController = exports.APUsersInboxController = APUsersInboxController_1 = class APUsersInboxController {
-    constructor(httpService, usersService, hostUrlService, followersService, notificationsService) {
+    constructor(httpService, followersService, hostUrlService, notificationsService, usersService) {
         this.httpService = httpService;
-        this.usersService = usersService;
-        this.hostUrlService = hostUrlService;
         this.followersService = followersService;
+        this.hostUrlService = hostUrlService;
         this.notificationsService = notificationsService;
+        this.usersService = usersService;
         this.logger = new common_1.Logger(APUsersInboxController_1.name);
     }
     async inbox(name, body, res) {
@@ -38,10 +38,8 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
             return res.status(common_1.HttpStatus.NOT_FOUND).send('User Not Found');
         const type = body?.type?.toLowerCase();
         if (type === 'follow') {
-            const actorUrl = body?.actor;
-            const actor = await this.getActor(actorUrl);
-            const inboxUrl = actor?.inbox;
-            if (inboxUrl == null)
+            const actor = await this.getActor(body?.actor);
+            if (actor?.inbox == null)
                 return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Follow But Invalid Inbox URL');
             const isCreated = await this.followersService.create(user.name, actor);
             if (!isCreated)
@@ -49,7 +47,7 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
             const isNotified = await this.notificationsService.createFollow(user.name, actor);
             if (!isNotified)
                 return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Follow But Invalid Actor (Notification)');
-            const isAccepted = await this.acceptFollow(user, body, inboxUrl);
+            const isAccepted = await this.acceptFollow(user, body, actor.inbox);
             if (!isAccepted)
                 return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Follow But Invalid Body (Accept)');
             return res.status(common_1.HttpStatus.OK).end();
@@ -63,15 +61,13 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
         else if (type === 'undo') {
             const objectType = body.object?.type?.toLowerCase();
             if (objectType === 'follow') {
-                const actorUrl = body?.actor;
-                const actor = await this.getActor(actorUrl);
-                const inboxUrl = actor?.inbox;
-                if (inboxUrl == null)
+                const actor = await this.getActor(body?.actor);
+                if (actor?.inbox == null)
                     return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Inbox URL');
                 const isRemoved = await this.followersService.remove(user.name, actor);
                 if (!isRemoved)
                     return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Undo Follow But Failed To Remove Follower');
-                const isAccepted = await this.acceptFollow(user, body.object, inboxUrl);
+                const isAccepted = await this.acceptFollow(user, body.object, actor.inbox);
                 if (!isAccepted)
                     return res.status(common_1.HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Body');
                 return res.status(common_1.HttpStatus.OK).end();
@@ -108,7 +104,7 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
             return actorResponse?.data;
         }
         catch (error) {
-            this.logger.warn('Cannot Get Actor', error);
+            this.logger.warn('Failed To Get Actor', error);
             return undefined;
         }
     }
@@ -161,9 +157,9 @@ __decorate([
 exports.APUsersInboxController = APUsersInboxController = APUsersInboxController_1 = __decorate([
     (0, common_1.Controller)('api/activity-pub/users'),
     __metadata("design:paramtypes", [axios_1.HttpService,
-        users_service_1.UsersService,
-        host_url_service_1.HostUrlService,
         followers_service_1.FollowersService,
-        notifications_service_1.NotificationsService])
+        host_url_service_1.HostUrlService,
+        notifications_service_1.NotificationsService,
+        users_service_1.UsersService])
 ], APUsersInboxController);
 //# sourceMappingURL=ap-users-inbox.controller.js.map

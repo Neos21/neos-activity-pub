@@ -18,9 +18,9 @@ const common_1 = require("@nestjs/common");
 const host_url_service_1 = require("../../../shared/services/host-url.service");
 const users_service_1 = require("../../../users/users.service");
 let APUsersOutboxController = exports.APUsersOutboxController = APUsersOutboxController_1 = class APUsersOutboxController {
-    constructor(usersService, hostUrlService) {
-        this.usersService = usersService;
+    constructor(hostUrlService, usersService) {
         this.hostUrlService = hostUrlService;
+        this.usersService = usersService;
         this.logger = new common_1.Logger(APUsersOutboxController_1.name);
     }
     async outbox(name, req, res) {
@@ -49,7 +49,7 @@ __decorate([
 ], APUsersOutboxController.prototype, "outbox", null);
 exports.APUsersOutboxController = APUsersOutboxController = APUsersOutboxController_1 = __decorate([
     (0, common_1.Controller)('api/activity-pub/users'),
-    __metadata("design:paramtypes", [users_service_1.UsersService,
-        host_url_service_1.HostUrlService])
+    __metadata("design:paramtypes", [host_url_service_1.HostUrlService,
+        users_service_1.UsersService])
 ], APUsersOutboxController);
 //# sourceMappingURL=ap-users-outbox.controller.js.map

@@ -22,8 +22,8 @@ export class LoginComponent {
   
   constructor(
     private formBuilder: FormBuilder,
+    private router: Router,
     private authService: AuthService,
-    private router: Router
   ) { }
   
   public async ngOnInit(): Promise<void | boolean> {
@@ -31,22 +31,17 @@ export class LoginComponent {
       name    : ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
-    // ログイン済ならこの画面を表示しない (ログアウト処理をちゃんと通させる)
+    // ログイン済ならこの画面を表示しない
     if(this.authService.accessToken) return this.router.navigate(['/home']);
     this.isLoaded = true;
   }
   
-  /** ログインする */
   public async login(): Promise<void | boolean> {
     this.error = undefined;
     this.isProcessing = true;
     const isSucceeded = await this.authService.login(this.form.value.name, this.form.value.password);
-    if(isSucceeded) {
-      return this.router.navigate(['/home']);
-    }
-    else {
-      this.error = 'ログイン失敗';
-    }
+    if(isSucceeded) return this.router.navigate(['/home']);
+    this.error = 'ログイン失敗';
     this.isProcessing = false;
   }
 }

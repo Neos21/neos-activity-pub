@@ -31,8 +31,7 @@ export class PostComponent implements OnInit {
     this.isProcessing = true;
     this.error = undefined;
     try {
-      const text = this.form.value.text;
-      await firstValueFrom(this.httpClient.post('/api/posts', { text }));  // Throws
+      await firstValueFrom(this.httpClient.post('/api/posts', { text: this.form.value.text }));  // Throws
       this.form.setValue({ text: '' });
     }
     catch(error) {

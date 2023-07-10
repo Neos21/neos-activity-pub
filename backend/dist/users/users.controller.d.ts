@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { User } from 'src/entities/user';
 import { UsersService } from './users.service';
+import { User } from 'src/entities/user';
 export declare class UsersController {
     private usersService;
     constructor(usersService: UsersService);

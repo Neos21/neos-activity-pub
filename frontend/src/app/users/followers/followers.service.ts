@@ -7,11 +7,8 @@ import { Follower } from 'src/app/shared/classes/follower';
 export class FollowersService {
   constructor(private httpClient: HttpClient) { }
   
-  /**
-   * フォロワー一覧を取得する
+  /** フォロワー一覧を取得する
    * 
-   * @param userName User Name
-   * @return フォロワー一覧
    * @throws ユーザが見つからなかった場合 (404)・サーバエラー時
    */
   public async findAll(userName: string): Promise<Array<Follower>> {

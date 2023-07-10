@@ -3,14 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { authGuard } from './shared/guards/auth.guard';
 
-import { RedirectComponent } from './core/redirect.component';
-
-import { LoginComponent } from './login/login.component';
-import { SignupComponent } from './signup/signup.component';
-import { HomeComponent } from './home/home.component';
-import { NotificationsComponent } from './notifications/notifications.component';
-import { UserComponent } from './users/user.component';
 import { FollowersComponent } from './users/followers/followers.component';
+import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { RedirectComponent } from './core/redirect.component';
+import { SignupComponent } from './signup/signup.component';
+import { UserComponent } from './users/user.component';
 
 const routes: Routes = [
   { path: 'login'                , component: LoginComponent     },  // 未ログイン時トップ

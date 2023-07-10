@@ -11,7 +11,6 @@ export class NotificationsService {
   /**
    * 通知一覧を取得する (対象ユーザ名は JWT にて判断させる)
    * 
-   * @return 通知一覧
    * @throws ユーザが見つからなかった場合 (404)・サーバエラー時
    */
   public async findAll(): Promise<Array<Notification>> {

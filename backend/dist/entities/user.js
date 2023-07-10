@@ -12,9 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 let User = exports.User = class User {
-    constructor(partial) {
-        Object.assign(this, partial);
-    }
+    constructor(partial) { Object.assign(this, partial); }
 };
 __decorate([
     (0, typeorm_1.PrimaryColumn)({ type: 'text', name: 'name' }),

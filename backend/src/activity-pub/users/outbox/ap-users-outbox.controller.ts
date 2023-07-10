@@ -9,18 +9,10 @@ export class APUsersOutboxController {
   private logger: Logger = new Logger(APUsersOutboxController.name);
   
   constructor(
+    private hostUrlService: HostUrlService,
     private usersService: UsersService,
-    private hostUrlService: HostUrlService
   ) { }
   
-  /**
-   * Outbox
-   * 
-   * @param name User Name
-   * @param req Request
-   * @param res Response
-   * @return Response
-   */
   @Post(':name/outbox')
   public async outbox(@Param('name') name: string, @Req() req: Request, @Res() res: Response): Promise<Response> {
     this.logger.log(`Outbox : ${name}`, req.body);
