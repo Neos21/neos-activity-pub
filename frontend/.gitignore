@@ -1,7 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Compiled output
-/dist
+# TODO : develop ブランチのみビルド成果物をコミットできるようにする (クラウドサーバ側でビルドすると遅いので)
+#/dist
 /tmp
 /out-tsc
 /bazel-out
