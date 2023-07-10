@@ -62,22 +62,6 @@ let APUsersController = exports.APUsersController = class APUsersController {
         };
         return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
     }
-    getNote(name, res) {
-        const fqdn = this.hostUrlService.fqdn;
-        const json = {
-            '@context': 'https://www.w3.org/ns/activitystreams',
-            type: 'Note',
-            id: `${fqdn}/api/activity-pub/users/${name}/note`,
-            attributedTo: `${fqdn}/api/activity-pub/users/${name}`,
-            content: `<p>仮投稿 ${name}</p>`,
-            published: '2023-07-07T00:00:00+09:00',
-            to: [
-                'https://www.w3.org/ns/activitystreams#Public',
-                `${fqdn}/api/activity-pub/users/${name}/follower`,
-            ]
-        };
-        return res.status(common_1.HttpStatus.OK).type('application/activity+json').json(json);
-    }
 };
 __decorate([
     (0, common_1.Get)(':name'),
@@ -87,14 +71,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], APUsersController.prototype, "getUser", null);
-__decorate([
-    (0, common_1.Get)(':name/note'),
-    __param(0, (0, common_1.Param)('name')),
-    __param(1, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Object)
-], APUsersController.prototype, "getNote", null);
 exports.APUsersController = APUsersController = __decorate([
     (0, common_1.Controller)('api/activity-pub/users'),
     __metadata("design:paramtypes", [host_url_service_1.HostUrlService,

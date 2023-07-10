@@ -22,6 +22,7 @@ const post_1 = require("./entities/post");
 const user_1 = require("./entities/user");
 const ap_users_controller_1 = require("./activity-pub/users/ap-users.controller");
 const ap_users_inbox_controller_1 = require("./activity-pub/users/inbox/ap-users-inbox.controller");
+const ap_users_notes_controller_1 = require("./activity-pub/users/notes/ap-users-notes.controller");
 const ap_users_outbox_controller_1 = require("./activity-pub/users/outbox/ap-users-outbox.controller");
 const auth_controller_1 = require("./auth/auth.controller");
 const followers_controller_1 = require("./users/followers/followers.controller");
@@ -34,6 +35,7 @@ const actor_object_service_1 = require("./shared/services/actor-object.service")
 const followers_service_1 = require("./users/followers/followers.service");
 const host_url_service_1 = require("./shared/services/host-url.service");
 const notifications_service_1 = require("./notifications/notifications.service");
+const posts_service_1 = require("./users/posts/posts.service");
 const users_service_1 = require("./users/users.service");
 let AppModule = exports.AppModule = class AppModule {
     configure(middlewareConsumer) {
@@ -83,6 +85,7 @@ exports.AppModule = AppModule = __decorate([
         controllers: [
             ap_users_controller_1.APUsersController,
             ap_users_inbox_controller_1.APUsersInboxController,
+            ap_users_notes_controller_1.APUsersNotesController,
             ap_users_outbox_controller_1.APUsersOutboxController,
             auth_controller_1.AuthController,
             followers_controller_1.FollowersController,
@@ -97,6 +100,7 @@ exports.AppModule = AppModule = __decorate([
             followers_service_1.FollowersService,
             host_url_service_1.HostUrlService,
             notifications_service_1.NotificationsService,
+            posts_service_1.PostsService,
             users_service_1.UsersService,
         ]
     })

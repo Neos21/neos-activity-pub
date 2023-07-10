@@ -13,7 +13,7 @@ export class NotificationsService {
    * 
    * @throws ユーザが見つからなかった場合 (404)・サーバエラー時
    */
-  public async findAll(): Promise<Array<Notification>> {
-    return await firstValueFrom(this.httpClient.get<Array<Notification>>(`/api/notifications`));
+  public findAll(): Promise<Array<Notification>> {
+    return firstValueFrom(this.httpClient.get<Array<Notification>>(`/api/notifications`));
   }
 }

@@ -43,22 +43,22 @@ export class UsersService {
   }
   
   /** ユーザを一意に取得する */
-  public async findOne(name: string): Promise<User | null> {
+  public findOne(name: string): Promise<User | null> {
     return this.findOneBase(name, { name: true, createdAt: true });
   }
   
   /** ユーザを一意に取得する・パスワードのハッシュ値も取得する */
-  public async findOneWithPassword(name: string): Promise<User | null> {
+  public findOneWithPassword(name: string): Promise<User | null> {
     return this.findOneBase(name, { name: true, password: true });
   }
   
   /** ユーザを一意に取得する・公開鍵も取得する */
-  public async findOneWithPublicKey(name: string): Promise<User | null> {
+  public findOneWithPublicKey(name: string): Promise<User | null> {
     return this.findOneBase(name, { name: true, createdAt: true, publicKey: true });
   }
   
   /** ユーザを一意に取得する・秘密鍵も取得する */
-  public async findOneWithPrivateKey(name: string): Promise<User | null> {
+  public findOneWithPrivateKey(name: string): Promise<User | null> {
     return this.findOneBase(name, { name: true, privateKey: true });
   }
   
@@ -68,7 +68,7 @@ export class UsersService {
    * @param selectOptions 取得する項目名の連想配列
    * @return User・見つからなかった場合は `null`
    */
-  private async findOneBase(name: string, selectOptions: FindOptionsSelect<User>): Promise<User | null> {
+  private findOneBase(name: string, selectOptions: FindOptionsSelect<User>): Promise<User | null> {
     return this.usersRepository.findOne({
       select: selectOptions,
       where: { name }

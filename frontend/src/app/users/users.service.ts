@@ -9,7 +9,7 @@ export class UsersService {
   constructor(private httpClient: HttpClient) { }
   
   /** ユーザを取得する */
-  public async findOne(name: string): Promise<User | null> {
-    return await firstValueFrom(this.httpClient.get<User>(`/api/users/${name}`)).catch(_error => null);
+  public findOne(name: string): Promise<User | null> {
+    return firstValueFrom(this.httpClient.get<User>(`/api/users/${name}`)).catch(_error => null);
   }
 }

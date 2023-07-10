@@ -14,41 +14,29 @@ export class FollowersService {
   ) { }
   
   /** フォロワー情報を追加する */
-  public async create(userName: string, actorObject: any): Promise<boolean> {
-    try {
-      const follower = new Follower({
-        userName    : userName,
-        followerName: this.actorObjectSerice.getFullName(actorObject),
-        actorUrl    : actorObject.id,
-        inboxUrl    : actorObject.inbox
-      })
-      await this.followersRepository.insert(follower);  // Throws
-      return true;
-    }
-    catch(_error) {
-      return false;
-    }
+  public create(userName: string, actorObject: any): Promise<boolean> {
+    const follower = new Follower({
+      userName    : userName,
+      followerName: this.actorObjectSerice.getFullName(actorObject),
+      actorUrl    : actorObject.id,
+      inboxUrl    : actorObject.inbox
+    })
+    return this.followersRepository.insert(follower).then(_insertResult => true).catch(_error => false);
   }
   
   /** フォロワーを新しいモノから順番に一覧で返す */
-  public async findAll(userName: string): Promise<Array<Follower>> {
-    return await this.followersRepository.find({
+  public findAll(userName: string): Promise<Array<Follower>> {
+    return this.followersRepository.find({
       where: { userName },
       order: { createdAt: 'DESC' }
     });
   }
   
   /** フォロワー情報を削除する */
-  public async remove(userName: string, actorObject: any): Promise<boolean> {
-    try {
-      await this.followersRepository.delete({
-        userName    : userName,
-        followerName: this.actorObjectSerice.getFullName(actorObject)
-      });
-      return true;
-    }
-    catch(_error) {
-      return false;
-    }
+  public remove(userName: string, actorObject: any): Promise<boolean> {
+    return this.followersRepository.delete({
+      userName    : userName,
+      followerName: this.actorObjectSerice.getFullName(actorObject)
+    }).then(_deleteResult => true).catch(_error => false);
   }
 }

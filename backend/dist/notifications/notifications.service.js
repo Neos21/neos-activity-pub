@@ -23,23 +23,17 @@ let NotificationsService = exports.NotificationsService = class NotificationsSer
         this.notificationsRepository = notificationsRepository;
         this.actorObjectSerice = actorObjectSerice;
     }
-    async createFollow(userName, actorObject) {
-        try {
-            const notification = new notification_1.Notification({
-                userName: userName,
-                type: 'follow',
-                actorName: this.actorObjectSerice.getActorUserName(actorObject),
-                remoteHost: this.actorObjectSerice.getRemoteHost(actorObject)
-            });
-            await this.notificationsRepository.insert(notification);
-            return true;
-        }
-        catch (_error) {
-            return false;
-        }
+    createFollow(userName, actorObject) {
+        const notification = new notification_1.Notification({
+            userName: userName,
+            type: 'follow',
+            actorName: this.actorObjectSerice.getActorUserName(actorObject),
+            remoteHost: this.actorObjectSerice.getRemoteHost(actorObject)
+        });
+        return this.notificationsRepository.insert(notification).then(_insertResult => true).catch(_error => false);
     }
-    async findAll(userName) {
-        return await this.notificationsRepository.find({
+    findAll(userName) {
+        return this.notificationsRepository.find({
             where: { userName },
             order: { createdAt: 'DESC' }
         });

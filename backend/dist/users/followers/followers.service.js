@@ -23,38 +23,26 @@ let FollowersService = exports.FollowersService = class FollowersService {
         this.followersRepository = followersRepository;
         this.actorObjectSerice = actorObjectSerice;
     }
-    async create(userName, actorObject) {
-        try {
-            const follower = new follower_1.Follower({
-                userName: userName,
-                followerName: this.actorObjectSerice.getFullName(actorObject),
-                actorUrl: actorObject.id,
-                inboxUrl: actorObject.inbox
-            });
-            await this.followersRepository.insert(follower);
-            return true;
-        }
-        catch (_error) {
-            return false;
-        }
+    create(userName, actorObject) {
+        const follower = new follower_1.Follower({
+            userName: userName,
+            followerName: this.actorObjectSerice.getFullName(actorObject),
+            actorUrl: actorObject.id,
+            inboxUrl: actorObject.inbox
+        });
+        return this.followersRepository.insert(follower).then(_insertResult => true).catch(_error => false);
     }
-    async findAll(userName) {
-        return await this.followersRepository.find({
+    findAll(userName) {
+        return this.followersRepository.find({
             where: { userName },
             order: { createdAt: 'DESC' }
         });
     }
-    async remove(userName, actorObject) {
-        try {
-            await this.followersRepository.delete({
-                userName: userName,
-                followerName: this.actorObjectSerice.getFullName(actorObject)
-            });
-            return true;
-        }
-        catch (_error) {
-            return false;
-        }
+    remove(userName, actorObject) {
+        return this.followersRepository.delete({
+            userName: userName,
+            followerName: this.actorObjectSerice.getFullName(actorObject)
+        }).then(_deleteResult => true).catch(_error => false);
     }
 };
 exports.FollowersService = FollowersService = __decorate([

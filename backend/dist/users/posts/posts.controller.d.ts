@@ -1,4 +1,7 @@
 import { Request, Response } from 'express';
+import { PostsService } from './posts.service';
 export declare class PostsController {
-    create(req: Request, paramName: string, text: string, res: Response): Promise<Response>;
+    private postsService;
+    constructor(postsService: PostsService);
+    create(req: Request, text: string, res: Response): Promise<Response>;
 }

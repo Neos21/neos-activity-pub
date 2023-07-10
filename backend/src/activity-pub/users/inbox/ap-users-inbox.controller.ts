@@ -63,9 +63,8 @@ export class APUsersInboxController {
         // Actor・Inbox URL を取得する
         const actor = await this.getActor(body?.actor);
         if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Inbox URL');  // Inbox URL が不明なので処理できない
-        // フォロワー情報を削除する
-        const isRemoved = await this.followersService.remove(user.name, actor);
-        if(!isRemoved) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Failed To Remove Follower');
+        // フォロワー情報を削除する (失敗しても続行する)
+        await this.followersService.remove(user.name, actor);
         // アンフォローを承認する
         const isAccepted = await this.acceptFollow(user, body.object, actor.inbox);  // Undo 内の Follow Object を使用する
         if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).send('Type Undo Follow But Invalid Body');
@@ -104,7 +103,7 @@ export class APUsersInboxController {
   /** Actor の URL に GET リクエストを投げて情報を取得する */
   private async getActor(actorUrl: string): Promise<any | undefined> {
     try {
-      const actorResponse = await firstValueFrom(this.httpService.get(actorUrl, { headers: { Accept: 'application/activity+json' } }));
+      const actorResponse = await firstValueFrom(this.httpService.get(actorUrl, { headers: { Accept: 'application/activity+json' } }));  // Throws
       return actorResponse?.data;
     }
     catch(error) {
@@ -118,6 +117,7 @@ export class APUsersInboxController {
    * 
    * @param user User (秘密鍵も取得しておく)
    * @param followObject 受信した Type : Follow のオブジェクト
+   * @throws リクエスト失敗時
    */
   private async acceptFollow(user: User, followObject: any, inboxUrl: string): Promise<boolean> {
     // 現在日時を利用して ID と認証ヘッダ用の文字列にする
@@ -160,7 +160,7 @@ export class APUsersInboxController {
     };
     
     // Inbox URL に向けて Accept を POST する
-    await firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));
+    await firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));  // Throws
     return true;
   }
 }

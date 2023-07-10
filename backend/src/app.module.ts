@@ -18,6 +18,7 @@ import { User } from './entities/user';
 // Controllers
 import { APUsersController } from './activity-pub/users/ap-users.controller';
 import { APUsersInboxController } from './activity-pub/users/inbox/ap-users-inbox.controller';
+import { APUsersNotesController } from './activity-pub/users/notes/ap-users-notes.controller';
 import { APUsersOutboxController } from './activity-pub/users/outbox/ap-users-outbox.controller';
 import { AuthController } from './auth/auth.controller';
 import { FollowersController } from './users/followers/followers.controller';
@@ -31,6 +32,7 @@ import { ActorObjectService } from './shared/services/actor-object.service';
 import { FollowersService } from './users/followers/followers.service';
 import { HostUrlService } from './shared/services/host-url.service';
 import { NotificationsService } from './notifications/notifications.service';
+import { PostsService } from './users/posts/posts.service';
 import { UsersService } from './users/users.service';
 
 @Module({
@@ -81,6 +83,7 @@ import { UsersService } from './users/users.service';
   controllers: [
     APUsersController,
     APUsersInboxController,
+    APUsersNotesController,
     APUsersOutboxController,
     AuthController,
     FollowersController,
@@ -95,6 +98,7 @@ import { UsersService } from './users/users.service';
     FollowersService,
     HostUrlService,
     NotificationsService,
+    PostsService,
     UsersService,
   ]
 })

@@ -32,7 +32,7 @@ export class SignupComponent {
     private authService: AuthService,
   ) { }
   
-  public async ngOnInit(): Promise<void | boolean> {
+  public ngOnInit(): void | Promise<boolean> {
     this.form = this.formBuilder.group({
       name    : ['', [Validators.required, Validators.min(1), Validators.max(20), Validators.pattern('[a-z0-9-]*')]],
       password: ['', [Validators.required, Validators.min(1), Validators.max(20)]]

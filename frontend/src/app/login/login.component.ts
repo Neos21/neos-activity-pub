@@ -26,7 +26,7 @@ export class LoginComponent {
     private authService: AuthService,
   ) { }
   
-  public async ngOnInit(): Promise<void | boolean> {
+  public ngOnInit(): void | Promise<boolean> {
     this.form = this.formBuilder.group({
       name    : ['', [Validators.required]],
       password: ['', [Validators.required]]

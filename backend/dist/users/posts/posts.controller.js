@@ -15,27 +15,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsController = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
+const posts_service_1 = require("./posts.service");
 let PostsController = exports.PostsController = class PostsController {
-    async create(req, paramName, text, res) {
-        const userName = req.user.name;
-        if (userName !== paramName)
-            return res.status(common_1.HttpStatus.BAD_REQUEST).send('JWT User Name And Param User Name Are Different');
-        console.log('TODO', { userName, text });
-        return res.status(common_1.HttpStatus.CREATED).json({ createdPost: text });
+    constructor(postsService) {
+        this.postsService = postsService;
+    }
+    async create(req, text, res) {
+        const userName = req.user?.name;
+        if (userName == null)
+            return res.status(common_1.HttpStatus.BAD_REQUEST).send('JWT User Name Is Empty');
+        let createdPost;
+        try {
+            createdPost = await this.postsService.create(userName, text);
+        }
+        catch (error) {
+            return res.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+        }
+        await this.postsService.publishNote(createdPost);
+        return res.status(common_1.HttpStatus.CREATED).end();
     }
 };
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(''),
     __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Param)('name')),
-    __param(2, (0, common_1.Body)('text')),
-    __param(3, (0, common_1.Res)()),
+    __param(1, (0, common_1.Body)('text')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, Object]),
+    __metadata("design:paramtypes", [Object, String, Object]),
     __metadata("design:returntype", Promise)
 ], PostsController.prototype, "create", null);
 exports.PostsController = PostsController = __decorate([
-    (0, common_1.Controller)('api/posts')
+    (0, common_1.Controller)('api/posts'),
+    __metadata("design:paramtypes", [posts_service_1.PostsService])
 ], PostsController);
 //# sourceMappingURL=posts.controller.js.map

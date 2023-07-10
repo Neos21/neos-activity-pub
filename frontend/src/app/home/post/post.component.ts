@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+
+/** 空白のみの投稿を除外する */
+const noWhitespacesValidator = (formControl: FormControl) =>  (formControl.value ?? '').trim().length ? null : { whitespaces: true };
 
 @Component({
   selector: 'app-post',
@@ -23,7 +26,7 @@ export class PostComponent implements OnInit {
   
   public ngOnInit(): void {
     this.form = this.formBuilder.group({
-      text: ['', [Validators.required, Validators.max(500)]]
+      text: ['', [Validators.required, Validators.max(500), noWhitespacesValidator]]
     });
   }
   
@@ -31,7 +34,8 @@ export class PostComponent implements OnInit {
     this.isProcessing = true;
     this.error = undefined;
     try {
-      await firstValueFrom(this.httpClient.post('/api/posts', { text: this.form.value.text }));  // Throws
+      const text = this.form.value.text.trim();  // ココでトリムしておく
+      await firstValueFrom(this.httpClient.post('/api/posts', { text }));  // Throws
       this.form.setValue({ text: '' });
     }
     catch(error) {

@@ -43,19 +43,19 @@ let UsersService = exports.UsersService = class UsersService {
         await this.usersRepository.insert(user);
         return true;
     }
-    async findOne(name) {
+    findOne(name) {
         return this.findOneBase(name, { name: true, createdAt: true });
     }
-    async findOneWithPassword(name) {
+    findOneWithPassword(name) {
         return this.findOneBase(name, { name: true, password: true });
     }
-    async findOneWithPublicKey(name) {
+    findOneWithPublicKey(name) {
         return this.findOneBase(name, { name: true, createdAt: true, publicKey: true });
     }
-    async findOneWithPrivateKey(name) {
+    findOneWithPrivateKey(name) {
         return this.findOneBase(name, { name: true, privateKey: true });
     }
-    async findOneBase(name, selectOptions) {
+    findOneBase(name, selectOptions) {
         return this.usersRepository.findOne({
             select: selectOptions,
             where: { name }

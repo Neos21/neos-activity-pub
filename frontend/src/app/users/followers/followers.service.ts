@@ -11,7 +11,7 @@ export class FollowersService {
    * 
    * @throws ユーザが見つからなかった場合 (404)・サーバエラー時
    */
-  public async findAll(userName: string): Promise<Array<Follower>> {
-    return await firstValueFrom(this.httpClient.get<Array<Follower>>(`/api/users/${userName}/followers`));
+  public findAll(userName: string): Promise<Array<Follower>> {
+    return firstValueFrom(this.httpClient.get<Array<Follower>>(`/api/users/${userName}/followers`));
   }
 }
