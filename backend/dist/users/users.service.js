@@ -43,6 +43,9 @@ let UsersService = exports.UsersService = class UsersService {
         await this.usersRepository.insert(user);
         return true;
     }
+    findAll() {
+        return this.usersRepository.find({ order: { createdAt: 'DESC' } });
+    }
     findOne(name) {
         return this.findOneBase(name, { name: true, createdAt: true });
     }

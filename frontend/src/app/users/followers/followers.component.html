@@ -1,6 +1,6 @@
 <app-loading *ngIf="followers == null"></app-loading>
-<ng-container *ngIf="followers != null">
-  <h2>Followers</h2>
+<div *ngIf="followers != null" class="container">
+  <h2><a [routerLink]="['/users', userName]">@{{ userName }}</a> : Followers</h2>
   <p *ngIf="followers.length === 0">フォロワーはいません</p>
   
   <dl *ngIf="followers.length > 0">
@@ -9,4 +9,4 @@
       <dd>{{ follower.createdAt }} 〜</dd>
     </ng-container>
   </dl>
-</ng-container>
+</div>

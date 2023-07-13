@@ -38,64 +38,31 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
         if (user == null)
             return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
         const type = body?.type?.toLowerCase();
-        if (type === 'follow') {
-            const actor = await this.getActor(body?.actor);
-            if (actor?.inbox == null)
-                return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Inbox URL' });
-            const isCreated = await this.followersService.create(user.name, actor);
-            if (!isCreated)
-                return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Follower)' });
-            const isNotified = await this.notificationsService.createFollow(user.name, actor);
-            if (!isNotified)
-                return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Notification)' });
-            const isAccepted = await this.acceptFollow(user, body, actor.inbox);
-            if (!isAccepted)
-                return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Body (Accept)' });
+        if (type === 'follow')
+            return this.onFollow(user, body, res);
+        if (type === 'like')
             return res.status(common_1.HttpStatus.OK).end();
-        }
-        else if (type === 'like') {
+        if (type === 'announce')
             return res.status(common_1.HttpStatus.OK).end();
-        }
-        else if (type === 'announce') {
-            return res.status(common_1.HttpStatus.OK).end();
-        }
-        else if (type === 'undo') {
+        if (type === 'undo') {
             const objectType = body.object?.type?.toLowerCase();
-            if (objectType === 'follow') {
-                const actor = await this.getActor(body?.actor);
-                if (actor?.inbox == null)
-                    return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Inbox URL' });
-                await this.followersService.remove(user.name, actor);
-                const isAccepted = await this.acceptFollow(user, body.object, actor.inbox);
-                if (!isAccepted)
-                    return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Body' });
+            if (objectType === 'follow')
+                return this.onUnfollow(user, body, res);
+            if (objectType === 'like')
                 return res.status(common_1.HttpStatus.OK).end();
-            }
-            else if (objectType === 'like') {
+            if (objectType === 'announce')
                 return res.status(common_1.HttpStatus.OK).end();
-            }
-            else if (objectType === 'announce') {
-                return res.status(common_1.HttpStatus.OK).end();
-            }
-            else {
-                return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
-            }
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
         }
-        else if (type === 'create') {
-            const objectType = body?.object?.type?.toLowerCase();
-            if (objectType === 'note') {
+        if (type === 'create') {
+            const objectType = body.object?.type?.toLowerCase();
+            if (objectType === 'note')
                 return res.status(common_1.HttpStatus.OK).end();
-            }
-            else {
-                return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
-            }
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
         }
-        else if (['update', 'delete', 'accept', 'reject'].includes(type)) {
+        if (['update', 'delete', 'accept', 'reject'].includes(type))
             return res.status(common_1.HttpStatus.OK).end();
-        }
-        else {
-            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Unknown Type' });
-        }
+        return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Unknown Type' });
     }
     async getActor(actorUrl) {
         try {
@@ -104,10 +71,35 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
         }
         catch (error) {
             this.logger.warn('Failed To Get Actor', error);
-            return undefined;
+            return null;
         }
     }
-    async acceptFollow(user, followObject, inboxUrl) {
+    async onFollow(user, body, res) {
+        const actor = await this.getActor(body?.actor);
+        if (actor?.inbox == null)
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Inbox URL' });
+        const isCreated = await this.followersService.create(user.name, actor);
+        if (!isCreated)
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Follower)' });
+        const isNotified = await this.notificationsService.createFollow(user.name, actor);
+        if (!isNotified)
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Notification)' });
+        const isAccepted = await this.acceptFollow(user, body, actor.inbox);
+        if (!isAccepted)
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Body (Accept)' });
+        return res.status(common_1.HttpStatus.OK).end();
+    }
+    async onUnfollow(user, body, res) {
+        const actor = await this.getActor(body?.actor);
+        if (actor?.inbox == null)
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Inbox URL' });
+        await this.followersService.remove(user.name, actor);
+        const isAccepted = await this.acceptFollow(user, body.object, actor.inbox);
+        if (!isAccepted)
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Body' });
+        return res.status(common_1.HttpStatus.OK).end();
+    }
+    acceptFollow(user, followObject, inboxUrl) {
         const fqdn = this.hostUrlService.fqdn;
         const json = {
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -117,8 +109,7 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
             object: followObject
         };
         const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, user.name, user.privateKey);
-        await (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));
-        return true;
+        return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders })).then(_response => true).catch(_error => false);
     }
 };
 __decorate([

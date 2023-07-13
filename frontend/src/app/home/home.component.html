@@ -1,4 +1,4 @@
-<h2>@{{ name }}</h2>
+<h2>Home</h2>
 <app-new-post></app-new-post>
 
 <ul class="menu">
@@ -7,6 +7,10 @@
   <li><a [routerLink]="['/users', name, 'followers']">Followers</a></li>
   <li>Following</li>
   <li><a [routerLink]="['/users', name, 'posts']">Posts</a></li>
+</ul>
+
+<ul class="menu">
+  <li><a [routerLink]="['/users']">Users</a></li>
 </ul>
 
 <p class="text-right"><button type="button" (click)="logout()">Logout</button></p>

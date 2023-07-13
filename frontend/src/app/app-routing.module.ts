@@ -11,12 +11,14 @@ import { PostsComponent } from './users/posts/posts.component';
 import { RedirectComponent } from './core/redirect.component';
 import { SignupComponent } from './signup/signup.component';
 import { UserComponent } from './users/user.component';
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
   { path: 'login'                , component: LoginComponent     },  // 未ログイン時トップ
   { path: 'signup'               , component: SignupComponent    },  // ユーザ登録画面
   { path: 'home'                 , component: HomeComponent         , canActivate: [authGuard] },  // ログイン後トップ
   { path: 'notifications'        , component: NotificationsComponent, canActivate: [authGuard] },  // 通知
+  { path: 'users'                , component: UsersComponent     },
   { path: 'users/:name'          , component: UserComponent      },
   { path: 'users/:name/followers', component: FollowersComponent },
   { path: 'users/:name/posts'    , component: PostsComponent     },

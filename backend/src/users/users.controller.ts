@@ -21,6 +21,13 @@ export class UsersController {
     }
   }
   
+  /** ユーザ一覧を返す */
+  @Get('')
+  public async findAll(@Res() res: Response): Promise<Response> {
+    const users = await this.usersService.findAll();
+    return res.status(HttpStatus.OK).json(users);
+  }
+  
   /** ユーザ情報を返す */
   @Get(':name')
   public async findOne(@Param('name') name: string, @Res() res: Response): Promise<Response> {

@@ -1,6 +1,6 @@
 <app-loading *ngIf="posts == null"></app-loading>
-<ng-container *ngIf="posts != null">
-  <h2>Posts</h2>
+<div *ngIf="posts != null" class="container">
+  <h2><a [routerLink]="['/users', userName]">@{{ userName }}</a> : Posts</h2>
   <p *ngIf="posts.length === 0">投稿はありません</p>
   
   <dl *ngIf="posts.length > 0">
@@ -9,4 +9,4 @@
       <dd [innerHTML]="post.text"></dd>  <!-- https://angular.io/guide/security#sanitization-example -->
     </ng-container>
   </dl>
-</ng-container>
+</div>

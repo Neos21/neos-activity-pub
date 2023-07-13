@@ -27,7 +27,7 @@ export class APUsersNotesController {
       published   : post.createdAt.toISOString().slice(0, 19) + 'Z',                     // ISO 形式の投稿日時 `YYYY-MM-DDTHH:mm:SSZ`
       to: [                                                                              // 公開範囲
         'https://www.w3.org/ns/activitystreams#Public',                                  // 公開
-        `${fqdn}/api/activity-pub/users/${name}/followers`,                              // フォロワー
+        `${fqdn}/api/activity-pub/users/${name}/followers`,                              // NOTE : フォロワー URL
       ]
     };
     return res.status(HttpStatus.OK).type('application/activity+json').json(json);

@@ -20,6 +20,7 @@ import { PostsComponent } from './users/posts/posts.component';
 import { RedirectComponent } from './core/redirect.component';
 import { SignupComponent } from './signup/signup.component';
 import { UserComponent } from './users/user.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   imports: [
@@ -42,6 +43,7 @@ import { UserComponent } from './users/user.component';
     SignupComponent,
     UserComponent,
     AppComponent,
+    UsersComponent,
   ],
   providers: [
     {

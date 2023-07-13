@@ -29,6 +29,10 @@ let UsersController = exports.UsersController = class UsersController {
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: error.toString() });
         }
     }
+    async findAll(res) {
+        const users = await this.usersService.findAll();
+        return res.status(common_1.HttpStatus.OK).json(users);
+    }
     async findOne(name, res) {
         const user = await this.usersService.findOne(name);
         if (user == null)
@@ -44,6 +48,13 @@ __decorate([
     __metadata("design:paramtypes", [user_1.User, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(''),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':name'),
     __param(0, (0, common_1.Param)('name')),

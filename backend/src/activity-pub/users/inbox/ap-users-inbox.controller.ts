@@ -33,83 +33,67 @@ export class APUsersInboxController {
     if(user == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
     
     const type = body?.type?.toLowerCase();  // 小文字に統一する
-    if(type === 'follow') {  // フォローされた
-      // Actor・Inbox URL を取得する
-      const actor = await this.getActor(body?.actor);
-      if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
-      // フォロワー情報を追加する
-      const isCreated = await this.followersService.create(user.name, actor);
-      if(!isCreated) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Follower)' });
-      // フォローされた通知を追加する
-      const isNotified = await this.notificationsService.createFollow(user.name, actor);
-      if(!isNotified) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Notification)' });
-      // フォローを承認する
-      const isAccepted = await this.acceptFollow(user, body, actor.inbox);
-      if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Body (Accept)' });
-      // 成功
-      return res.status(HttpStatus.OK).end();
-    }
-    else if(type === 'like') {  // いいねされた
-      // TODO : いいね情報を追加する・いいねされた通知を追加する
-      return res.status(HttpStatus.OK).end();
-    }
-    else if(type === 'announce') {  // ブーストされた
-      // TODO : ブーストされた通知を追加する
-      return res.status(HttpStatus.OK).end();
-    }
-    else if(type === 'undo') {  // 何らかの処理が取り消された
+    if(type === 'follow'  ) return this.onFollow(user, body, res);   // フォローされた
+    if(type === 'like'    ) return res.status(HttpStatus.OK).end();  // いいねされた・TODO : いいね情報を追加する・いいねされた通知を追加する
+    if(type === 'announce') return res.status(HttpStatus.OK).end();  // ブーストされた・TODO : ブーストされた通知を追加する
+    if(type === 'undo'    ) {  // 何らかの処理が取り消された
       const objectType = body.object?.type?.toLowerCase();
-      if(objectType === 'follow') {  // アンフォローされた
-        // Actor・Inbox URL を取得する
-        const actor = await this.getActor(body?.actor);
-        if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
-        // フォロワー情報を削除する (失敗しても続行する)
-        await this.followersService.remove(user.name, actor);
-        // アンフォローを承認する
-        const isAccepted = await this.acceptFollow(user, body.object, actor.inbox);  // Undo 内の Follow Object を使用する
-        if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Body' });
-        // 成功
-        return res.status(HttpStatus.OK).end();
-      }
-      else if(objectType === 'like') {  // いいねが外された
-        // TODO : いいね情報を削除する
-        return res.status(HttpStatus.OK).end();
-      }
-      else if(objectType === 'announce') {  // ブーストが外された
-        return res.status(HttpStatus.OK).end();
-      }
-      else {  // 未知の Undo イベント
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
-      }
+      if(objectType === 'follow'  ) return this.onUnfollow(user, body, res);  // アンフォローされた
+      if(objectType === 'like'    ) return res.status(HttpStatus.OK).end();   // いいねが外された・TODO : いいね情報を削除する
+      if(objectType === 'announce') return res.status(HttpStatus.OK).end();   // ブーストが外された
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });  // 未知の Undo イベント
     }
-    else if(type === 'create') {
-      const objectType = body?.object?.type?.toLowerCase();
-      if(objectType === 'note') {
-        // TODO : リプライを受け取ったことを記録する
-        return res.status(HttpStatus.OK).end();
-      }
-      else {  // 未知の Create イベント
-        return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });
-      }
+    if(type === 'create') {
+      const objectType = body.object?.type?.toLowerCase();
+      if(objectType === 'note') return res.status(HttpStatus.OK).end();  // TODO : リプライを受け取ったことを記録する
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });  // 未知の Create イベント
     }
-    else if(['update', 'delete', 'accept', 'reject'].includes(type)) {  // その他のイベント
-      return res.status(HttpStatus.OK).end();
-    }
-    else {  // 未知の Type だったら 400 にする
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Unknown Type' });
-    }
+    if(['update', 'delete', 'accept', 'reject'].includes(type)) return res.status(HttpStatus.OK).end();  // その他のイベント
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Unknown Type' });  // 未知の Type だったら 400 にする
   }
   
   /** Actor の URL に GET リクエストを投げて情報を取得する */
-  private async getActor(actorUrl: string): Promise<any | undefined> {
+  private async getActor(actorUrl: string): Promise<any | null> {
     try {
       const actorResponse = await firstValueFrom(this.httpService.get(actorUrl, { headers: { Accept: 'application/activity+json' } }));  // Throws
       return actorResponse?.data;
     }
     catch(error) {
       this.logger.warn('Failed To Get Actor', error);
-      return undefined;
+      return null;
     }
+  }
+  
+  /** フォローされた */
+  private async onFollow(user: User, body: any, res: Response): Promise<Response> {
+    // Actor・Inbox URL を取得する
+    const actor = await this.getActor(body?.actor);
+    if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
+    // フォロワー情報を追加する
+    const isCreated = await this.followersService.create(user.name, actor);
+    if(!isCreated) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Follower)' });
+    // フォローされた通知を追加する
+    const isNotified = await this.notificationsService.createFollow(user.name, actor);
+    if(!isNotified) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Notification)' });
+    // フォローを承認する
+    const isAccepted = await this.acceptFollow(user, body, actor.inbox);
+    if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Body (Accept)' });
+    // 成功
+    return res.status(HttpStatus.OK).end();
+  }
+  
+  /** アンフォローされた */
+  private async onUnfollow(user: User, body: any, res: Response): Promise<Response> {
+    // Actor・Inbox URL を取得する
+    const actor = await this.getActor(body?.actor);
+    if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
+    // フォロワー情報を削除する (失敗しても続行する)
+    await this.followersService.remove(user.name, actor);
+    // アンフォローを承認する
+    const isAccepted = await this.acceptFollow(user, body.object, actor.inbox);  // Undo 内の Follow Object を使用する
+    if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Body' });
+    // 成功
+    return res.status(HttpStatus.OK).end();
   }
   
   /**
@@ -117,9 +101,8 @@ export class APUsersInboxController {
    * 
    * @param user User (秘密鍵も取得しておく)
    * @param followObject 受信した Type : Follow のオブジェクト
-   * @throws リクエスト失敗時
    */
-  private async acceptFollow(user: User, followObject: any, inboxUrl: string): Promise<boolean> {
+  private acceptFollow(user: User, followObject: any, inboxUrl: string): Promise<boolean> {
     // リクエスト本文を作る
     const fqdn = this.hostUrlService.fqdn;
     const json = {
@@ -131,7 +114,6 @@ export class APUsersInboxController {
     };
     // Inbox URL に向けて Accept を POST する
     const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, user.name, user.privateKey);
-    await firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));  // Throws
-    return true;
+    return firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders })).then(_response => true).catch(_error => false);
   }
 }

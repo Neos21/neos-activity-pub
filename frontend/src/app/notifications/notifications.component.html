@@ -1,5 +1,5 @@
 <app-loading *ngIf="notifications == null"></app-loading>
-<ng-container *ngIf="notifications != null">
+<div *ngIf="notifications != null" class="container">
   <h2>Notifications</h2>
   <p *ngIf="notifications.length === 0">通知はありません</p>
   
@@ -12,4 +12,4 @@
       </dd>
     </ng-container>
   </dl>
-</ng-container>
+</div>

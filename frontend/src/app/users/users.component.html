@@ -1,0 +1,10 @@
+<app-loading *ngIf="users == null"></app-loading>
+<div *ngIf="users != null" class="container">
+  <h2>Users</h2>
+  <dl>
+    <ng-container *ngFor="let user of users">
+      <dt><a [routerLink]="['/users', user.name]">@{{ user.name }}</a></dt>
+      <dd>登録日 : {{ user.createdAt }}</dd>
+    </ng-container>
+  </dl>
+</div>
