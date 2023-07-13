@@ -24,6 +24,7 @@ import { AuthController } from './auth/auth.controller';
 import { FollowersController } from './users/followers/followers.controller';
 import { NotificationsController } from './notifications/notifications.controller';
 import { PostsController } from './users/posts/posts.controller';
+import { SearchController } from './search/search.controller';
 import { UsersController } from './users/users.controller';
 import { WellKnownController } from './well-known/well-known.controller';
 import { AppController } from './app.controller';
@@ -33,6 +34,7 @@ import { FollowersService } from './users/followers/followers.service';
 import { HostUrlService } from './shared/services/host-url.service';
 import { NotificationsService } from './notifications/notifications.service';
 import { PostsService } from './users/posts/posts.service';
+import { SearchService } from './search/search.service';
 import { SignHeaderService } from './activity-pub/sign-header.service';
 import { UsersService } from './users/users.service';
 
@@ -91,6 +93,7 @@ import { UsersService } from './users/users.service';
     UsersController,
     NotificationsController,
     PostsController,
+    SearchController,
     WellKnownController,
     AppController,
   ],
@@ -100,6 +103,7 @@ import { UsersService } from './users/users.service';
     HostUrlService,
     NotificationsService,
     PostsService,
+    SearchService,
     SignHeaderService,
     UsersService,
   ]

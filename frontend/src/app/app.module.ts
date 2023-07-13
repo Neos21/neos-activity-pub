@@ -21,6 +21,7 @@ import { RedirectComponent } from './core/redirect.component';
 import { SignupComponent } from './signup/signup.component';
 import { UserComponent } from './users/user.component';
 import { UsersComponent } from './users/users.component';
+import { SearchComponent } from './home/search/search.component';
 
 @NgModule({
   imports: [
@@ -44,6 +45,7 @@ import { UsersComponent } from './users/users.component';
     UserComponent,
     AppComponent,
     UsersComponent,
+    SearchComponent,
   ],
   providers: [
     {

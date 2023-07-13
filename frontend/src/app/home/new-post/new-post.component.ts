@@ -14,7 +14,7 @@ const noWhitespacesValidator = (formControl: FormControl) =>  (formControl.value
   styleUrls: ['./new-post.component.css']
 })
 export class NewPostComponent implements OnInit {
-  /** 登録フォーム */
+  /** 投稿フォーム */
   public form!: FormGroup;
   /** 処理中かどうか */
   public isProcessing: boolean = false;

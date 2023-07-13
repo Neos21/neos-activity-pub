@@ -12,34 +12,30 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppController = void 0;
-const axios_1 = require("@nestjs/axios");
+exports.SearchController = void 0;
 const common_1 = require("@nestjs/common");
-const rxjs_1 = require("rxjs");
-let AppController = exports.AppController = class AppController {
-    constructor(httpService) {
-        this.httpService = httpService;
+const search_service_1 = require("./search.service");
+let SearchController = exports.SearchController = class SearchController {
+    constructor(searchService) {
+        this.searchService = searchService;
     }
-    async test(res) {
-        const result = await (0, rxjs_1.firstValueFrom)(this.httpService.get('https://mstdn.jp/@Neos21mstdn/110708815749404953', {
-            headers: {
-                Accept: 'application/activity+json',
-                'Content-Type': 'application/activity+json'
-            }
-        }));
-        console.log(result);
-        return res.status(common_1.HttpStatus.OK).send('OK');
+    async search(query, res) {
+        const result = await this.searchService.search(query);
+        if (result == null)
+            return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'Results Not Found' });
+        return res.status(common_1.HttpStatus.OK).json(result);
     }
 };
 __decorate([
-    (0, common_1.Get)('test'),
-    __param(0, (0, common_1.Res)()),
+    (0, common_1.Get)(''),
+    __param(0, (0, common_1.Query)('query')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
-], AppController.prototype, "test", null);
-exports.AppController = AppController = __decorate([
-    (0, common_1.Controller)(''),
-    __metadata("design:paramtypes", [axios_1.HttpService])
-], AppController);
-//# sourceMappingURL=app.controller.js.map
+], SearchController.prototype, "search", null);
+exports.SearchController = SearchController = __decorate([
+    (0, common_1.Controller)('api/search'),
+    __metadata("design:paramtypes", [search_service_1.SearchService])
+], SearchController);
+//# sourceMappingURL=search.controller.js.map

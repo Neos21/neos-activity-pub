@@ -28,6 +28,7 @@ const auth_controller_1 = require("./auth/auth.controller");
 const followers_controller_1 = require("./users/followers/followers.controller");
 const notifications_controller_1 = require("./notifications/notifications.controller");
 const posts_controller_1 = require("./users/posts/posts.controller");
+const search_controller_1 = require("./search/search.controller");
 const users_controller_1 = require("./users/users.controller");
 const well_known_controller_1 = require("./well-known/well-known.controller");
 const app_controller_1 = require("./app.controller");
@@ -36,6 +37,7 @@ const followers_service_1 = require("./users/followers/followers.service");
 const host_url_service_1 = require("./shared/services/host-url.service");
 const notifications_service_1 = require("./notifications/notifications.service");
 const posts_service_1 = require("./users/posts/posts.service");
+const search_service_1 = require("./search/search.service");
 const sign_header_service_1 = require("./activity-pub/sign-header.service");
 const users_service_1 = require("./users/users.service");
 let AppModule = exports.AppModule = class AppModule {
@@ -93,6 +95,7 @@ exports.AppModule = AppModule = __decorate([
             users_controller_1.UsersController,
             notifications_controller_1.NotificationsController,
             posts_controller_1.PostsController,
+            search_controller_1.SearchController,
             well_known_controller_1.WellKnownController,
             app_controller_1.AppController,
         ],
@@ -102,6 +105,7 @@ exports.AppModule = AppModule = __decorate([
             host_url_service_1.HostUrlService,
             notifications_service_1.NotificationsService,
             posts_service_1.PostsService,
+            search_service_1.SearchService,
             sign_header_service_1.SignHeaderService,
             users_service_1.UsersService,
         ]
