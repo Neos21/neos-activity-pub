@@ -5,7 +5,7 @@
   
   <dl *ngIf="followers.length > 0">
     <ng-container *ngFor="let follower of followers">
-      <dt><a [href]="follower.url">@{{ follower.followerName }}<ng-container *ngIf="follower.followerRemoteHost != null">@{{ follower.followerRemoteHost }}</ng-container></a></dt>
+      <dt><a [href]="follower.url">@{{ follower.followerName }}<ng-container *ngIf="follower.followerRemoteHost != null || follower.followerRemoteHost !== ''">@{{ follower.followerRemoteHost }}</ng-container></a></dt>
       <dd>フォロー日 : {{ follower.createdAt }} 〜 (<a [href]="follower.actorUrl">Actor URL</a>・<a [href]="follower.inboxUrl">Inbox URL</a>)</dd>
     </ng-container>
   </dl>
