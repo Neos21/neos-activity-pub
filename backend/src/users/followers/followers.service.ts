@@ -18,7 +18,7 @@ export class FollowersService {
     const follower = new Follower({
       userName          : userName,
       followerName      : actorObject.preferredUsername,
-      followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id),
+      followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id) ?? '',
       url               : actorObject.url,
       actorUrl          : actorObject.id,
       inboxUrl          : actorObject.inbox
@@ -42,7 +42,7 @@ export class FollowersService {
     return this.followersRepository.delete({
       userName          : userName,
       followerName      : actorObject.preferredUsername,
-      followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id)
+      followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id) ?? ''
     }).then(_deleteResult => true).catch(_error => false);
   }
 }

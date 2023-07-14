@@ -23,7 +23,7 @@ __decorate([
     __metadata("design:type", String)
 ], Follower.prototype, "followerName", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'text', name: 'follower_remote_host', nullable: true }),
+    (0, typeorm_1.PrimaryColumn)({ type: 'text', name: 'follower_remote_host' }),
     __metadata("design:type", String)
 ], Follower.prototype, "followerRemoteHost", void 0);
 __decorate([
