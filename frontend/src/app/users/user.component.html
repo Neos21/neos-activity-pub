@@ -9,7 +9,7 @@
   </dl>
   <p *ngIf="user.name === authUserName">それはあなたです!</p>
   <p *ngIf="user.name !== authUserName">
-    <app-follow-button></app-follow-button>
+    <app-follow-local-user-button [userName]="authUserName" [followingName]="user.name"></app-follow-local-user-button>
   </p>
   <ul>
     <li><a [routerLink]="['/users', user.name, 'followers']">Followers</a></li>

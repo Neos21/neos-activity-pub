@@ -9,8 +9,8 @@ export class Following {
   /** フォローしたユーザ名 */
   @PrimaryColumn({ type: 'text', name: 'following_name' })
   public followingName: string;
-  /** フォローしたユーザのリモートホスト (ローカルユーザは `null`) */
-  @Column({ type: 'text', name: 'following_remote_host', nullable: true })
+  /** フォローしたユーザのリモートホスト (ローカルユーザは `null` ではなく空文字を入れる・検索条件にうまくヒットしなくなってしまうため) */
+  @PrimaryColumn({ type: 'text', name: 'following_remote_host' })
   public followingRemoteHost: string;
   /** フォローしたユーザのプロフィールページ URL */
   @Column({ type: 'text', name: 'url' })

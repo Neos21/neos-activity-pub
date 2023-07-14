@@ -1,15 +1,48 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, InsertResult, Repository } from 'typeorm';
+
+import { Following } from 'src/entities/following';
+import { HostUrlService } from 'src/shared/services/host-url.service';
 
 @Injectable()
 export class FollowingsService {
+  constructor(
+    @InjectRepository(Following) private followingsRepository: Repository<Following>,
+    private hostUrlService: HostUrlService,
+  ) { }
+  
   /**
+   * ローカルユーザをフォローユーザとして登録する
    * 
-   * @param userName フォローする側のユーザ名 (ローカルユーザなので名前のみ)
-   * @param fullName フォロー対象のユーザ名 (必ず `USER@HOST` の形式で送ってもらう)
+   * @throws 登録失敗時
    */
-  public create(userName: string, fullName: string): void {
-    
+  public createLocalUser(userName: string, followingName: string): Promise<InsertResult> {
+    const following = new Following({
+      userName,
+      followingName,
+      followingRemoteHost: '',
+      url     : `${this.hostUrlService.fqdn}/users/${followingName}`,
+      actorUrl: `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`,
+      inboxUrl: `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}/inbox`
+    });
+    return this.followingsRepository.insert(following);  // Throws
+  }
+  
+  public createRemoteUser(userName: string, followingName: string, followingRemoteHost: string): void {
     // TODO : fullName に `acct:` を付けて WebFinger を拾う
     // TODO : links[].rel:self の href にアクセスして actorURL・inboxURL を拾う
+  }
+  
+  /** ローカルユーザをフォロー中かどうか調べる・`null` が返れば未フォロー */
+  public searchLocalUser(userName: string, followingName: string) {
+    return this.followingsRepository.findOne({
+      where: { userName, followingName, followingRemoteHost: '' }
+    });
+  }
+  
+  /** ローカルユーザをアンフォローするため削除する */
+  public removeLocalUser(userName: string, followingName: string): Promise<DeleteResult> {
+    return this.followingsRepository.delete({ userName, followingName, followingRemoteHost: '' });
   }
 }
