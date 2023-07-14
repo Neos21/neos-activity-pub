@@ -26,7 +26,9 @@ let FollowersService = exports.FollowersService = class FollowersService {
     create(userName, actorObject) {
         const follower = new follower_1.Follower({
             userName: userName,
-            followerName: this.actorObjectSerice.getFullName(actorObject),
+            followerName: actorObject.preferredUsername,
+            followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id),
+            url: actorObject.url,
             actorUrl: actorObject.id,
             inboxUrl: actorObject.inbox
         });
@@ -41,7 +43,8 @@ let FollowersService = exports.FollowersService = class FollowersService {
     remove(userName, actorObject) {
         return this.followersRepository.delete({
             userName: userName,
-            followerName: this.actorObjectSerice.getFullName(actorObject)
+            followerName: actorObject.preferredUsername,
+            followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id)
         }).then(_deleteResult => true).catch(_error => false);
     }
 };

@@ -52,7 +52,7 @@ export class APUsersInboxController {
   }
   
   /** Actor の URL に GET リクエストを投げて情報を取得する */
-  private async getActor(actorUrl: string): Promise<any | null> {
+  private async fetchActor(actorUrl: string): Promise<any | null> {
     try {
       const actorResponse = await firstValueFrom(this.httpService.get(actorUrl, { headers: { Accept: 'application/activity+json' } }));  // Throws
       return actorResponse?.data;
@@ -66,7 +66,7 @@ export class APUsersInboxController {
   /** フォローされた */
   private async onFollow(user: User, body: any, res: Response): Promise<Response> {
     // Actor・Inbox URL を取得する
-    const actor = await this.getActor(body?.actor);
+    const actor = await this.fetchActor(body?.actor);
     if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor' });  // Inbox URL が不明なので処理できない
     // フォロワー情報を追加する
     const isCreated = await this.followersService.create(user.name, actor);
@@ -84,7 +84,7 @@ export class APUsersInboxController {
   /** アンフォローされた */
   private async onUnfollow(user: User, body: any, res: Response): Promise<Response> {
     // Actor・Inbox URL を取得する
-    const actor = await this.getActor(body?.actor);
+    const actor = await this.fetchActor(body?.actor);
     if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
     // フォロワー情報を削除する (失敗しても続行する)
     await this.followersService.remove(user.name, actor);
@@ -119,7 +119,7 @@ export class APUsersInboxController {
   /** いいねされた */
   private async onLike(userName: string, body: any, res: Response): Promise<Response> {
     // Actor を取得する
-    const actor = await this.getActor(body?.actor);
+    const actor = await this.fetchActor(body?.actor);
     if(actor == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Like But Invalid Actor' });
     // いいねされた投稿の URL
     const postId = body?.object;

@@ -12,6 +12,7 @@ import { configuration } from './core/configuration';
 import { AccessLogMiddleware } from './core/access-log.middleware';
 // TypeORM Entities
 import { Follower } from './entities/follower';
+import { Following } from './entities/following';
 import { Notification } from './entities/notification';
 import { Post } from './entities/post';
 import { User } from './entities/user';
@@ -22,6 +23,7 @@ import { APUsersNotesController } from './activity-pub/users/notes/ap-users-note
 import { APUsersOutboxController } from './activity-pub/users/outbox/ap-users-outbox.controller';
 import { AuthController } from './auth/auth.controller';
 import { FollowersController } from './users/followers/followers.controller';
+import { FollowingsController } from './users/followings/followings.controller';
 import { NotificationsController } from './notifications/notifications.controller';
 import { PostsController } from './users/posts/posts.controller';
 import { SearchController } from './search/search.controller';
@@ -31,6 +33,7 @@ import { AppController } from './app.controller';
 // Providers
 import { ActorObjectService } from './shared/services/actor-object.service';
 import { FollowersService } from './users/followers/followers.service';
+import { FollowingsService } from './users/followings/followings.service';
 import { HostUrlService } from './shared/services/host-url.service';
 import { NotificationsService } from './notifications/notifications.service';
 import { PostsService } from './users/posts/posts.service';
@@ -68,6 +71,7 @@ import { UsersService } from './users/users.service';
         database: path.resolve(__dirname, '../db/neos-activity-pub-backend.sqlite3.db'),
         entities: [
           Follower,
+          Following,
           Notification,
           Post,
           User,
@@ -78,6 +82,7 @@ import { UsersService } from './users/users.service';
     // Repository を使えるようにする
     TypeOrmModule.forFeature([
       Follower,
+      Following,
       Notification,
       Post,
       User,
@@ -90,6 +95,7 @@ import { UsersService } from './users/users.service';
     APUsersOutboxController,
     AuthController,
     FollowersController,
+    FollowingsController,
     UsersController,
     NotificationsController,
     PostsController,
@@ -100,6 +106,7 @@ import { UsersService } from './users/users.service';
   providers: [
     ActorObjectService,
     FollowersService,
+    FollowingsService,
     HostUrlService,
     NotificationsService,
     PostsService,

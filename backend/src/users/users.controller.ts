@@ -17,7 +17,7 @@ export class UsersController {
       return res.status(HttpStatus.OK).end();
     }
     catch(error) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: error.toString() });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error });
     }
   }
   

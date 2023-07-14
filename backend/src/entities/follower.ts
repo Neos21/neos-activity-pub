@@ -9,6 +9,12 @@ export class Follower {
   /** フォロワー名 */
   @PrimaryColumn({ type: 'text', name: 'follower_name' })
   public followerName: string;
+  /** フォロワーのリモートホスト (ローカルユーザは `null`) */
+  @Column({ type: 'text', name: 'follower_remote_host', nullable: true })
+  public followerRemoteHost: string;
+  /** フォロワーのプロフィールページ URL */
+  @Column({ type: 'text', name: 'url' })
+  public url: string;
   /** フォロワーの Actor URL */
   @Column({ type: 'text', name: 'actor_url' })
   public actorUrl: string;

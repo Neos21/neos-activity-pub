@@ -20,13 +20,6 @@ let ActorObjectService = exports.ActorObjectService = class ActorObjectService {
         const host = new URL(url).host;
         return host === this.hostUrlService.host ? null : host;
     }
-    getFullName(actorObject) {
-        const remoteHost = this.getRemoteHost(actorObject.host);
-        const actorUserName = actorObject.preferredUsername;
-        if (remoteHost == null)
-            return actorUserName;
-        return `${actorUserName}@${remoteHost}`;
-    }
 };
 exports.ActorObjectService = ActorObjectService = __decorate([
     (0, common_1.Injectable)(),

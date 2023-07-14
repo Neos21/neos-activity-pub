@@ -11,12 +11,4 @@ export class ActorObjectService  {
     const host = new URL(url).host;
     return host === this.hostUrlService.host ? null : host;
   }
-  
-  /** Actor オブジェクトからフルネーム (ローカルユーザは `USER`・リモートユーザは `USER@HOST`) を取得する */
-  public getFullName(actorObject: any): string {
-    const remoteHost    = this.getRemoteHost(actorObject.host);
-    const actorUserName = actorObject.preferredUsername;
-    if(remoteHost == null) return actorUserName;
-    return `${actorUserName}@${remoteHost}`;
-  }
 }

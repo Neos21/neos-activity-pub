@@ -62,7 +62,7 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
             return res.status(common_1.HttpStatus.OK).end();
         return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Unknown Type' });
     }
-    async getActor(actorUrl) {
+    async fetchActor(actorUrl) {
         try {
             const actorResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(actorUrl, { headers: { Accept: 'application/activity+json' } }));
             return actorResponse?.data;
@@ -73,7 +73,7 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
         }
     }
     async onFollow(user, body, res) {
-        const actor = await this.getActor(body?.actor);
+        const actor = await this.fetchActor(body?.actor);
         if (actor?.inbox == null)
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor' });
         const isCreated = await this.followersService.create(user.name, actor);
@@ -88,7 +88,7 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
         return res.status(common_1.HttpStatus.OK).end();
     }
     async onUnfollow(user, body, res) {
-        const actor = await this.getActor(body?.actor);
+        const actor = await this.fetchActor(body?.actor);
         if (actor?.inbox == null)
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Undo Follow But Invalid Inbox URL' });
         await this.followersService.remove(user.name, actor);
@@ -110,7 +110,7 @@ let APUsersInboxController = exports.APUsersInboxController = APUsersInboxContro
         return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders })).then(_response => true).catch(_error => false);
     }
     async onLike(userName, body, res) {
-        const actor = await this.getActor(body?.actor);
+        const actor = await this.fetchActor(body?.actor);
         if (actor == null)
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Type Like But Invalid Actor' });
         const postId = body?.object;

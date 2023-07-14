@@ -38,7 +38,7 @@ let APUsersController = exports.APUsersController = class APUsersController {
             summary: `<p>User : ${user.name}</p>`,
             inbox: `${fqdn}/api/activity-pub/users/${user.name}/inbox`,
             outbox: `${fqdn}/api/activity-pub/users/${user.name}/outbox`,
-            url: `${fqdn}/api/activity-pub/users/${user.name}`,
+            url: `${fqdn}/users/${user.name}`,
             manuallyApprovesFollowers: false,
             discoverable: true,
             published: `${user.createdAt.toISOString().slice(0, 10)}T00:00:00Z`,

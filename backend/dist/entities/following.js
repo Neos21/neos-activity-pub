@@ -9,41 +9,41 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Follower = void 0;
+exports.Following = void 0;
 const typeorm_1 = require("typeorm");
-let Follower = exports.Follower = class Follower {
+let Following = exports.Following = class Following {
     constructor(partial) { Object.assign(this, partial); }
 };
 __decorate([
     (0, typeorm_1.PrimaryColumn)({ type: 'text', name: 'user_name' }),
     __metadata("design:type", String)
-], Follower.prototype, "userName", void 0);
+], Following.prototype, "userName", void 0);
 __decorate([
-    (0, typeorm_1.PrimaryColumn)({ type: 'text', name: 'follower_name' }),
+    (0, typeorm_1.PrimaryColumn)({ type: 'text', name: 'following_name' }),
     __metadata("design:type", String)
-], Follower.prototype, "followerName", void 0);
+], Following.prototype, "followingName", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'text', name: 'follower_remote_host', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'text', name: 'following_remote_host', nullable: true }),
     __metadata("design:type", String)
-], Follower.prototype, "followerRemoteHost", void 0);
+], Following.prototype, "followingRemoteHost", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', name: 'url' }),
     __metadata("design:type", String)
-], Follower.prototype, "url", void 0);
+], Following.prototype, "url", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', name: 'actor_url' }),
     __metadata("design:type", String)
-], Follower.prototype, "actorUrl", void 0);
+], Following.prototype, "actorUrl", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', name: 'inbox_url' }),
     __metadata("design:type", String)
-], Follower.prototype, "inboxUrl", void 0);
+], Following.prototype, "inboxUrl", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
-], Follower.prototype, "createdAt", void 0);
-exports.Follower = Follower = __decorate([
-    (0, typeorm_1.Entity)('followers'),
+], Following.prototype, "createdAt", void 0);
+exports.Following = Following = __decorate([
+    (0, typeorm_1.Entity)('followings'),
     __metadata("design:paramtypes", [Object])
-], Follower);
-//# sourceMappingURL=follower.js.map
+], Following);
+//# sourceMappingURL=following.js.map

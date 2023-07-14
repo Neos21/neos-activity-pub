@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ErrorComponent } from './components/error/error.component';
+import { FollowButtonComponent } from './components/follow-button/follow-button.component';
 import { InfoComponent } from './components/info/info.component';
 import { LoadingComponent } from './components/loading/loading.component';
 
@@ -16,6 +17,7 @@ import { LoadingComponent } from './components/loading/loading.component';
   ],
   declarations: [
     ErrorComponent,
+    FollowButtonComponent,
     InfoComponent,
     LoadingComponent,
   ],
@@ -26,8 +28,9 @@ import { LoadingComponent } from './components/loading/loading.component';
     ReactiveFormsModule,
     // Components
     ErrorComponent,
+    FollowButtonComponent,
     InfoComponent,
-    LoadingComponent
+    LoadingComponent,
   ]
 })
 export class SharedModule { }

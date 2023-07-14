@@ -26,7 +26,7 @@ let UsersController = exports.UsersController = class UsersController {
             return res.status(common_1.HttpStatus.OK).end();
         }
         catch (error) {
-            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: error.toString() });
+            return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error });
         }
     }
     async findAll(res) {

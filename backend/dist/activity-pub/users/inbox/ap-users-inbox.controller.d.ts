@@ -15,7 +15,7 @@ export declare class APUsersInboxController {
     private logger;
     constructor(httpService: HttpService, followersService: FollowersService, hostUrlService: HostUrlService, notificationsService: NotificationsService, usersService: UsersService, signHeaderService: SignHeaderService);
     inbox(name: string, body: any, res: Response): Promise<Response>;
-    private getActor;
+    private fetchActor;
     private onFollow;
     private onUnfollow;
     private acceptFollow;

@@ -29,7 +29,7 @@ export class FollowersComponent {
       this.userName = name;
       
       const followers = await this.followersService.findAll(name);
-      if(followers == null)return this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時
+      if(followers == null) return this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時
       this.followers = followers;
     });
   }
