@@ -36,7 +36,7 @@ export class FollowingsController {
         await this.followingsService.createLocalUser(userName, followingName);  // Throws
         // フォロー通知を相手の Inbox URL に投げる
         const fqdn = this.hostUrlService.fqdn;
-        await firstValueFrom(this.httpService.post(`${fqdn}/api/activity-pub/${followingName}/inbox`, {
+        await firstValueFrom(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
           '@context': 'https://www.w3.org/ns/activitystreams',
           id        : `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
           type      : 'Follow',
@@ -97,7 +97,7 @@ export class FollowingsController {
         await this.followingsService.removeLocalUser(userName, followingName);
         // アンフォロー通知を Inbox URL に投げる
         const fqdn = this.hostUrlService.fqdn;
-        await firstValueFrom(this.httpService.post(`${fqdn}/api/activity-pub/${followingName}/inbox`, {
+        await firstValueFrom(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
           '@context': 'https://www.w3.org/ns/activitystreams',
           id        : `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
           type      : 'Undo',

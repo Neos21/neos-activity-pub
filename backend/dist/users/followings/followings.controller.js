@@ -35,7 +35,7 @@ let FollowingsController = exports.FollowingsController = class FollowingsContro
             try {
                 await this.followingsService.createLocalUser(userName, followingName);
                 const fqdn = this.hostUrlService.fqdn;
-                await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${fqdn}/api/activity-pub/${followingName}/inbox`, {
+                await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
                     '@context': 'https://www.w3.org/ns/activitystreams',
                     id: `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
                     type: 'Follow',
@@ -73,7 +73,7 @@ let FollowingsController = exports.FollowingsController = class FollowingsContro
             try {
                 await this.followingsService.removeLocalUser(userName, followingName);
                 const fqdn = this.hostUrlService.fqdn;
-                await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${fqdn}/api/activity-pub/${followingName}/inbox`, {
+                await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
                     '@context': 'https://www.w3.org/ns/activitystreams',
                     id: `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
                     type: 'Undo',
