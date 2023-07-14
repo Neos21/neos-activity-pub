@@ -1,0 +1,12 @@
+<app-loading *ngIf="followings == null"></app-loading>
+<div *ngIf="followings != null" class="container">
+  <h2><a [routerLink]="['/users', userName]">@{{ userName }}</a> : Followings</h2>
+  <p *ngIf="followings.length === 0">フォロー中の人はいません</p>
+  
+  <dl *ngIf="followings.length > 0">
+    <ng-container *ngFor="let following of followings">
+      <dt><a [href]="following.url">@{{ following.followingName }}<ng-container *ngIf="following.followingRemoteHost != null">@{{ following.followingRemoteHost }}</ng-container></a></dt>
+      <dd>フォロー日 : {{ following.createdAt }} 〜 (<a [href]="following.actorUrl">Actor URL</a>・<a [href]="following.inboxUrl">Inbox URL</a>)</dd>
+    </ng-container>
+  </dl>
+</div>

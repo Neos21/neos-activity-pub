@@ -7,6 +7,7 @@ export declare class FollowingsService {
     constructor(followingsRepository: Repository<Following>, hostUrlService: HostUrlService);
     createLocalUser(userName: string, followingName: string): Promise<InsertResult>;
     createRemoteUser(userName: string, followingName: string, followingRemoteHost: string): void;
+    findAll(userName: string): Promise<Array<Following>>;
     searchLocalUser(userName: string, followingName: string): Promise<Following>;
     removeLocalUser(userName: string, followingName: string): Promise<DeleteResult>;
 }

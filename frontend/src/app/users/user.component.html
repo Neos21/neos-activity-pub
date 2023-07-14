@@ -13,7 +13,7 @@
   </p>
   <ul>
     <li><a [routerLink]="['/users', user.name, 'followers']">Followers</a></li>
-    <li>Following</li>
+    <li><a [routerLink]="['/users', user.name, 'followings']">Followings</a></li>
     <li><a [routerLink]="['/users', user.name, 'posts']">Posts</a></li>
   </ul>
 </div>

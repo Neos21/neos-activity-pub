@@ -12,6 +12,7 @@ import { CustomInterceptor } from './core/custom.interceptor';
 import { AppComponent } from './app.component';
 // Components
 import { FollowersComponent } from './users/followers/followers.component';
+import { FollowingsComponent } from './users/followings/followings.component';
 import { FollowLocalUserButtonComponent } from './users/followers/follow-button/follow-local-user-button.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
@@ -36,6 +37,7 @@ import { SearchComponent } from './home/search/search.component';
   ],
   declarations: [
     FollowersComponent,
+    FollowingsComponent,
     FollowLocalUserButtonComponent,
     HomeComponent,
     LoginComponent,

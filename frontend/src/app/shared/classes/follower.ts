@@ -4,7 +4,7 @@ export class Follower {
   public userName!: string;
   /** フォロワー名 */
   public followerName!: string;
-  /** フォロワーのリモートホスト (ローカルユーザは `null`) */
+  /** フォロワーのリモートホスト (ローカルユーザは `null` ではなく空文字) */
   public followerRemoteHost?: string;
   /** フォロワーのプロフィールページ URL */
   public url!: string;

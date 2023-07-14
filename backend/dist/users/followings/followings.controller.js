@@ -19,11 +19,13 @@ const rxjs_1 = require("rxjs");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const followings_service_1 = require("./followings.service");
 const host_url_service_1 = require("../../shared/services/host-url.service");
+const users_service_1 = require("../users.service");
 let FollowingsController = exports.FollowingsController = class FollowingsController {
-    constructor(httpService, followingsService, hostUrlService) {
+    constructor(httpService, followingsService, hostUrlService, usersService) {
         this.httpService = httpService;
         this.followingsService = followingsService;
         this.hostUrlService = hostUrlService;
+        this.usersService = usersService;
     }
     async create(name, userName, followingName, followingRemoteHost, req, res) {
         const jwtUserName = req.user?.name;
@@ -50,6 +52,18 @@ let FollowingsController = exports.FollowingsController = class FollowingsContro
             }
         }
         return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });
+    }
+    async findAll(name, res) {
+        try {
+            const user = this.usersService.findOne(name);
+            if (user == null)
+                return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
+            const followers = await this.followingsService.findAll(name);
+            return res.status(common_1.HttpStatus.OK).json(followers);
+        }
+        catch (error) {
+            return res.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+        }
     }
     async search(name, userName, followingName, followingRemoteHost, req, res) {
         const jwtUserName = req.user?.name;
@@ -109,6 +123,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FollowingsController.prototype, "create", null);
 __decorate([
+    (0, common_1.Get)(':name/followings'),
+    __param(0, (0, common_1.Param)('name')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], FollowingsController.prototype, "findAll", null);
+__decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':name/followings/search'),
     __param(0, (0, common_1.Param)('name')),
@@ -138,6 +160,7 @@ exports.FollowingsController = FollowingsController = __decorate([
     (0, common_1.Controller)('api/users'),
     __metadata("design:paramtypes", [axios_1.HttpService,
         followings_service_1.FollowingsService,
-        host_url_service_1.HostUrlService])
+        host_url_service_1.HostUrlService,
+        users_service_1.UsersService])
 ], FollowingsController);
 //# sourceMappingURL=followings.controller.js.map

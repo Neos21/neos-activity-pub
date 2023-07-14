@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FollowingsService } from './followings.service';
 import { HostUrlService } from 'src/shared/services/host-url.service';
+import { UsersService } from '../users.service';
 
 @Controller('api/users')
 export class FollowingsController {
@@ -13,6 +14,7 @@ export class FollowingsController {
     private httpService: HttpService,
     private followingsService: FollowingsService,
     private hostUrlService: HostUrlService,
+    private usersService: UsersService,
   ) { }
   
   /** フォローする */
@@ -53,6 +55,21 @@ export class FollowingsController {
     return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他のフォローパターンを実装する
   }
   
+  /** フォロー中一覧を返す */
+  @Get(':name/followings')
+  public async findAll(@Param('name') name: string, @Res() res: Response): Promise<Response> {
+    try {
+      const user = this.usersService.findOne(name);  // ユーザ存在チェック
+      if(user == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
+      const followers = await this.followingsService.findAll(name);
+      return res.status(HttpStatus.OK).json(followers);
+    }
+    catch(error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+    }
+  }
+  
+  /** フォロー中のユーザを検索する (フォロー中か否かを判定するため) */
   @UseGuards(JwtAuthGuard)
   @Get(':name/followings/search')
   public async search(
@@ -75,6 +92,7 @@ export class FollowingsController {
     
     return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他の検索パターンを実装する
   }
+  
   
   /** アンフォローする */
   @UseGuards(JwtAuthGuard)

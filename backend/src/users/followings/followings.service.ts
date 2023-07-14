@@ -34,6 +34,14 @@ export class FollowingsService {
     // TODO : links[].rel:self の href にアクセスして actorURL・inboxURL を拾う
   }
   
+  /** フォロー中を新しいモノから順番に一覧で返す */
+  public findAll(userName: string): Promise<Array<Following>> {
+    return this.followingsRepository.find({
+      where: { userName },
+      order: { createdAt: 'DESC' }
+    });
+  }
+  
   /** ローカルユーザをフォロー中かどうか調べる・`null` が返れば未フォロー */
   public searchLocalUser(userName: string, followingName: string) {
     return this.followingsRepository.findOne({

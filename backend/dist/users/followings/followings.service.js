@@ -36,6 +36,12 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
     }
     createRemoteUser(userName, followingName, followingRemoteHost) {
     }
+    findAll(userName) {
+        return this.followingsRepository.find({
+            where: { userName },
+            order: { createdAt: 'DESC' }
+        });
+    }
     searchLocalUser(userName, followingName) {
         return this.followingsRepository.findOne({
             where: { userName, followingName, followingRemoteHost: '' }
