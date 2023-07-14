@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
+import { AuthService } from 'src/app/shared/services/auth.service';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -13,6 +15,8 @@ export class SearchComponent {
   public form!: FormGroup;
   /** 処理中かどうか */
   public isProcessing: boolean = false;
+  /** ログインユーザ名 */
+  public authUserName?: string;
   /** エラーメッセージ */
   public error?: string;
   /** 検索結果 */
@@ -31,12 +35,14 @@ export class SearchComponent {
   constructor(
     private formBuilder: FormBuilder,
     private httpClient: HttpClient,
+    private authService: AuthService,
   ) { }
   
   public ngOnInit(): void {
     this.form = this.formBuilder.group({
       searchText: ['', [Validators.required]]
     });
+    this.authUserName = this.authService.name;
   }
   
   public async search(): Promise<void> {

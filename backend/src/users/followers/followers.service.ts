@@ -23,10 +23,7 @@ export class FollowersService {
       actorUrl          : actorObject.id,
       inboxUrl          : actorObject.inbox
     });
-    console.log('TODO : ', follower);
-    return this.followersRepository.insert(follower).then(_insertResult => true).catch(_error => {
-      console.log('TODO: : 何が悪い', _error);
-      return false});
+    return this.followersRepository.insert(follower).then(_insertResult => true).catch(_error => false);
   }
   
   /** フォロワーを新しいモノから順番に一覧で返す */

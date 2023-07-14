@@ -14,8 +14,14 @@
   <p><button type="button" onClick="window.alert('TODO : まだ実装できてないです…')">☆</button>
 </ng-container>
 
-<ng-container *ngIf="searchResult != null && searchResult.type === 'User'">
-  <h3>ユーザ :</h3>
-  <p><a [href]="searchResult.userUrl">@{{ searchResult.userName }}<ng-container *ngIf="searchResult.userHost != null">@{{ searchResult.userHost }}</ng-container></a></p>
+<ng-container *ngIf="searchResult != null && searchResult.type === 'User' && searchResult.userHost == null">
+  <h3>ローカルユーザ :</h3>
+  <p><a [href]="searchResult.userUrl">@{{ searchResult.userName }}</a></p>
+  <p><app-follow-local-user-button [userName]="authUserName" [followingName]="searchResult.userName"></app-follow-local-user-button></p>
+</ng-container>
+
+<ng-container *ngIf="searchResult != null && searchResult.type === 'User' && searchResult.userHost != null">
+  <h3>リモートユーザ :</h3>
+  <p><a [href]="searchResult.userUrl">@{{ searchResult.userName }}@{{ searchResult.userHost }}</a></p>
   <p><button type="button" onClick="window.alert('TODO : まだ実装できてないです…')">フォロー</button>
 </ng-container>

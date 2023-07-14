@@ -50,7 +50,7 @@ export class FollowingsController {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他の検索パターンを実装する
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他のフォローパターンを実装する
   }
   
   @UseGuards(JwtAuthGuard)
@@ -116,7 +116,6 @@ export class FollowingsController {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他の検索パターンを実装する
+    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他のアンフォローパターンを実装する
   }
-  
 }
