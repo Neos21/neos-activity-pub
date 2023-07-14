@@ -19,4 +19,5 @@ export declare class APUsersInboxController {
     private onFollow;
     private onUnfollow;
     private acceptFollow;
+    private onLike;
 }

@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 
+import { ActorObjectService } from 'src/shared/services/actor-object.service';
 import { HostUrlService } from 'src/shared/services/host-url.service';
 import { UsersService } from 'src/users/users.service';
 
@@ -16,6 +17,7 @@ const activityJsonHeaderOption = {
 export class SearchService {
   constructor(
     private httpService: HttpService,
+    private actorObjectService: ActorObjectService,
     private hostUrlService: HostUrlService,
     private usersService: UsersService,
   ) { }
@@ -46,7 +48,7 @@ export class SearchService {
         userId   : personResult.data.id,
         userUrl  : personResult.data.url,
         userName : userName,
-        userHost : this.getRemoteHost(personResult.data.id)
+        userHost : this.actorObjectService.getRemoteHost(personResult.data.id)
       };
     }
     // ユーザだった場合
@@ -55,7 +57,7 @@ export class SearchService {
       userId  : result.data.id,
       userUrl : result.data.url,
       userName: result.data.preferredUsername,
-      userHost: this.getRemoteHost(result.data.id)
+      userHost: this.actorObjectService.getRemoteHost(result.data.id)
     };
     // それ以外の結果は `null` とする
     return null;
@@ -76,7 +78,7 @@ export class SearchService {
       userId  : result.data.id,
       userUrl : result.data.url,
       userName: result.data.preferredUsername,
-      userHost: this.getRemoteHost(result.data.id)
+      userHost: this.actorObjectService.getRemoteHost(result.data.id)
     };
   }
   
@@ -91,11 +93,5 @@ export class SearchService {
       userName: user.name,
       userHost: null
     };
-  }
-  
-  // ローカルホストの場合は `null` を返す
-  private getRemoteHost(url: string): string | null {
-    const host = new URL(url).host;
-    return host === this.hostUrlService.host ? null : host;
   }
 }

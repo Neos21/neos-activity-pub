@@ -13,6 +13,7 @@ exports.SearchService = void 0;
 const axios_1 = require("@nestjs/axios");
 const common_1 = require("@nestjs/common");
 const rxjs_1 = require("rxjs");
+const actor_object_service_1 = require("../shared/services/actor-object.service");
 const host_url_service_1 = require("../shared/services/host-url.service");
 const users_service_1 = require("../users/users.service");
 const activityJsonHeaderOption = {
@@ -22,8 +23,9 @@ const activityJsonHeaderOption = {
     }
 };
 let SearchService = exports.SearchService = class SearchService {
-    constructor(httpService, hostUrlService, usersService) {
+    constructor(httpService, actorObjectService, hostUrlService, usersService) {
         this.httpService = httpService;
+        this.actorObjectService = actorObjectService;
         this.hostUrlService = hostUrlService;
         this.usersService = usersService;
     }
@@ -57,7 +59,7 @@ let SearchService = exports.SearchService = class SearchService {
                 userId: personResult.data.id,
                 userUrl: personResult.data.url,
                 userName: userName,
-                userHost: this.getRemoteHost(personResult.data.id)
+                userHost: this.actorObjectService.getRemoteHost(personResult.data.id)
             };
         }
         if (result?.data?.type === 'Person')
@@ -66,7 +68,7 @@ let SearchService = exports.SearchService = class SearchService {
                 userId: result.data.id,
                 userUrl: result.data.url,
                 userName: result.data.preferredUsername,
-                userHost: this.getRemoteHost(result.data.id)
+                userHost: this.actorObjectService.getRemoteHost(result.data.id)
             };
         return null;
     }
@@ -87,7 +89,7 @@ let SearchService = exports.SearchService = class SearchService {
             userId: result.data.id,
             userUrl: result.data.url,
             userName: result.data.preferredUsername,
-            userHost: this.getRemoteHost(result.data.id)
+            userHost: this.actorObjectService.getRemoteHost(result.data.id)
         };
     }
     async searchLocalUser(query) {
@@ -103,14 +105,11 @@ let SearchService = exports.SearchService = class SearchService {
             userHost: null
         };
     }
-    getRemoteHost(url) {
-        const host = new URL(url).host;
-        return host === this.hostUrlService.host ? null : host;
-    }
 };
 exports.SearchService = SearchService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [axios_1.HttpService,
+        actor_object_service_1.ActorObjectService,
         host_url_service_1.HostUrlService,
         users_service_1.UsersService])
 ], SearchService);

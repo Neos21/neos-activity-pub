@@ -6,5 +6,6 @@ export declare class NotificationsService {
     private actorObjectSerice;
     constructor(notificationsRepository: Repository<Notification>, actorObjectSerice: ActorObjectService);
     createFollow(userName: string, actorObject: any): Promise<boolean>;
+    createLike(userName: string, actorObject: any, postId: string): Promise<boolean>;
     findAll(userName: string): Promise<Array<Notification>>;
 }

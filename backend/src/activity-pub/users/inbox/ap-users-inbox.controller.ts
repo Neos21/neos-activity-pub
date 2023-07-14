@@ -33,19 +33,18 @@ export class APUsersInboxController {
     if(user == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'User Not Found' });
     
     const type = body?.type?.toLowerCase();  // 小文字に統一する
-    if(type === 'follow'  ) return this.onFollow(user, body, res);   // フォローされた
-    if(type === 'like'    ) return res.status(HttpStatus.OK).end();  // いいねされた・TODO : いいね情報を追加する・いいねされた通知を追加する
-    if(type === 'announce') return res.status(HttpStatus.OK).end();  // ブーストされた・TODO : ブーストされた通知を追加する
+    if(type === 'follow'  ) return this.onFollow(user, body, res);     // フォローされた
+    if(type === 'like'    ) return this.onLike(user.name, body, res);  // いいねされた
+    if(type === 'announce') return res.status(HttpStatus.OK).end();    // ブーストされた・TODO : ブーストされた通知を追加する
     if(type === 'undo'    ) {  // 何らかの処理が取り消された
       const objectType = body.object?.type?.toLowerCase();
-      if(objectType === 'follow'  ) return this.onUnfollow(user, body, res);  // アンフォローされた
-      if(objectType === 'like'    ) return res.status(HttpStatus.OK).end();   // いいねが外された・TODO : いいね情報を削除する
-      if(objectType === 'announce') return res.status(HttpStatus.OK).end();   // ブーストが外された
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });  // 未知の Undo イベント
+      if(objectType === 'follow'                  ) return this.onUnfollow(user, body, res);  // アンフォローされた
+      if(['like', 'announce'].includes(objectType)) return res.status(HttpStatus.OK).end();   // いいねが外された・ブーストが外された
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Undo But Unknown Object Type' });  // 未知の Undo イベント
     }
     if(type === 'create') {
       const objectType = body.object?.type?.toLowerCase();
-      if(objectType === 'note') return res.status(HttpStatus.OK).end();  // TODO : リプライを受け取ったことを記録する
+      if(objectType === 'note') return res.status(HttpStatus.OK).end();  // リプライを受け取った・TODO : リプライされた通知を追加する
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });  // 未知の Create イベント
     }
     if(['update', 'delete', 'accept', 'reject'].includes(type)) return res.status(HttpStatus.OK).end();  // その他のイベント
@@ -68,16 +67,16 @@ export class APUsersInboxController {
   private async onFollow(user: User, body: any, res: Response): Promise<Response> {
     // Actor・Inbox URL を取得する
     const actor = await this.getActor(body?.actor);
-    if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Inbox URL' });  // Inbox URL が不明なので処理できない
+    if(actor?.inbox == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor' });  // Inbox URL が不明なので処理できない
     // フォロワー情報を追加する
     const isCreated = await this.followersService.create(user.name, actor);
-    if(!isCreated) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Follower)' });
+    if(!isCreated) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Follower' });
     // フォローされた通知を追加する
     const isNotified = await this.notificationsService.createFollow(user.name, actor);
-    if(!isNotified) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Actor (Notification)' });
+    if(!isNotified) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Notification' });
     // フォローを承認する
     const isAccepted = await this.acceptFollow(user, body, actor.inbox);
-    if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Body (Accept)' });
+    if(!isAccepted) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Follow But Invalid Accept' });
     // 成功
     return res.status(HttpStatus.OK).end();
   }
@@ -115,5 +114,20 @@ export class APUsersInboxController {
     // Inbox URL に向けて Accept を POST する
     const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, user.name, user.privateKey);
     return firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders })).then(_response => true).catch(_error => false);
+  }
+  
+  /** いいねされた */
+  private async onLike(userName: string, body: any, res: Response): Promise<Response> {
+    // Actor を取得する
+    const actor = await this.getActor(body?.actor);
+    if(actor == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Like But Invalid Actor' });
+    // いいねされた投稿の URL
+    const postId = body?.object;
+    if(postId == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Like But Invalid Object' });
+    // いいねされた通知を追加する
+    const isNotified = await this.notificationsService.createLike(userName, actor, postId);
+    if(!isNotified) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Like But Invalid Notification' });
+    // 成功
+    return res.status(HttpStatus.OK).end();
   }
 }

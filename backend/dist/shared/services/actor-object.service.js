@@ -16,18 +16,13 @@ let ActorObjectService = exports.ActorObjectService = class ActorObjectService {
     constructor(hostUrlService) {
         this.hostUrlService = hostUrlService;
     }
-    getRemoteHost(actorObject) {
-        const targetHost = new URL(actorObject.url).host;
-        if (this.hostUrlService.host === targetHost)
-            return undefined;
-        return targetHost;
-    }
-    getActorUserName(actorObject) {
-        return actorObject.preferredUsername;
+    getRemoteHost(url) {
+        const host = new URL(url).host;
+        return host === this.hostUrlService.host ? null : host;
     }
     getFullName(actorObject) {
-        const remoteHost = this.getRemoteHost(actorObject);
-        const actorUserName = this.getActorUserName(actorObject);
+        const remoteHost = this.getRemoteHost(actorObject.host);
+        const actorUserName = actorObject.preferredUsername;
         if (remoteHost == null)
             return actorUserName;
         return `${actorUserName}@${remoteHost}`;

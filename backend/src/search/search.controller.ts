@@ -11,7 +11,7 @@ export class SearchController {
   @Get('')
   public async search(@Query('query') query: string, @Res() res: Response): Promise<Response> {
     const result = await this.searchService.search(query);
-    if(result == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'Results Not Found' })
+    if(result == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'Results Not Found' });
     return res.status(HttpStatus.OK).json(result);
   }
 }

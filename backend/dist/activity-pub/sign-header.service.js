@@ -19,25 +19,15 @@ let SignHeaderService = exports.SignHeaderService = class SignHeaderService {
     }
     signHeader(json, inboxUrl, userName, privateKey) {
         const utc = new Date().toUTCString();
-        const sha256Digest = 'SHA-256=' + crypto.createHash('sha256').update(JSON.stringify(json)).digest('base64');
+        const sha256Digest = `SHA-256=${crypto.createHash('sha256').update(JSON.stringify(json)).digest('base64')}`;
         const hostName = new URL(inboxUrl).hostname;
-        const signature = crypto.createSign('sha256').update([
-            `(request-target): post ${new URL(inboxUrl).pathname}`,
-            `host: ${hostName}`,
-            `date: ${utc}`,
-            `digest: ${sha256Digest}`
-        ].join('\n')).end();
+        const signature = crypto.createSign('sha256').update(`(request-target): post ${new URL(inboxUrl).pathname}\nhost: ${hostName}\ndate: ${utc}\ndigest: ${sha256Digest}`).end();
         const base64Signature = signature.sign(privateKey, 'base64');
         const requestHeaders = {
             Host: hostName,
             Date: utc,
             Digest: sha256Digest,
-            Signature: [
-                `keyId="${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}#main-key"`,
-                'algorithm="rsa-sha256"',
-                'headers="(request-target) host date digest"',
-                `signature="${base64Signature}"`
-            ].join(','),
+            Signature: `keyId="${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}#main-key",algorithm="rsa-sha256",headers="(request-target) host date digest",signature="${base64Signature}"`,
             Accept: 'application/activity+json',
             'Content-Type': 'application/activity+json'
         };

@@ -27,8 +27,18 @@ let NotificationsService = exports.NotificationsService = class NotificationsSer
         const notification = new notification_1.Notification({
             userName: userName,
             type: 'follow',
-            actorName: this.actorObjectSerice.getActorUserName(actorObject),
-            remoteHost: this.actorObjectSerice.getRemoteHost(actorObject)
+            actorName: actorObject.preferredUsername,
+            remoteHost: this.actorObjectSerice.getRemoteHost(actorObject?.url)
+        });
+        return this.notificationsRepository.insert(notification).then(_insertResult => true).catch(_error => false);
+    }
+    createLike(userName, actorObject, postId) {
+        const notification = new notification_1.Notification({
+            userName: userName,
+            type: 'like',
+            actorName: actorObject.preferredUsername,
+            remoteHost: this.actorObjectSerice.getRemoteHost(actorObject?.url),
+            postId: postId
         });
         return this.notificationsRepository.insert(notification).then(_insertResult => true).catch(_error => false);
     }

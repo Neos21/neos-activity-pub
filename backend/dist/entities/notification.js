@@ -36,8 +36,20 @@ __decorate([
 ], Notification.prototype, "remoteHost", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', name: 'post_id', nullable: true }),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], Notification.prototype, "postId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', name: 'reply_id', nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "replyId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', name: 'reply_url', nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "replyUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', name: 'reply_content', nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "replyContent", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
