@@ -14,6 +14,9 @@ export class FavouriteButtonComponent {
   /** ふぁぼる対象の Post ID (URL) */
   @Input()
   public postId?: string;
+  /** ふぁぼる対象のユーザ ID (URL) */
+  @Input()
+  public userId?: string;
   
   /** ボタンのラベル */
   public label: string = '☆';
@@ -61,7 +64,8 @@ export class FavouriteButtonComponent {
       try {
         await firstValueFrom(this.httpClient.post(`/api/users/${this.userName}/favourites`, {
           userName: this.userName,
-          postId  : this.postId
+          postId  : this.postId,
+          userId  : this.userId
         }));
         this.isFavourited = true;
         this.label = '★';

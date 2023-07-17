@@ -30,7 +30,7 @@ let FavouritesController = exports.FavouritesController = class FavouritesContro
         try {
             console.log('Start 1');
             const inboxUrl = await this.favouritesService.fetchInboxUrl(userId);
-            console.log('Start 2');
+            console.log('Start 2', inboxUrl);
             await this.favouritesService.postLikeInbox(userName, inboxUrl, postId);
             console.log('Start 3');
             await this.favouritesService.create(userName, postId, inboxUrl);

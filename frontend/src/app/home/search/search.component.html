@@ -11,7 +11,7 @@
   <div><a [href]="searchResult.userUrl">@{{ searchResult.userName }}<ng-container *ngIf="searchResult.userHost != null">@{{ searchResult.userHost }}</ng-container></a></div>
   <div class="text-right"><a [href]="searchResult.postUrl">{{ searchResult.createdAt }}</a></div>
   <div [innerHTML]="searchResult.content"></div>
-  <p><app-favourite-button [userName]="authUserName" [postId]="searchResult.postId"></app-favourite-button></p>
+  <p><app-favourite-button [userName]="authUserName" [postId]="searchResult.postId" [userId]="searchResult.userId"></app-favourite-button></p>
 </ng-container>
 
 <ng-container *ngIf="searchResult != null && searchResult.type === 'User' && searchResult.userHost == null">
