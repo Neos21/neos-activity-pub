@@ -35,7 +35,7 @@ export class APUsersInboxController {
     const type = body?.type?.toLowerCase();  // 小文字に統一する
     if(type === 'follow'  ) return this.onFollow(user, body, res);     // フォローされた
     if(type === 'like'    ) return this.onLike(user.name, body, res);  // いいねされた
-    if(type === 'announce') return res.status(HttpStatus.OK).end();    // ブーストされた・TODO : ブーストされた通知を追加する
+    if(type === 'announce') return res.status(HttpStatus.OK).end();    // ブーストされた
     if(type === 'undo'    ) {  // 何らかの処理が取り消された
       const objectType = body.object?.type?.toLowerCase();
       if(objectType === 'follow'                  ) return this.onUnfollow(user, body, res);  // アンフォローされた
@@ -44,7 +44,7 @@ export class APUsersInboxController {
     }
     if(type === 'create') {
       const objectType = body.object?.type?.toLowerCase();
-      if(objectType === 'note') return res.status(HttpStatus.OK).end();  // リプライを受け取った・TODO : リプライされた通知を追加する
+      if(objectType === 'note') return res.status(HttpStatus.OK).end();  // リプライを受け取った
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Type Create But Unknown Object Type' });  // 未知の Create イベント
     }
     if(['update', 'delete', 'accept', 'reject'].includes(type)) return res.status(HttpStatus.OK).end();  // その他のイベント
