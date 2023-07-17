@@ -42,6 +42,11 @@ export class UsersService {
     return true;
   }
   
+  /** ユーザ一覧を取得する */
+  public findAll(): Promise<Array<User> | null> {
+    return this.usersRepository.find({ order: { createdAt: 'DESC' }});
+  }
+  
   /** ユーザを一意に取得する */
   public findOne(name: string): Promise<User | null> {
     return this.findOneBase(name, { name: true, createdAt: true });

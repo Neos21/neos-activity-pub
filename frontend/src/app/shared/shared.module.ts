@@ -27,7 +27,7 @@ import { LoadingComponent } from './components/loading/loading.component';
     // Components
     ErrorComponent,
     InfoComponent,
-    LoadingComponent
+    LoadingComponent,
   ]
 })
 export class SharedModule { }

@@ -37,7 +37,7 @@ export class PostsService {
     return this.findOne(createdId);
   }
   
-  /** フォロワーを取得し、そのフォロワーの Inbox に Create を投げる (TODO : BullMQ でやりたい) */
+  /** フォロワーを取得し、そのフォロワーの Inbox に Create を投げる (できれば BullMQ でやりたい) */
   public async publishNote(post: Post): Promise<void> {
     const user = await this.usersService.findOneWithPrivateKey(post.userName);
     const followers = await this.followersService.findAll(post.userName);

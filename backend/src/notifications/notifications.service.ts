@@ -18,8 +18,19 @@ export class NotificationsService {
     const notification = new Notification({
       userName  : userName,
       type      : 'follow',
-      actorName : this.actorObjectSerice.getActorUserName(actorObject),
-      remoteHost: this.actorObjectSerice.getRemoteHost(actorObject)
+      actorName : actorObject.preferredUsername,
+      remoteHost: this.actorObjectSerice.getRemoteHost(actorObject?.url)
+    });
+    return this.notificationsRepository.insert(notification).then(_insertResult => true).catch(_error => false);
+  }
+  
+  public createLike(userName: string, actorObject: any, postId: string): Promise<boolean> {
+    const notification = new Notification({
+      userName  : userName,
+      type      : 'like',
+      actorName : actorObject.preferredUsername,
+      remoteHost: this.actorObjectSerice.getRemoteHost(actorObject?.url),
+      postId    : postId
     });
     return this.notificationsRepository.insert(notification).then(_insertResult => true).catch(_error => false);
   }

@@ -1,10 +1,19 @@
 <app-loading *ngIf="user == null"></app-loading>
-<ng-container *ngIf="user != null">
-  <h2>Profile</h2>
+<div *ngIf="user != null" class="container">
+  <h2>@{{ user.name }}</h2>
   <dl>
     <dt>ユーザ名</dt>
     <dd>{{ user.name }}</dd>
     <dt>登録日</dt>
     <dd>{{ user.createdAt }}</dd>
   </dl>
-</ng-container>
+  <p *ngIf="user.name === authUserName">それはあなたです!</p>
+  <p *ngIf="user.name !== authUserName">
+    <app-follow-local-user-button [userName]="authUserName" [followingName]="user.name"></app-follow-local-user-button>
+  </p>
+  <ul>
+    <li><a [routerLink]="['/users', user.name, 'followers']">Followers</a></li>
+    <li><a [routerLink]="['/users', user.name, 'followings']">Followings</a></li>
+    <li><a [routerLink]="['/users', user.name, 'posts']">Posts</a></li>
+  </ul>
+</div>

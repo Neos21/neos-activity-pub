@@ -17,8 +17,15 @@ export class UsersController {
       return res.status(HttpStatus.OK).end();
     }
     catch(error) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: error.toString() });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error });
     }
+  }
+  
+  /** ユーザ一覧を返す */
+  @Get('')
+  public async findAll(@Res() res: Response): Promise<Response> {
+    const users = await this.usersService.findAll();
+    return res.status(HttpStatus.OK).json(users);
   }
   
   /** ユーザ情報を返す */

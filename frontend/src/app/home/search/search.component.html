@@ -1,0 +1,27 @@
+<p class="form-description"><code>URL</code>・<code>@RemoteUserName@Host</code>・<code>@LocalUserName</code> で検索できます</p>
+<form [formGroup]="form" (ngSubmit)="search()">
+  <input type="text" formControlName="searchText" placeholder="検索または URL を入力" [disabled]="isProcessing">
+  <button type="submit" [disabled]="form.invalid || isProcessing">検索</button>
+  <button type="reset"  [disabled]="isProcessing" (click)="reset()">×</button>
+</form>
+<app-error [error]="error"></app-error>
+
+<ng-container *ngIf="searchResult != null && searchResult.type === 'Post'">
+  <h3>投稿 :</h3>
+  <div><a [href]="searchResult.userUrl">@{{ searchResult.userName }}<ng-container *ngIf="searchResult.userHost != null">@{{ searchResult.userHost }}</ng-container></a></div>
+  <div class="text-right"><a [href]="searchResult.postUrl">{{ searchResult.createdAt }}</a></div>
+  <div [innerHTML]="searchResult.content"></div>
+  <p><app-favourite-button [userName]="authUserName" [postId]="searchResult.postId" [userId]="searchResult.userId"></app-favourite-button></p>
+</ng-container>
+
+<ng-container *ngIf="searchResult != null && searchResult.type === 'User' && searchResult.userHost == null">
+  <h3>ローカルユーザ :</h3>
+  <p><a [href]="searchResult.userUrl">@{{ searchResult.userName }}</a></p>
+  <p><app-follow-local-user-button [userName]="authUserName" [followingName]="searchResult.userName"></app-follow-local-user-button></p>
+</ng-container>
+
+<ng-container *ngIf="searchResult != null && searchResult.type === 'User' && searchResult.userHost != null">
+  <h3>リモートユーザ :</h3>
+  <p><a [href]="searchResult.userUrl">@{{ searchResult.userName }}@{{ searchResult.userHost }}</a></p>
+  <p><app-follow-remote-user-button [userName]="authUserName" [followingName]="searchResult.userName" [followingRemoteHost]="searchResult.userHost"></app-follow-remote-user-button></p>
+</ng-container>

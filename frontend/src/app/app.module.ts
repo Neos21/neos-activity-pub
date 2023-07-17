@@ -11,7 +11,11 @@ import { CustomInterceptor } from './core/custom.interceptor';
 // Bootstrap
 import { AppComponent } from './app.component';
 // Components
+import { FavouriteButtonComponent } from './home/favourite-button/favourite-button.component';
 import { FollowersComponent } from './users/followers/followers.component';
+import { FollowingsComponent } from './users/followings/followings.component';
+import { FollowLocalUserButtonComponent } from './users/followers/follow-local-user-button/follow-local-user-button.component';
+import { FollowRemoteUserButtonComponent } from './users/followers/follow-remote-user-button/follow-remote-user-button.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { NewPostComponent } from './home/new-post/new-post.component';
@@ -20,6 +24,8 @@ import { PostsComponent } from './users/posts/posts.component';
 import { RedirectComponent } from './core/redirect.component';
 import { SignupComponent } from './signup/signup.component';
 import { UserComponent } from './users/user.component';
+import { UsersComponent } from './users/users.component';
+import { SearchComponent } from './home/search/search.component';
 
 @NgModule({
   imports: [
@@ -32,7 +38,11 @@ import { UserComponent } from './users/user.component';
     AppComponent
   ],
   declarations: [
+    FavouriteButtonComponent,
     FollowersComponent,
+    FollowingsComponent,
+    FollowLocalUserButtonComponent,
+    FollowRemoteUserButtonComponent,
     HomeComponent,
     LoginComponent,
     NewPostComponent,
@@ -42,6 +52,8 @@ import { UserComponent } from './users/user.component';
     SignupComponent,
     UserComponent,
     AppComponent,
+    UsersComponent,
+    SearchComponent,
   ],
   providers: [
     {

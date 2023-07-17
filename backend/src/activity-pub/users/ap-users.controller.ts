@@ -25,12 +25,12 @@ export class APUsersController {
       ],
       type   : 'Person',
       id     : `${fqdn}/api/activity-pub/users/${user.name}`,         // Fediverse で一意・ActivityPub を話せる URL であること
-      name   : user.name,                                               // 表示名
-      preferredUsername: user.name,                                     // ユーザ ID
-      summary: `<p>User : ${user.name}</p>`,                            // 概要
+      name   : user.name,                                             // 表示名
+      preferredUsername: user.name,                                   // ユーザ ID
+      summary: `<p>User : ${user.name}</p>`,                          // 概要
       inbox  : `${fqdn}/api/activity-pub/users/${user.name}/inbox`,   // このユーザへの宛先
       outbox : `${fqdn}/api/activity-pub/users/${user.name}/outbox`,  // このユーザの発信元
-      url    : `${fqdn}/api/activity-pub/users/${user.name}`,         // プロフィールページ
+      url    : `${fqdn}/users/${user.name}`,                          // プロフィールページ
       manuallyApprovesFollowers: false,
       discoverable: true,
       published: `${user.createdAt.toISOString().slice(0, 10)}T00:00:00Z`,  // 登録日 `YYYY-MM-DDTHH:mm:SSZ`

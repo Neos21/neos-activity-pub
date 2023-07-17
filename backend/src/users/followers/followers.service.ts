@@ -13,14 +13,16 @@ export class FollowersService {
     private actorObjectSerice: ActorObjectService
   ) { }
   
-  /** フォロワー情報を追加する */
+  /** フォロワー情報を追加する : Inbox より呼び出される */
   public create(userName: string, actorObject: any): Promise<boolean> {
     const follower = new Follower({
-      userName    : userName,
-      followerName: this.actorObjectSerice.getFullName(actorObject),
-      actorUrl    : actorObject.id,
-      inboxUrl    : actorObject.inbox
-    })
+      userName          : userName,
+      followerName      : actorObject.preferredUsername,
+      followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id) ?? '',
+      url               : actorObject.url,
+      actorUrl          : actorObject.id,
+      inboxUrl          : actorObject.inbox
+    });
     return this.followersRepository.insert(follower).then(_insertResult => true).catch(_error => false);
   }
   
@@ -32,11 +34,12 @@ export class FollowersService {
     });
   }
   
-  /** フォロワー情報を削除する */
+  /** フォロワー情報を削除する : Inbox より呼び出される */
   public remove(userName: string, actorObject: any): Promise<boolean> {
     return this.followersRepository.delete({
-      userName    : userName,
-      followerName: this.actorObjectSerice.getFullName(actorObject)
+      userName          : userName,
+      followerName      : actorObject.preferredUsername,
+      followerRemoteHost: this.actorObjectSerice.getRemoteHost(actorObject.id) ?? ''
     }).then(_deleteResult => true).catch(_error => false);
   }
 }

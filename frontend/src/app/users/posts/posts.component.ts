@@ -11,6 +11,8 @@ import { Post } from 'src/app/shared/classes/post';
   styleUrls: ['./posts.component.css']
 })
 export class PostsComponent {
+  /** ユーザ名 */
+  public userName?: string;
   /** 投稿一覧 */
   public posts?: Array<Post>;
   
@@ -24,12 +26,11 @@ export class PostsComponent {
     this.activatedRoute.paramMap.subscribe(async (params: ParamMap): Promise<void | boolean> => {
       const name = params.get('name');
       if(name == null) return this.router.navigate(['/']);  // ユーザ名が未指定の場合はトップに戻す
-      try {
-        this.posts = await this.postsService.findAll(name);  // Throws
-      }
-      catch(_error) {
-        this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時
-      }
+      this.userName = name;
+      
+      const posts = await this.postsService.findAll(name);
+      if(posts == null) return this.router.navigate(['/']);  // ユーザが見つからなかった場合 (404)・サーバエラー時
+      this.posts = posts;
     });
   }
 }
