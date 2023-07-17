@@ -11,6 +11,7 @@ import { HttpModule } from '@nestjs/axios';
 import { configuration } from './core/configuration';
 import { AccessLogMiddleware } from './core/access-log.middleware';
 // TypeORM Entities
+import { Favourite } from './entities/favourite';
 import { Follower } from './entities/follower';
 import { Following } from './entities/following';
 import { Notification } from './entities/notification';
@@ -22,6 +23,7 @@ import { APUsersInboxController } from './activity-pub/users/inbox/ap-users-inbo
 import { APUsersNotesController } from './activity-pub/users/notes/ap-users-notes.controller';
 import { APUsersOutboxController } from './activity-pub/users/outbox/ap-users-outbox.controller';
 import { AuthController } from './auth/auth.controller';
+import { FavouritesController } from './users/favourites/favourites.controller';
 import { FollowersController } from './users/followers/followers.controller';
 import { FollowingsController } from './users/followings/followings.controller';
 import { NotificationsController } from './notifications/notifications.controller';
@@ -32,6 +34,7 @@ import { WellKnownController } from './well-known/well-known.controller';
 import { AppController } from './app.controller';
 // Providers
 import { ActorObjectService } from './shared/services/actor-object.service';
+import { FavouritesService } from './users/favourites/favourites.service';
 import { FollowersService } from './users/followers/followers.service';
 import { FollowingsService } from './users/followings/followings.service';
 import { HostUrlService } from './shared/services/host-url.service';
@@ -70,6 +73,7 @@ import { UsersService } from './users/users.service';
         type: 'sqlite',
         database: path.resolve(__dirname, '../db/neos-activity-pub-backend.sqlite3.db'),
         entities: [
+          Favourite,
           Follower,
           Following,
           Notification,
@@ -81,6 +85,7 @@ import { UsersService } from './users/users.service';
     }),
     // Repository を使えるようにする
     TypeOrmModule.forFeature([
+      Favourite,
       Follower,
       Following,
       Notification,
@@ -94,6 +99,7 @@ import { UsersService } from './users/users.service';
     APUsersNotesController,
     APUsersOutboxController,
     AuthController,
+    FavouritesController,
     FollowersController,
     FollowingsController,
     UsersController,
@@ -105,6 +111,7 @@ import { UsersService } from './users/users.service';
   ],
   providers: [
     ActorObjectService,
+    FavouritesService,
     FollowersService,
     FollowingsService,
     HostUrlService,

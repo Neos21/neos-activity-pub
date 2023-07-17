@@ -104,7 +104,7 @@ let FollowingsController = exports.FollowingsController = FollowingsController_1
             try {
                 const following = await this.followingsService.searchRemoteUser(userName, followingName, followingRemoteHost);
                 if (following == null)
-                    throw new Error('Following Not Found');
+                    return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'Following Not Found' });
                 await this.followingsService.postUnfollowInboxToRemoteUser(userName, following.actorUrl, following.inboxUrl);
                 await this.followingsService.removeRemoteUser(userName, followingName, followingRemoteHost);
                 return res.status(common_1.HttpStatus.OK).end();

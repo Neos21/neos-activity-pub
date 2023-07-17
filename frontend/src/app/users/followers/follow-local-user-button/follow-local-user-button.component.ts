@@ -37,7 +37,6 @@ export class FollowLocalUserButtonComponent implements OnInit {
         this.label = `@${this.followingName} をアンフォローする`;
       }
       this.isDisabled = false;
-      
     }
     catch(error) {
       console.error('FollowLocalUserComponent#ngOnInit() : Error', error);

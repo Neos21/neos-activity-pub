@@ -16,6 +16,7 @@ const serve_static_1 = require("@nestjs/serve-static");
 const axios_1 = require("@nestjs/axios");
 const configuration_1 = require("./core/configuration");
 const access_log_middleware_1 = require("./core/access-log.middleware");
+const favourite_1 = require("./entities/favourite");
 const follower_1 = require("./entities/follower");
 const following_1 = require("./entities/following");
 const notification_1 = require("./entities/notification");
@@ -26,6 +27,7 @@ const ap_users_inbox_controller_1 = require("./activity-pub/users/inbox/ap-users
 const ap_users_notes_controller_1 = require("./activity-pub/users/notes/ap-users-notes.controller");
 const ap_users_outbox_controller_1 = require("./activity-pub/users/outbox/ap-users-outbox.controller");
 const auth_controller_1 = require("./auth/auth.controller");
+const favourites_controller_1 = require("./users/favourites/favourites.controller");
 const followers_controller_1 = require("./users/followers/followers.controller");
 const followings_controller_1 = require("./users/followings/followings.controller");
 const notifications_controller_1 = require("./notifications/notifications.controller");
@@ -35,6 +37,7 @@ const users_controller_1 = require("./users/users.controller");
 const well_known_controller_1 = require("./well-known/well-known.controller");
 const app_controller_1 = require("./app.controller");
 const actor_object_service_1 = require("./shared/services/actor-object.service");
+const favourites_service_1 = require("./users/favourites/favourites.service");
 const followers_service_1 = require("./users/followers/followers.service");
 const followings_service_1 = require("./users/followings/followings.service");
 const host_url_service_1 = require("./shared/services/host-url.service");
@@ -73,6 +76,7 @@ exports.AppModule = AppModule = __decorate([
                     type: 'sqlite',
                     database: path.resolve(__dirname, '../db/neos-activity-pub-backend.sqlite3.db'),
                     entities: [
+                        favourite_1.Favourite,
                         follower_1.Follower,
                         following_1.Following,
                         notification_1.Notification,
@@ -83,6 +87,7 @@ exports.AppModule = AppModule = __decorate([
                 })
             }),
             typeorm_1.TypeOrmModule.forFeature([
+                favourite_1.Favourite,
                 follower_1.Follower,
                 following_1.Following,
                 notification_1.Notification,
@@ -96,6 +101,7 @@ exports.AppModule = AppModule = __decorate([
             ap_users_notes_controller_1.APUsersNotesController,
             ap_users_outbox_controller_1.APUsersOutboxController,
             auth_controller_1.AuthController,
+            favourites_controller_1.FavouritesController,
             followers_controller_1.FollowersController,
             followings_controller_1.FollowingsController,
             users_controller_1.UsersController,
@@ -107,6 +113,7 @@ exports.AppModule = AppModule = __decorate([
         ],
         providers: [
             actor_object_service_1.ActorObjectService,
+            favourites_service_1.FavouritesService,
             followers_service_1.FollowersService,
             followings_service_1.FollowingsService,
             host_url_service_1.HostUrlService,

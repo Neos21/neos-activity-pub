@@ -130,7 +130,7 @@ export class FollowingsController {
       // リモートユーザを削除する場合
       try {
         const following = await this.followingsService.searchRemoteUser(userName, followingName, followingRemoteHost);
-        if(following == null) throw new Error('Following Not Found');
+        if(following == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'Following Not Found' });
         await this.followingsService.postUnfollowInboxToRemoteUser(userName, following.actorUrl, following.inboxUrl);
         await this.followingsService.removeRemoteUser(userName, followingName, followingRemoteHost);
         return res.status(HttpStatus.OK).end();

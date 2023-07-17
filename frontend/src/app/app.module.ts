@@ -11,6 +11,7 @@ import { CustomInterceptor } from './core/custom.interceptor';
 // Bootstrap
 import { AppComponent } from './app.component';
 // Components
+import { FavouriteButtonComponent } from './home/favourite-button/favourite-button.component';
 import { FollowersComponent } from './users/followers/followers.component';
 import { FollowingsComponent } from './users/followings/followings.component';
 import { FollowLocalUserButtonComponent } from './users/followers/follow-local-user-button/follow-local-user-button.component';
@@ -37,6 +38,7 @@ import { SearchComponent } from './home/search/search.component';
     AppComponent
   ],
   declarations: [
+    FavouriteButtonComponent,
     FollowersComponent,
     FollowingsComponent,
     FollowLocalUserButtonComponent,

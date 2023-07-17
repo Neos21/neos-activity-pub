@@ -52,6 +52,7 @@ export class SearchComponent {
     try {
       const searchText = this.form.value.searchText.trim();
       this.searchResult = await firstValueFrom(this.httpClient.get<any>(`/api/search?query=${searchText}`));  // Throws
+      console.log('Serach Result', this.searchResult);
     }
     catch(error) {
       this.error = '検索結果が見つかりませんでした';
