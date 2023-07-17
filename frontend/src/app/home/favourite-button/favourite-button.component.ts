@@ -62,7 +62,7 @@ export class FavouriteButtonComponent {
     }
     else {  // ふぁぼる
       try {
-        await firstValueFrom(this.httpClient.post(`/api/users/${this.userName}/favourites`, {
+        firstValueFrom(this.httpClient.post(`/api/users/${this.userName}/favourites`, {  // なぜかタイムアウトになるので無視
           userName: this.userName,
           postId  : this.postId,
           userId  : this.userId
