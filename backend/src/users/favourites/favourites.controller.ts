@@ -27,9 +27,8 @@ export class FavouritesController {
   
   @Get(':name/favourites')
   public async findOne(@Param('name') name: string, @Query('postId') postId: string, @Res() res: Response): Promise<Response> {
-    const favourite = await this.favouritesService.findOne(name, postId);
-    if(favourite == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'Like Not Found' });
-    return res.status(HttpStatus.OK).json(favourite);
+    const result = await this.favouritesService.findOne(name, postId);
+    return res.status(HttpStatus.OK).json({ result });
   }
   
   @UseGuards(JwtAuthGuard)

@@ -36,10 +36,8 @@ let FavouritesController = exports.FavouritesController = class FavouritesContro
         }
     }
     async findOne(name, postId, res) {
-        const favourite = await this.favouritesService.findOne(name, postId);
-        if (favourite == null)
-            return res.status(common_1.HttpStatus.NOT_FOUND).json({ error: 'Like Not Found' });
-        return res.status(common_1.HttpStatus.OK).json(favourite);
+        const result = await this.favouritesService.findOne(name, postId);
+        return res.status(common_1.HttpStatus.OK).json({ result });
     }
     async remove(name, postId, req, res) {
         const jwtUserName = req.user?.name;
