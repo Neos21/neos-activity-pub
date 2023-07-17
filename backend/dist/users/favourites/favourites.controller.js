@@ -74,9 +74,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FavouritesController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(':name/favourites/:postId'),
+    (0, common_1.Get)(':name/favourites'),
     __param(0, (0, common_1.Param)('name')),
-    __param(1, (0, common_1.Param)('postId')),
+    __param(1, (0, common_1.Query)('postId')),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, Object]),
@@ -84,9 +84,9 @@ __decorate([
 ], FavouritesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Delete)(':name/favourites/:postId'),
+    (0, common_1.Delete)(':name/favourites'),
     __param(0, (0, common_1.Param)('name')),
-    __param(1, (0, common_1.Param)('postId')),
+    __param(1, (0, common_1.Body)('postId')),
     __param(2, (0, common_1.Req)()),
     __param(3, (0, common_1.Res)()),
     __metadata("design:type", Function),

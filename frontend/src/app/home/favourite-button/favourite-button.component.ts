@@ -26,7 +26,7 @@ export class FavouriteButtonComponent {
   
   public async ngOnInit(): Promise<void> {
     try {
-      const result = await firstValueFrom(this.httpClient.get<{ result: any; }>(`/api/users/${this.userName}/favourites/${this.postId}`));  // Throws
+      const result = await firstValueFrom(this.httpClient.get<{ result: any; }>(`/api/users/${this.userName}/favourites?postId=${this.postId}`));  // Throws
       if(result?.result == null) {  // 未ふぁぼ
         this.isFavourited = false;
         this.label = '☆';
@@ -49,7 +49,7 @@ export class FavouriteButtonComponent {
     this.isDisabled = true;
     if(this.isFavourited) {  // ふぁぼを外す
       try {
-        await firstValueFrom(this.httpClient.delete(`/api/users/${this.userName}/favourites/${this.postId}`));
+        await firstValueFrom(this.httpClient.delete(`/api/users/${this.userName}/favourites`, { body: { postId: this.postId } }));
         this.isFavourited = false;
         this.label = '☆';
       }

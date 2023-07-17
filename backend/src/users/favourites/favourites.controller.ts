@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -25,16 +25,16 @@ export class FavouritesController {
     }
   }
   
-  @Get(':name/favourites/:postId')
-  public async findOne(@Param('name') name: string, @Param('postId') postId: string, @Res() res: Response): Promise<Response> {
+  @Get(':name/favourites')
+  public async findOne(@Param('name') name: string, @Query('postId') postId: string, @Res() res: Response): Promise<Response> {
     const favourite = await this.favouritesService.findOne(name, postId);
     if(favourite == null) return res.status(HttpStatus.NOT_FOUND).json({ error: 'Like Not Found' });
     return res.status(HttpStatus.OK).json(favourite);
   }
   
   @UseGuards(JwtAuthGuard)
-  @Delete(':name/favourites/:postId')
-  public async remove(@Param('name') name: string, @Param('postId') postId: string, @Req() req: Request, @Res() res: Response): Promise<Response> {
+  @Delete(':name/favourites')
+  public async remove(@Param('name') name: string, @Body('postId') postId: string, @Req() req: Request, @Res() res: Response): Promise<Response> {
     const jwtUserName = (req.user as { name: string; })?.name;
     if(jwtUserName == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'JWT User Name Is Empty' });
     if(name !== jwtUserName) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
