@@ -4,8 +4,7 @@ db/*
 *.out
 
 # compiled output
-# TODO : develop ブランチのみビルド成果物をコミットできるようにする (クラウドサーバ側でビルドすると遅いので)
-#/dist
+/dist
 /node_modules
 
 # Logs
