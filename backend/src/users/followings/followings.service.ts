@@ -1,6 +1,8 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, InsertResult, Repository } from 'typeorm';
+import { firstValueFrom } from 'rxjs';
 
 import { Following } from 'src/entities/following';
 import { HostUrlService } from 'src/shared/services/host-url.service';
@@ -8,9 +10,43 @@ import { HostUrlService } from 'src/shared/services/host-url.service';
 @Injectable()
 export class FollowingsService {
   constructor(
+    private httpService: HttpService,
     @InjectRepository(Following) private followingsRepository: Repository<Following>,
     private hostUrlService: HostUrlService,
   ) { }
+  
+  /** フォロー通知を相手の Inbox URL に投げる */
+  public postFollowInboxToLocalUser(userName: string, followingName: string): Promise<any> {
+    return firstValueFrom(this.httpService.post(`${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}/inbox`, {
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      id        : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
+      type      : 'Follow',
+      actor     : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+      object    : `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
+    }));  // Throws
+  }
+  
+  /** WebFinger を辿って Actor Object URL と Inbox URL を取得する */
+  public async fetchActor(followingName: string, followingRemoteHost: string): Promise<{ objectUrl: string; inboxUrl: string; }> {
+    const webFingerResponse = await firstValueFrom(this.httpService.get(`https://${followingRemoteHost}/.well-known/webfinger?resource=acct:${followingName}@${followingRemoteHost}`));  // Throws
+    const webFinger = webFingerResponse.data;
+    const objectUrl = webFinger?.links?.find(item => item.rel === 'self')?.href;
+    const actorResponse = await firstValueFrom(this.httpService.get(objectUrl, { headers: { Accept: 'application/activity+json' } }));  // Throws
+    const actor = actorResponse.data;
+    const inboxUrl = actor.inbox;
+    return { objectUrl, inboxUrl };
+  }
+  
+  /** フォロー通知を相手の Inbox URL に投げる */
+  public postFollowInboxToRemoteUser(userName: string, inboxUrl: string, objectUrl: string): Promise<any> {
+    return firstValueFrom(this.httpService.post(inboxUrl, {
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      id        : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
+      type      : 'Follow',
+      actor     : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+      object    : objectUrl
+    }));  // Throws
+  }
   
   /**
    * ローカルユーザをフォローユーザとして登録する
@@ -29,9 +65,17 @@ export class FollowingsService {
     return this.followingsRepository.insert(following);  // Throws
   }
   
-  public createRemoteUser(userName: string, followingName: string, followingRemoteHost: string): void {
-    // TODO : fullName に `acct:` を付けて WebFinger を拾う
-    // TODO : links[].rel:self の href にアクセスして actorURL・inboxURL を拾う
+  /** リモートユーザをフォローユーザとして登録する */
+  public createRemoteUser(userName: string, followingName: string, followingRemoteHost: string, objectUrl: string, inboxUrl: string): Promise<InsertResult> {
+    const following = new Following({
+      userName,
+      followingName,
+      followingRemoteHost,
+      url     : objectUrl,
+      actorUrl: objectUrl,
+      inboxUrl
+    });
+    return this.followingsRepository.insert(following);  // Throws
   }
   
   /** フォロー中を新しいモノから順番に一覧で返す */
@@ -43,14 +87,56 @@ export class FollowingsService {
   }
   
   /** ローカルユーザをフォロー中かどうか調べる・`null` が返れば未フォロー */
-  public searchLocalUser(userName: string, followingName: string) {
+  public searchLocalUser(userName: string, followingName: string): Promise<Following | null> {
     return this.followingsRepository.findOne({
       where: { userName, followingName, followingRemoteHost: '' }
     });
   }
   
+  /** リモートユーザをフォロー中かどうか調べる・`null` が返れば未フォロー */
+  public searchRemoteUser(userName: string, followingName: string, followingRemoteHost: string): Promise<Following | null> {
+    return this.followingsRepository.findOne({
+      where: { userName, followingName, followingRemoteHost }
+    });
+  }
+  
+  public postUnfollowInboxToLocalUser(userName: string, followingName: string): Promise<any> {
+    return firstValueFrom(this.httpService.post(`${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}/inbox`, {
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      id        : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
+      type      : 'Undo',
+      actor     : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+      object    : {
+        id      : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
+        type    : 'Follow',
+        actor   : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+        object  : `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
+      }
+    }));
+  }
+  
+  public postUnfollowInboxToRemoteUser(userName: string, followingName: string, objectUrl: string, inboxUrl: string): Promise<any> {
+    return firstValueFrom(this.httpService.post(inboxUrl, {
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      id        : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
+      type      : 'Undo',
+      actor     : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+      object    : {
+        id      : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
+        type    : 'Follow',
+        actor   : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+        object  : objectUrl
+      }
+    }));
+  }
+  
   /** ローカルユーザをアンフォローするため削除する */
   public removeLocalUser(userName: string, followingName: string): Promise<DeleteResult> {
     return this.followingsRepository.delete({ userName, followingName, followingRemoteHost: '' });
+  }
+  
+  /** リモートユーザをアンフォローするため削除する */
+  public removeRemoteUser(userName: string, followingName: string, followingRemoteHost: string): Promise<DeleteResult> {
+    return this.followingsRepository.delete({ userName, followingName, followingRemoteHost });
   }
 }

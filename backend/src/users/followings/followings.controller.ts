@@ -1,7 +1,5 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
+import { Body, Controller, Delete, Get, HttpStatus, Logger, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { firstValueFrom } from 'rxjs';
 
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FollowingsService } from './followings.service';
@@ -10,8 +8,9 @@ import { UsersService } from '../users.service';
 
 @Controller('api/users')
 export class FollowingsController {
+  private logger: Logger = new Logger(FollowingsController.name);
+  
   constructor(
-    private httpService: HttpService,
     private followingsService: FollowingsService,
     private hostUrlService: HostUrlService,
     private usersService: UsersService,
@@ -32,27 +31,31 @@ export class FollowingsController {
     if(jwtUserName == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'JWT User Name Is Empty' });
     if(name !== userName || name !== jwtUserName || userName !== jwtUserName) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
     
-    // ローカルユーザを登録する場合
-    if(followingRemoteHost == null || followingRemoteHost === '') {
+    if(followingRemoteHost == null || followingRemoteHost === '' || followingRemoteHost === this.hostUrlService.host) {
+      // ローカルユーザを登録する場合
       try {
+        await this.followingsService.postFollowInboxToLocalUser(userName, followingName);  // Throws
         await this.followingsService.createLocalUser(userName, followingName);  // Throws
-        // フォロー通知を相手の Inbox URL に投げる
-        const fqdn = this.hostUrlService.fqdn;
-        await firstValueFrom(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          id        : `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
-          type      : 'Follow',
-          actor     : `${fqdn}/api/activity-pub/users/${userName}`,
-          object    : `${fqdn}/api/activity-pub/users/${followingName}`
-        }));
         return res.status(HttpStatus.CREATED).end();
       }
       catch(error) {
-        console.log(error);
+        this.logger.log('Failed To Follow Local User', error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他のフォローパターンを実装する
+    else {
+      // リモートユーザを登録する場合
+      try {
+        const { objectUrl, inboxUrl } = await this.followingsService.fetchActor(followingName, followingRemoteHost);  // Throws
+        await this.followingsService.postFollowInboxToRemoteUser(userName, inboxUrl, objectUrl);  // Throws
+        await this.followingsService.createRemoteUser(userName, followingName, followingRemoteHost, objectUrl, inboxUrl);  // Throws
+        return res.status(HttpStatus.CREATED).end();
+      }
+      catch(error) {
+        this.logger.log('Failed To Follow Remote User', error);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+      }
+    }
   }
   
   /** フォロー中一覧を返す */
@@ -84,15 +87,17 @@ export class FollowingsController {
     if(jwtUserName == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'JWT User Name Is Empty' });
     if(name !== userName || name !== jwtUserName || userName !== jwtUserName) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
     
-    // ローカルユーザを検索する場合
-    if(followingRemoteHost == null || followingRemoteHost === '') {
+    if(followingRemoteHost == null || followingRemoteHost === '' || followingRemoteHost === this.hostUrlService.host) {
+      // ローカルユーザを検索する場合
       const result = await this.followingsService.searchLocalUser(userName, followingName);
       return res.status(HttpStatus.OK).json({ result });
     }
-    
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他の検索パターンを実装する
+    else {
+      // リモートユーザを検索する場合
+      const result = await this.followingsService.searchRemoteUser(userName, followingName, followingRemoteHost);
+      return res.status(HttpStatus.OK).json({ result });
+    }
   }
-  
   
   /** アンフォローする */
   @UseGuards(JwtAuthGuard)
@@ -109,31 +114,31 @@ export class FollowingsController {
     if(jwtUserName == null) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'JWT User Name Is Empty' });
     if(name !== userName || name !== jwtUserName || userName !== jwtUserName) return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
     
-    // ローカルユーザを削除する場合
     if(followingRemoteHost == null || followingRemoteHost === '') {
+      // ローカルユーザを削除する場合
       try {
+        await this.followingsService.postUnfollowInboxToLocalUser(userName, followingName);
         await this.followingsService.removeLocalUser(userName, followingName);
-        // アンフォロー通知を Inbox URL に投げる
-        const fqdn = this.hostUrlService.fqdn;
-        await firstValueFrom(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          id        : `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
-          type      : 'Undo',
-          actor     : `${fqdn}/api/activity-pub/users/${userName}`,
-          object    : {
-            id    : `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
-            type  : 'Follow',
-            actor : `${fqdn}/api/activity-pub/users/${userName}`,
-            object: `${fqdn}/api/activity-pub/users/${followingName}`
-          }
-        }));
         return res.status(HttpStatus.OK).end();
       }
       catch(error) {
-        console.log(error);
+        this.logger.log('Failed To Unfollow Local User', error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
       }
     }
-    return res.status(HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });  // TODO : 他のアンフォローパターンを実装する
+    else {
+      // リモートユーザを削除する場合
+      try {
+        const following = await this.followingsService.searchRemoteUser(userName, followingName, followingRemoteHost);
+        if(following == null) throw new Error('Following Not Found');
+        await this.followingsService.postUnfollowInboxToRemoteUser(userName, followingName, following.actorUrl, following.inboxUrl);
+        await this.followingsService.removeRemoteUser(userName, followingName, followingRemoteHost);
+        return res.status(HttpStatus.OK).end();
+      }
+      catch(error) {
+        this.logger.log('Failed To Unfollow Remote User', error);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+      }
+    }
   }
 }

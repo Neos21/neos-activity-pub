@@ -13,15 +13,45 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FollowingsService = void 0;
+const axios_1 = require("@nestjs/axios");
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const rxjs_1 = require("rxjs");
 const following_1 = require("../../entities/following");
 const host_url_service_1 = require("../../shared/services/host-url.service");
 let FollowingsService = exports.FollowingsService = class FollowingsService {
-    constructor(followingsRepository, hostUrlService) {
+    constructor(httpService, followingsRepository, hostUrlService) {
+        this.httpService = httpService;
         this.followingsRepository = followingsRepository;
         this.hostUrlService = hostUrlService;
+    }
+    postFollowInboxToLocalUser(userName, followingName) {
+        return (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}/inbox`, {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
+            type: 'Follow',
+            actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+            object: `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
+        }));
+    }
+    async fetchActor(followingName, followingRemoteHost) {
+        const webFingerResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`https://${followingRemoteHost}/.well-known/webfinger?resource=acct:${followingName}@${followingRemoteHost}`));
+        const webFinger = webFingerResponse.data;
+        const objectUrl = webFinger?.links?.find(item => item.rel === 'self')?.href;
+        const actorResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(objectUrl, { headers: { Accept: 'application/activity+json' } }));
+        const actor = actorResponse.data;
+        const inboxUrl = actor.inbox;
+        return { objectUrl, inboxUrl };
+    }
+    postFollowInboxToRemoteUser(userName, inboxUrl, objectUrl) {
+        return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
+            type: 'Follow',
+            actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+            object: objectUrl
+        }));
     }
     createLocalUser(userName, followingName) {
         const following = new following_1.Following({
@@ -34,7 +64,16 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
         });
         return this.followingsRepository.insert(following);
     }
-    createRemoteUser(userName, followingName, followingRemoteHost) {
+    createRemoteUser(userName, followingName, followingRemoteHost, objectUrl, inboxUrl) {
+        const following = new following_1.Following({
+            userName,
+            followingName,
+            followingRemoteHost,
+            url: objectUrl,
+            actorUrl: objectUrl,
+            inboxUrl
+        });
+        return this.followingsRepository.insert(following);
     }
     findAll(userName) {
         return this.followingsRepository.find({
@@ -47,14 +86,51 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
             where: { userName, followingName, followingRemoteHost: '' }
         });
     }
+    searchRemoteUser(userName, followingName, followingRemoteHost) {
+        return this.followingsRepository.findOne({
+            where: { userName, followingName, followingRemoteHost }
+        });
+    }
+    postUnfollowInboxToLocalUser(userName, followingName) {
+        return (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}/inbox`, {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
+            type: 'Undo',
+            actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+            object: {
+                id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
+                type: 'Follow',
+                actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+                object: `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
+            }
+        }));
+    }
+    postUnfollowInboxToRemoteUser(userName, followingName, objectUrl, inboxUrl) {
+        return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
+            type: 'Undo',
+            actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+            object: {
+                id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
+                type: 'Follow',
+                actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
+                object: objectUrl
+            }
+        }));
+    }
     removeLocalUser(userName, followingName) {
         return this.followingsRepository.delete({ userName, followingName, followingRemoteHost: '' });
+    }
+    removeRemoteUser(userName, followingName, followingRemoteHost) {
+        return this.followingsRepository.delete({ userName, followingName, followingRemoteHost });
     }
 };
 exports.FollowingsService = FollowingsService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(following_1.Following)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
+    __param(1, (0, typeorm_1.InjectRepository)(following_1.Following)),
+    __metadata("design:paramtypes", [axios_1.HttpService,
+        typeorm_2.Repository,
         host_url_service_1.HostUrlService])
 ], FollowingsService);
 //# sourceMappingURL=followings.service.js.map

@@ -11,21 +11,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var FollowingsController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FollowingsController = void 0;
 const common_1 = require("@nestjs/common");
-const axios_1 = require("@nestjs/axios");
-const rxjs_1 = require("rxjs");
 const jwt_auth_guard_1 = require("../../auth/jwt-auth.guard");
 const followings_service_1 = require("./followings.service");
 const host_url_service_1 = require("../../shared/services/host-url.service");
 const users_service_1 = require("../users.service");
-let FollowingsController = exports.FollowingsController = class FollowingsController {
-    constructor(httpService, followingsService, hostUrlService, usersService) {
-        this.httpService = httpService;
+let FollowingsController = exports.FollowingsController = FollowingsController_1 = class FollowingsController {
+    constructor(followingsService, hostUrlService, usersService) {
         this.followingsService = followingsService;
         this.hostUrlService = hostUrlService;
         this.usersService = usersService;
+        this.logger = new common_1.Logger(FollowingsController_1.name);
     }
     async create(name, userName, followingName, followingRemoteHost, req, res) {
         const jwtUserName = req.user?.name;
@@ -33,25 +32,29 @@ let FollowingsController = exports.FollowingsController = class FollowingsContro
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'JWT User Name Is Empty' });
         if (name !== userName || name !== jwtUserName || userName !== jwtUserName)
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
-        if (followingRemoteHost == null || followingRemoteHost === '') {
+        if (followingRemoteHost == null || followingRemoteHost === '' || followingRemoteHost === this.hostUrlService.host) {
             try {
+                await this.followingsService.postFollowInboxToLocalUser(userName, followingName);
                 await this.followingsService.createLocalUser(userName, followingName);
-                const fqdn = this.hostUrlService.fqdn;
-                await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
-                    '@context': 'https://www.w3.org/ns/activitystreams',
-                    id: `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
-                    type: 'Follow',
-                    actor: `${fqdn}/api/activity-pub/users/${userName}`,
-                    object: `${fqdn}/api/activity-pub/users/${followingName}`
-                }));
                 return res.status(common_1.HttpStatus.CREATED).end();
             }
             catch (error) {
-                console.log(error);
+                this.logger.log('Failed To Follow Local User', error);
                 return res.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
             }
         }
-        return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });
+        else {
+            try {
+                const { objectUrl, inboxUrl } = await this.followingsService.fetchActor(followingName, followingRemoteHost);
+                await this.followingsService.postFollowInboxToRemoteUser(userName, inboxUrl, objectUrl);
+                await this.followingsService.createRemoteUser(userName, followingName, followingRemoteHost, objectUrl, inboxUrl);
+                return res.status(common_1.HttpStatus.CREATED).end();
+            }
+            catch (error) {
+                this.logger.log('Failed To Follow Remote User', error);
+                return res.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+            }
+        }
     }
     async findAll(name, res) {
         try {
@@ -71,11 +74,14 @@ let FollowingsController = exports.FollowingsController = class FollowingsContro
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'JWT User Name Is Empty' });
         if (name !== userName || name !== jwtUserName || userName !== jwtUserName)
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
-        if (followingRemoteHost == null || followingRemoteHost === '') {
+        if (followingRemoteHost == null || followingRemoteHost === '' || followingRemoteHost === this.hostUrlService.host) {
             const result = await this.followingsService.searchLocalUser(userName, followingName);
             return res.status(common_1.HttpStatus.OK).json({ result });
         }
-        return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });
+        else {
+            const result = await this.followingsService.searchRemoteUser(userName, followingName, followingRemoteHost);
+            return res.status(common_1.HttpStatus.OK).json({ result });
+        }
     }
     async remove(name, userName, followingName, followingRemoteHost, req, res) {
         const jwtUserName = req.user?.name;
@@ -85,28 +91,29 @@ let FollowingsController = exports.FollowingsController = class FollowingsContro
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
         if (followingRemoteHost == null || followingRemoteHost === '') {
             try {
+                await this.followingsService.postUnfollowInboxToLocalUser(userName, followingName);
                 await this.followingsService.removeLocalUser(userName, followingName);
-                const fqdn = this.hostUrlService.fqdn;
-                await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${fqdn}/api/activity-pub/users/${followingName}/inbox`, {
-                    '@context': 'https://www.w3.org/ns/activitystreams',
-                    id: `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
-                    type: 'Undo',
-                    actor: `${fqdn}/api/activity-pub/users/${userName}`,
-                    object: {
-                        id: `${fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
-                        type: 'Follow',
-                        actor: `${fqdn}/api/activity-pub/users/${userName}`,
-                        object: `${fqdn}/api/activity-pub/users/${followingName}`
-                    }
-                }));
                 return res.status(common_1.HttpStatus.OK).end();
             }
             catch (error) {
-                console.log(error);
+                this.logger.log('Failed To Unfollow Local User', error);
                 return res.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
             }
         }
-        return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'TODO : Not Implemented' });
+        else {
+            try {
+                const following = await this.followingsService.searchRemoteUser(userName, followingName, followingRemoteHost);
+                if (following == null)
+                    throw new Error('Following Not Found');
+                await this.followingsService.postUnfollowInboxToRemoteUser(userName, followingName, following.actorUrl, following.inboxUrl);
+                await this.followingsService.removeRemoteUser(userName, followingName, followingRemoteHost);
+                return res.status(common_1.HttpStatus.OK).end();
+            }
+            catch (error) {
+                this.logger.log('Failed To Unfollow Remote User', error);
+                return res.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
+            }
+        }
     }
 };
 __decorate([
@@ -156,10 +163,9 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String, String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], FollowingsController.prototype, "remove", null);
-exports.FollowingsController = FollowingsController = __decorate([
+exports.FollowingsController = FollowingsController = FollowingsController_1 = __decorate([
     (0, common_1.Controller)('api/users'),
-    __metadata("design:paramtypes", [axios_1.HttpService,
-        followings_service_1.FollowingsService,
+    __metadata("design:paramtypes", [followings_service_1.FollowingsService,
         host_url_service_1.HostUrlService,
         users_service_1.UsersService])
 ], FollowingsController);

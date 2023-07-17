@@ -48,6 +48,7 @@ export class SearchComponent {
   public async search(): Promise<void> {
     this.isProcessing = true;
     this.error = undefined;
+    this.searchResult = undefined;
     try {
       const searchText = this.form.value.searchText.trim();
       this.searchResult = await firstValueFrom(this.httpClient.get<any>(`/api/search?query=${searchText}`));  // Throws

@@ -13,7 +13,8 @@ import { AppComponent } from './app.component';
 // Components
 import { FollowersComponent } from './users/followers/followers.component';
 import { FollowingsComponent } from './users/followings/followings.component';
-import { FollowLocalUserButtonComponent } from './users/followers/follow-button/follow-local-user-button.component';
+import { FollowLocalUserButtonComponent } from './users/followers/follow-local-user-button/follow-local-user-button.component';
+import { FollowRemoteUserButtonComponent } from './users/followers/follow-remote-user-button/follow-remote-user-button.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { NewPostComponent } from './home/new-post/new-post.component';
@@ -39,6 +40,7 @@ import { SearchComponent } from './home/search/search.component';
     FollowersComponent,
     FollowingsComponent,
     FollowLocalUserButtonComponent,
+    FollowRemoteUserButtonComponent,
     HomeComponent,
     LoginComponent,
     NewPostComponent,

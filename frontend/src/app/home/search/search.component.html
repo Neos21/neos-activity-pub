@@ -23,5 +23,5 @@
 <ng-container *ngIf="searchResult != null && searchResult.type === 'User' && searchResult.userHost != null">
   <h3>リモートユーザ :</h3>
   <p><a [href]="searchResult.userUrl">@{{ searchResult.userName }}@{{ searchResult.userHost }}</a></p>
-  <p><button type="button" onClick="window.alert('TODO : まだ実装できてないです…')">フォロー</button>
+  <p><app-follow-remote-user-button [userName]="authUserName" [followingName]="searchResult.userName" [followingRemoteHost]="searchResult.userHost"></app-follow-remote-user-button></p>
 </ng-container>
