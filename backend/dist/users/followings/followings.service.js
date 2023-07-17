@@ -118,8 +118,9 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
             }
         }, headers));
     }
-    postUnfollowInboxToRemoteUser(userName, followingName, objectUrl, inboxUrl) {
-        return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, {
+    async postUnfollowInboxToRemoteUser(userName, objectUrl, inboxUrl) {
+        const user = await this.usersService.findOneWithPrivateKey(userName);
+        const json = {
             '@context': 'https://www.w3.org/ns/activitystreams',
             id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
             type: 'Undo',
@@ -130,7 +131,9 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
                 actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
                 object: objectUrl
             }
-        }, headers));
+        };
+        const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, userName, user.privateKey);
+        return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));
     }
     removeLocalUser(userName, followingName) {
         return this.followingsRepository.delete({ userName, followingName, followingRemoteHost: '' });

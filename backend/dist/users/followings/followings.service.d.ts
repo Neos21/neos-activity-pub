@@ -23,7 +23,7 @@ export declare class FollowingsService {
     searchLocalUser(userName: string, followingName: string): Promise<Following | null>;
     searchRemoteUser(userName: string, followingName: string, followingRemoteHost: string): Promise<Following | null>;
     postUnfollowInboxToLocalUser(userName: string, followingName: string): Promise<any>;
-    postUnfollowInboxToRemoteUser(userName: string, followingName: string, objectUrl: string, inboxUrl: string): Promise<any>;
+    postUnfollowInboxToRemoteUser(userName: string, objectUrl: string, inboxUrl: string): Promise<any>;
     removeLocalUser(userName: string, followingName: string): Promise<DeleteResult>;
     removeRemoteUser(userName: string, followingName: string, followingRemoteHost: string): Promise<DeleteResult>;
 }

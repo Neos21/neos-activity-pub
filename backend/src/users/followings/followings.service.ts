@@ -129,8 +129,9 @@ export class FollowingsService {
     }, headers));
   }
   
-  public postUnfollowInboxToRemoteUser(userName: string, followingName: string, objectUrl: string, inboxUrl: string): Promise<any> {
-    return firstValueFrom(this.httpService.post(inboxUrl, {
+  public async postUnfollowInboxToRemoteUser(userName: string, objectUrl: string, inboxUrl: string): Promise<any> {
+    const user = await this.usersService.findOneWithPrivateKey(userName);
+    const json = {
       '@context': 'https://www.w3.org/ns/activitystreams',
       id        : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
       type      : 'Undo',
@@ -141,7 +142,9 @@ export class FollowingsService {
         actor   : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
         object  : objectUrl
       }
-    }, headers));
+    };
+    const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, userName, user.privateKey);
+    return firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));
   }
   
   /** ローカルユーザをアンフォローするため削除する */
