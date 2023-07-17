@@ -20,6 +20,12 @@ const typeorm_2 = require("typeorm");
 const rxjs_1 = require("rxjs");
 const following_1 = require("../../entities/following");
 const host_url_service_1 = require("../../shared/services/host-url.service");
+const headers = {
+    headers: {
+        Accept: 'application/activity+json',
+        'Content-Type': 'application/activity+json'
+    }
+};
 let FollowingsService = exports.FollowingsService = class FollowingsService {
     constructor(httpService, followingsRepository, hostUrlService) {
         this.httpService = httpService;
@@ -33,13 +39,13 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
             type: 'Follow',
             actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
             object: `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
-        }));
+        }, headers));
     }
     async fetchActor(followingName, followingRemoteHost) {
-        const webFingerResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`https://${followingRemoteHost}/.well-known/webfinger?resource=acct:${followingName}@${followingRemoteHost}`));
+        const webFingerResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`https://${followingRemoteHost}/.well-known/webfinger?resource=acct:${followingName}@${followingRemoteHost}`, headers));
         const webFinger = webFingerResponse.data;
         const objectUrl = webFinger?.links?.find(item => item.rel === 'self')?.href;
-        const actorResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(objectUrl, { headers: { Accept: 'application/activity+json' } }));
+        const actorResponse = await (0, rxjs_1.firstValueFrom)(this.httpService.get(objectUrl, headers));
         const actor = actorResponse.data;
         const inboxUrl = actor.inbox;
         return { objectUrl, inboxUrl };
@@ -51,7 +57,7 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
             type: 'Follow',
             actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
             object: objectUrl
-        }));
+        }, headers));
     }
     createLocalUser(userName, followingName) {
         const following = new following_1.Following({
@@ -103,7 +109,7 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
                 actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
                 object: `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
             }
-        }));
+        }, headers));
     }
     postUnfollowInboxToRemoteUser(userName, followingName, objectUrl, inboxUrl) {
         return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, {
@@ -117,7 +123,7 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
                 actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
                 object: objectUrl
             }
-        }));
+        }, headers));
     }
     removeLocalUser(userName, followingName) {
         return this.followingsRepository.delete({ userName, followingName, followingRemoteHost: '' });

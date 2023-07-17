@@ -7,6 +7,13 @@ import { firstValueFrom } from 'rxjs';
 import { Following } from 'src/entities/following';
 import { HostUrlService } from 'src/shared/services/host-url.service';
 
+const headers = {
+  headers: {
+    Accept        : 'application/activity+json',
+    'Content-Type': 'application/activity+json'
+  }
+};
+
 @Injectable()
 export class FollowingsService {
   constructor(
@@ -23,15 +30,15 @@ export class FollowingsService {
       type      : 'Follow',
       actor     : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
       object    : `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
-    }));  // Throws
+    }, headers));  // Throws
   }
   
   /** WebFinger を辿って Actor Object URL と Inbox URL を取得する */
   public async fetchActor(followingName: string, followingRemoteHost: string): Promise<{ objectUrl: string; inboxUrl: string; }> {
-    const webFingerResponse = await firstValueFrom(this.httpService.get(`https://${followingRemoteHost}/.well-known/webfinger?resource=acct:${followingName}@${followingRemoteHost}`));  // Throws
+    const webFingerResponse = await firstValueFrom(this.httpService.get(`https://${followingRemoteHost}/.well-known/webfinger?resource=acct:${followingName}@${followingRemoteHost}`, headers));  // Throws
     const webFinger = webFingerResponse.data;
     const objectUrl = webFinger?.links?.find(item => item.rel === 'self')?.href;
-    const actorResponse = await firstValueFrom(this.httpService.get(objectUrl, { headers: { Accept: 'application/activity+json' } }));  // Throws
+    const actorResponse = await firstValueFrom(this.httpService.get(objectUrl, headers));  // Throws
     const actor = actorResponse.data;
     const inboxUrl = actor.inbox;
     return { objectUrl, inboxUrl };
@@ -45,7 +52,7 @@ export class FollowingsService {
       type      : 'Follow',
       actor     : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
       object    : objectUrl
-    }));  // Throws
+    }, headers));  // Throws
   }
   
   /**
@@ -112,7 +119,7 @@ export class FollowingsService {
         actor   : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
         object  : `${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}`
       }
-    }));
+    }, headers));
   }
   
   public postUnfollowInboxToRemoteUser(userName: string, followingName: string, objectUrl: string, inboxUrl: string): Promise<any> {
@@ -127,7 +134,7 @@ export class FollowingsService {
         actor   : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
         object  : objectUrl
       }
-    }));
+    }, headers));
   }
   
   /** ローカルユーザをアンフォローするため削除する */
