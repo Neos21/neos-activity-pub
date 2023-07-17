@@ -21,17 +21,22 @@ let FavouritesController = exports.FavouritesController = class FavouritesContro
         this.favouritesService = favouritesService;
     }
     async create(name, userName, postId, userId, req, res) {
+        console.log('POST');
         const jwtUserName = req.user?.name;
         if (jwtUserName == null)
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'JWT User Name Is Empty' });
         if (name !== userName || name !== jwtUserName || userName !== jwtUserName)
             return res.status(common_1.HttpStatus.BAD_REQUEST).json({ error: 'Invalid User Name' });
         try {
+            console.log('Start 1');
             const inboxUrl = await this.favouritesService.fetchInboxUrl(userId);
+            console.log('Start 2');
             await this.favouritesService.postLikeInbox(userName, inboxUrl, postId);
+            console.log('Start 3');
             await this.favouritesService.create(userName, postId, inboxUrl);
         }
         catch (error) {
+            console.log('ERROR', error);
             return res.status(common_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ error });
         }
     }
