@@ -2,11 +2,15 @@ import { HttpService } from '@nestjs/axios';
 import { DeleteResult, InsertResult, Repository } from 'typeorm';
 import { Following } from 'src/entities/following';
 import { HostUrlService } from 'src/shared/services/host-url.service';
+import { SignHeaderService } from 'src/activity-pub/sign-header.service';
+import { UsersService } from '../users.service';
 export declare class FollowingsService {
     private httpService;
     private followingsRepository;
     private hostUrlService;
-    constructor(httpService: HttpService, followingsRepository: Repository<Following>, hostUrlService: HostUrlService);
+    private signHeaderService;
+    private usersService;
+    constructor(httpService: HttpService, followingsRepository: Repository<Following>, hostUrlService: HostUrlService, signHeaderService: SignHeaderService, usersService: UsersService);
     postFollowInboxToLocalUser(userName: string, followingName: string): Promise<any>;
     fetchActor(followingName: string, followingRemoteHost: string): Promise<{
         objectUrl: string;

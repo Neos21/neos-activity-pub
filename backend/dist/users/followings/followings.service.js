@@ -20,6 +20,8 @@ const typeorm_2 = require("typeorm");
 const rxjs_1 = require("rxjs");
 const following_1 = require("../../entities/following");
 const host_url_service_1 = require("../../shared/services/host-url.service");
+const sign_header_service_1 = require("../../activity-pub/sign-header.service");
+const users_service_1 = require("../users.service");
 const headers = {
     headers: {
         Accept: 'application/activity+json',
@@ -27,10 +29,12 @@ const headers = {
     }
 };
 let FollowingsService = exports.FollowingsService = class FollowingsService {
-    constructor(httpService, followingsRepository, hostUrlService) {
+    constructor(httpService, followingsRepository, hostUrlService, signHeaderService, usersService) {
         this.httpService = httpService;
         this.followingsRepository = followingsRepository;
         this.hostUrlService = hostUrlService;
+        this.signHeaderService = signHeaderService;
+        this.usersService = usersService;
     }
     postFollowInboxToLocalUser(userName, followingName) {
         return (0, rxjs_1.firstValueFrom)(this.httpService.post(`${this.hostUrlService.fqdn}/api/activity-pub/users/${followingName}/inbox`, {
@@ -50,14 +54,17 @@ let FollowingsService = exports.FollowingsService = class FollowingsService {
         const inboxUrl = actor.inbox;
         return { objectUrl, inboxUrl };
     }
-    postFollowInboxToRemoteUser(userName, inboxUrl, objectUrl) {
-        return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, {
+    async postFollowInboxToRemoteUser(userName, inboxUrl, objectUrl) {
+        const user = await this.usersService.findOneWithPrivateKey(userName);
+        const json = {
             '@context': 'https://www.w3.org/ns/activitystreams',
             id: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,
             type: 'Follow',
             actor: `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
             object: objectUrl
-        }, headers));
+        };
+        const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, userName, user.privateKey);
+        return (0, rxjs_1.firstValueFrom)(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));
     }
     createLocalUser(userName, followingName) {
         const following = new following_1.Following({
@@ -137,6 +144,8 @@ exports.FollowingsService = FollowingsService = __decorate([
     __param(1, (0, typeorm_1.InjectRepository)(following_1.Following)),
     __metadata("design:paramtypes", [axios_1.HttpService,
         typeorm_2.Repository,
-        host_url_service_1.HostUrlService])
+        host_url_service_1.HostUrlService,
+        sign_header_service_1.SignHeaderService,
+        users_service_1.UsersService])
 ], FollowingsService);
 //# sourceMappingURL=followings.service.js.map

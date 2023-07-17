@@ -6,6 +6,8 @@ import { firstValueFrom } from 'rxjs';
 
 import { Following } from 'src/entities/following';
 import { HostUrlService } from 'src/shared/services/host-url.service';
+import { SignHeaderService } from 'src/activity-pub/sign-header.service';
+import { UsersService } from '../users.service';
 
 const headers = {
   headers: {
@@ -20,6 +22,8 @@ export class FollowingsService {
     private httpService: HttpService,
     @InjectRepository(Following) private followingsRepository: Repository<Following>,
     private hostUrlService: HostUrlService,
+    private signHeaderService: SignHeaderService,
+    private usersService: UsersService,
   ) { }
   
   /** フォロー通知を相手の Inbox URL に投げる */
@@ -45,14 +49,17 @@ export class FollowingsService {
   }
   
   /** フォロー通知を相手の Inbox URL に投げる */
-  public postFollowInboxToRemoteUser(userName: string, inboxUrl: string, objectUrl: string): Promise<any> {
-    return firstValueFrom(this.httpService.post(inboxUrl, {
+  public async postFollowInboxToRemoteUser(userName: string, inboxUrl: string, objectUrl: string): Promise<any> {
+    const user = await this.usersService.findOneWithPrivateKey(userName);
+    const json = {
       '@context': 'https://www.w3.org/ns/activitystreams',
       id        : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}/activities/${Date.now()}`,  // NOTE : 存在しなくて良いか
       type      : 'Follow',
       actor     : `${this.hostUrlService.fqdn}/api/activity-pub/users/${userName}`,
       object    : objectUrl
-    }, headers));  // Throws
+    };
+    const requestHeaders = this.signHeaderService.signHeader(json, inboxUrl, userName, user.privateKey);
+    return firstValueFrom(this.httpService.post(inboxUrl, JSON.stringify(json), { headers: requestHeaders }));  // Throws
   }
   
   /**
